@@ -1,6 +1,8 @@
 // Sin imports: lo usan vite.config.ts y el cliente.
 
 const WHATSAPP_NUMBER_PATTERN = /^[1-9][0-9]{7,14}$/;
+// "AGS-" y cuatro caracteres del alfabeto de whatsapp.ts (sin 0, O, 1 ni I).
+export const ORDER_CODE_PATTERN = /^AGS-[A-HJ-NP-Z2-9]{4}$/;
 
 export function isValidWhatsAppNumber(value: string | undefined): boolean {
   return typeof value === "string" && WHATSAPP_NUMBER_PATTERN.test(value);

@@ -237,7 +237,7 @@ describe("resolveSelection", () => {
     });
     expect(resolved?.combination.id).toBe("tarjetas-200-doble-faz-laminado");
     expect(resolved?.total).toBe(26300);
-    expect(resolved?.unit).toBe("pack de 200");
+    expect(resolved?.combination.unit).toBe("pack de 200");
   });
 
   it("Vinilos blanco · laca completa con maqueta suma el adicional", () => {
@@ -249,7 +249,7 @@ describe("resolveSelection", () => {
     expect(resolved?.combination.price).toBe(18800);
     expect(resolved?.addOns.map((addOn) => addOn.id)).toEqual(["vinilos-maqueta"]);
     expect(resolved?.total).toBe(18800 + 2500);
-    expect(resolved?.unit).toBe("por pliego");
+    expect(resolved?.combination.unit).toBe("por pliego");
   });
 
   it("suma cada adicional una sola vez y en el orden del catálogo", () => {
@@ -271,7 +271,7 @@ describe("resolveSelection", () => {
       expect(resolved).not.toBeNull();
       expect(resolved!.combination).toBe(item.combinations[0]);
       expect(resolved!.total).toBeGreaterThan(0);
-      expect(resolved!.unit.length).toBeGreaterThan(0);
+      expect(resolved!.combination.unit.length).toBeGreaterThan(0);
       expect(resolved!.addOns).toEqual([]);
     }
   });
@@ -291,7 +291,7 @@ describe("resolveSelection", () => {
     const resolved = resolveSelection(entreFlores, {});
     expect(resolved?.combination.id).toBe("entre-flores");
     expect(resolved?.total).toBe(35000);
-    expect(resolved?.unit).toBe("por unidad");
+    expect(resolved?.combination.unit).toBe("por unidad");
   });
 
   it("cada combinación se puede elegir a partir de sus valores", () => {

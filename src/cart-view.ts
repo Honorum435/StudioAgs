@@ -4,8 +4,8 @@ import {
   MAX_QUANTITY,
   MIN_QUANTITY,
   clampQuantity,
+  isDeliveryMethod,
   noticeMessage,
-  toIsoDate,
   type FormIssue,
   type OrderField,
   type OrderState,
@@ -13,8 +13,8 @@ import {
   type OrderSummary,
   type ResolvedLine,
 } from "./cart";
-import type { CatalogProduct } from "./catalog";
-import { formatPrice } from "./format";
+import { announceTo, delegateActions, setAttr, setHtml, windowOf, type ActionHandler } from "./dom";
+import { formatPrice, toIsoDate } from "./format";
 import { bumpBadge, popNumber, scrollToTarget } from "./motion";
 import type { Overlays } from "./overlays";
 import {
@@ -55,22 +55,61 @@ export interface CartView {
   destroy(): void;
 }
 
-type ActionHandler = (element: HTMLElement) => void;
 type FormControl = HTMLInputElement | HTMLTextAreaElement;
+type FormField = Exclude<OrderField, "lines">;
+type TextField = Exclude<FormField, "delivery">;
 
 interface Keyed {
   key: string;
   create: () => Element;
 }
 
+// Lo que el panel con productos actualiza en cada cambio: se busca una vez cada vez que se arma.
+interface Panel {
+  lines: HTMLElement | null;
+  subtotals: readonly HTMLElement[];
+  inputs: Record<TextField, HTMLInputElement | null>;
+  // Lo que lleva aria-invalid y aria-describedby: el campo de texto o el grupo de la entrega.
+  targets: Record<FormField, HTMLElement | null>;
+  errors: Record<FormField, HTMLElement | null>;
+  deliveryRadios: readonly HTMLInputElement[];
+  localityField: HTMLElement | null;
+  deliveryHint: HTMLElement | null;
+  dateWarning: HTMLElement | null;
+  ideasSection: HTMLElement | null;
+  ideas: HTMLElement | null;
+  checkout: HTMLElement | null;
+}
+
 const TEXT_INPUT_TYPES = new Set(["text", "search", "email", "tel", "url", "number", "password", "date"]);
 
-const fieldIds: Record<Exclude<OrderField, "lines">, string> = {
+const fieldIds: Record<FormField, string> = {
   name: "pedido-nombre",
   delivery: "pedido-entrega",
   locality: "pedido-localidad",
   date: "pedido-fecha",
 };
+
+function findPanel(content: HTMLElement): Panel {
+  const find = <T extends Element = HTMLElement>(selector: string) => content.querySelector<T>(selector);
+  const input = (field: TextField) => find<HTMLInputElement>(`#${fieldIds[field]}`);
+  const error = (field: FormField) => find(`[data-field-error="${field}"]`);
+  const inputs = { name: input("name"), locality: input("locality"), date: input("date") };
+  return {
+    lines: find("[data-cart-lines]"),
+    subtotals: Array.from(content.querySelectorAll<HTMLElement>("[data-cart-subtotal]")),
+    inputs,
+    targets: { ...inputs, delivery: find('[data-field="delivery"]') },
+    errors: { name: error("name"), delivery: error("delivery"), locality: error("locality"), date: error("date") },
+    deliveryRadios: Array.from(content.querySelectorAll<HTMLInputElement>('input[data-form-field="delivery"]')),
+    localityField: find('[data-field="locality"]'),
+    deliveryHint: find("[data-delivery-hint]"),
+    dateWarning: find("[data-date-warning]"),
+    ideasSection: find("[data-cart-ideas-section]"),
+    ideas: find("[data-cart-ideas]"),
+    checkout: find("[data-checkout]"),
+  };
+}
 
 function isTextField(target: EventTarget | null): boolean {
   if (target instanceof HTMLTextAreaElement) {
@@ -92,27 +131,12 @@ function setHidden(element: HTMLElement | null | undefined, hidden: boolean): vo
 }
 
 function setDescribedBy(element: Element | null, ids: readonly (string | null)[]): void {
-  const value = ids.filter(Boolean).join(" ");
-  if (!element) {
-    return;
-  }
-  if (value) {
-    element.setAttribute("aria-describedby", value);
-  } else {
-    element.removeAttribute("aria-describedby");
-  }
+  setAttr(element, "aria-describedby", ids.filter(Boolean).join(" ") || null);
 }
 
 // "Inactivo" sin disabled: el botón conserva el foco (por ejemplo "–" al llegar a 1).
 function setInert(button: Element | null, inert: boolean): void {
-  if (!button) {
-    return;
-  }
-  if (inert) {
-    button.setAttribute("aria-disabled", "true");
-  } else {
-    button.removeAttribute("aria-disabled");
-  }
+  setAttr(button, "aria-disabled", inert ? "true" : null);
 }
 
 function isInert(element: Element): boolean {
@@ -132,22 +156,10 @@ function counterText(length: number): string {
   return left === 1 ? "Te queda 1 carácter." : `Te quedan ${left} caracteres.`;
 }
 
-// Productos con bloque de idea o de fotos, en el orden de las líneas.
-function ideaProducts(summary: OrderSummary): CatalogProduct[] {
-  const seen = new Set<string>();
-  return summary.lines.flatMap(({ product }) => {
-    if (seen.has(product.id) || !(product.personalizable || product.needsPhotos)) {
-      return [];
-    }
-    seen.add(product.id);
-    return [product];
-  });
-}
-
 export function mountCartView(options: CartViewOptions): CartView {
   const { root, store, overlays, whatsappNumber } = options;
   const doc = root.ownerDocument;
-  const win = doc.defaultView ?? window;
+  const win = windowOf(root);
 
   const dialog = root.querySelector<HTMLDialogElement>("dialog#cart-dialog");
   const content = root.querySelector<HTMLElement>("[data-cart-content]");
@@ -160,10 +172,11 @@ export function mountCartView(options: CartViewOptions): CartView {
   const bar = root.querySelector<HTMLElement>("[data-sticky-bar]");
   const barSummary = bar?.querySelector<HTMLElement>(".sticky-bar-summary") ?? null;
 
-  const painted = { count: "", bar: "", restore: "", checkout: "" };
   // Cantidad que muestra el contador; null hasta la hidratación, que restaura sin animar.
   let paintedQuantity: number | null = null;
   let previous: OrderState | null = null;
+  // Controles del panel con productos; null hasta que se arma (y con el panel vacío).
+  let panel: Panel | null = null;
   // Los campos que marcó el último "Continuar": se desmarcan solos al corregirlos.
   let flagged = new Set<OrderField>();
   let typing = false;
@@ -201,11 +214,7 @@ export function mountCartView(options: CartViewOptions): CartView {
   }
 
   function announce(message: string): void {
-    if (!live) {
-      return;
-    }
-    // El mismo texto dos veces seguidas no se vuelve a leer: se alterna un espacio duro.
-    live.textContent = live.textContent === message ? `${message} ` : message;
+    announceTo(live, message);
   }
 
   function control<T extends Element>(selector: string): T | null {
@@ -243,11 +252,7 @@ export function mountCartView(options: CartViewOptions): CartView {
 
   function paintHeader(state: OrderState, summary: OrderSummary): void {
     if (count) {
-      const html = cartCountContent(summary.quantity);
-      if (html !== painted.count) {
-        count.innerHTML = html;
-        painted.count = html;
-      }
+      setHtml(count, cartCountContent(summary.quantity));
       count.classList.toggle("is-empty", summary.quantity === 0);
       if (paintedQuantity !== null && summary.quantity > paintedQuantity) {
         bumpBadge(count);
@@ -257,10 +262,7 @@ export function mountCartView(options: CartViewOptions): CartView {
     const note = state.notices.length > 0;
     if (triggerNote) {
       // El punto separa la nota del contador en el nombre del botón.
-      const html = note ? `<span class="visually-hidden">. </span>${ORDER_UPDATED_NOTE}` : "";
-      if (triggerNote.innerHTML !== html) {
-        triggerNote.innerHTML = html;
-      }
+      setHtml(triggerNote, note ? `<span class="visually-hidden">. </span>${ORDER_UPDATED_NOTE}` : "");
       setHidden(triggerNote, !note);
     }
     trigger?.classList.toggle("has-note", note);
@@ -274,10 +276,8 @@ export function mountCartView(options: CartViewOptions): CartView {
     const active = summary.quantity > 0;
     bar.toggleAttribute("data-active", active);
     setHidden(bar, !active || overlays.current() !== null || typing);
-    const html = stickyBarSummary(summary, barMessage(state));
-    if (barSummary && html !== painted.bar) {
-      barSummary.innerHTML = html;
-      painted.bar = html;
+    if (barSummary) {
+      setHtml(barSummary, stickyBarSummary(summary, barMessage(state)));
     }
   }
 
@@ -286,18 +286,13 @@ export function mountCartView(options: CartViewOptions): CartView {
       return;
     }
     const html = state.notices.length > 0 ? restoreNotice(state.notices.map(noticeMessage)) : "";
-    if (html === painted.restore) {
-      return;
-    }
-    restoreRegion.innerHTML = html;
-    painted.restore = html;
-    if (html && dialog?.open) {
+    if (setHtml(restoreRegion, html) && html && dialog?.open) {
       scrollToTarget(notices, { block: "nearest" });
     }
   }
 
   function patchLine(item: Element, line: ResolvedLine): void {
-    setText(item.querySelector("[data-line-total]"), formatPrice(line.combination.price * line.quantity));
+    setText(item.querySelector("[data-line-total]"), formatPrice(line.baseTotal));
     const input = item.querySelector<HTMLInputElement>("[data-quantity]");
     if (input && input !== doc.activeElement && input.value !== String(line.quantity)) {
       input.value = String(line.quantity);
@@ -315,8 +310,7 @@ export function mountCartView(options: CartViewOptions): CartView {
     }
   }
 
-  function paintLines(summary: OrderSummary): void {
-    const list = control<HTMLElement>("[data-cart-lines]");
+  function paintLines({ lines: list, subtotals }: Panel, summary: OrderSummary): void {
     if (!list) {
       return;
     }
@@ -327,7 +321,7 @@ export function mountCartView(options: CartViewOptions): CartView {
     );
     summary.lines.forEach((line) => patchLine(items.get(line.id)!, line));
     const subtotal = formatPrice(summary.subtotal);
-    content?.querySelectorAll<HTMLElement>("[data-cart-subtotal]").forEach((element) => {
+    subtotals.forEach((element) => {
       // Con el panel cerrado no se ve: cambia sin animación.
       if (element.textContent !== subtotal) {
         if (dialog?.open) {
@@ -345,67 +339,58 @@ export function mountCartView(options: CartViewOptions): CartView {
     }
   }
 
-  function paintIssue(field: Exclude<OrderField, "lines">, issue: FormIssue | undefined): string | null {
-    const target =
-      field === "delivery"
-        ? control<HTMLElement>('[data-field="delivery"]')
-        : control<HTMLElement>(`#${fieldIds[field]}`);
-    const message = control<HTMLElement>(`[data-field-error="${field}"]`);
-    if (target) {
-      if (issue) {
-        target.setAttribute("aria-invalid", "true");
-      } else {
-        target.removeAttribute("aria-invalid");
-      }
-    }
+  function paintIssue({ targets, errors }: Panel, field: FormField, issue: FormIssue | undefined): string | null {
+    const message = errors[field];
+    setAttr(targets[field], "aria-invalid", issue ? "true" : null);
     setText(message, issue?.message ?? "");
     setHidden(message, !issue);
     return issue && message ? message.id : null;
   }
 
-  function paintForm(state: OrderState): void {
+  function paintForm(current: Panel, state: OrderState): void {
     const { form } = state;
-    setValue(control<HTMLInputElement>("#pedido-nombre"), form.name);
-    setValue(control<HTMLInputElement>("#pedido-localidad"), form.locality);
-    const date = control<HTMLInputElement>("#pedido-fecha");
-    setValue(date, form.date);
-    if (date) {
+    const { inputs, targets } = current;
+    setValue(inputs.name, form.name);
+    setValue(inputs.locality, form.locality);
+    setValue(inputs.date, form.date);
+    if (inputs.date) {
       // El mínimo depende del día de quien mira: se calcula acá y no en el prerender.
       const min = toIsoDate(store.today());
-      if (date.min !== min) {
-        date.min = min;
+      if (inputs.date.min !== min) {
+        inputs.date.min = min;
       }
     }
-    content?.querySelectorAll<HTMLInputElement>('input[data-form-field="delivery"]').forEach((radio) => {
+    current.deliveryRadios.forEach((radio) => {
       radio.checked = radio.value === form.delivery;
     });
-    setHidden(control<HTMLElement>('[data-field="locality"]'), form.delivery !== "envio");
+    setHidden(current.localityField, form.delivery !== "envio");
 
-    const hint = control<HTMLElement>("[data-delivery-hint]");
     const hintText =
       form.delivery === "retiro"
         ? businessValue(business.pickupArea)
         : form.delivery === "envio"
           ? businessValue(business.shipping)
           : "";
-    setText(hint, hintText);
-    setHidden(hint, hintText === "");
+    setText(current.deliveryHint, hintText);
+    setHidden(current.deliveryHint, hintText === "");
 
     const validation = store.validate();
-    const issueFor = (field: OrderField) =>
+    const issueFor = (field: FormField) =>
       flagged.has(field) ? validation.errors.find((issue) => issue.field === field) : undefined;
-    setDescribedBy(control("#pedido-nombre"), [paintIssue("name", issueFor("name"))]);
-    setDescribedBy(control('[data-field="delivery"]'), [
+    setDescribedBy(targets.name, [paintIssue(current, "name", issueFor("name"))]);
+    setDescribedBy(targets.delivery, [
       hintText ? "pedido-entrega-ayuda" : null,
-      paintIssue("delivery", issueFor("delivery")),
+      paintIssue(current, "delivery", issueFor("delivery")),
     ]);
-    setDescribedBy(control("#pedido-localidad"), [paintIssue("locality", issueFor("locality"))]);
+    setDescribedBy(targets.locality, [paintIssue(current, "locality", issueFor("locality"))]);
 
     const warning = validation.warnings.find((issue) => issue.field === "date");
-    const warningElement = control<HTMLElement>("[data-date-warning]");
-    setText(warningElement, warning?.message ?? "");
-    setHidden(warningElement, !warning);
-    setDescribedBy(date, [warning ? "pedido-fecha-aviso" : null, paintIssue("date", issueFor("date"))]);
+    setText(current.dateWarning, warning?.message ?? "");
+    setHidden(current.dateWarning, !warning);
+    setDescribedBy(targets.date, [
+      warning ? "pedido-fecha-aviso" : null,
+      paintIssue(current, "date", issueFor("date")),
+    ]);
   }
 
   function paintCounter(area: HTMLTextAreaElement): void {
@@ -416,13 +401,11 @@ export function mountCartView(options: CartViewOptions): CartView {
     setHidden(counter, !show);
   }
 
-  function paintIdeas(state: OrderState, summary: OrderSummary): void {
-    const section = control<HTMLElement>("[data-cart-ideas-section]");
-    const list = control<HTMLElement>("[data-cart-ideas]");
+  function paintIdeas({ ideasSection: section, ideas: list }: Panel, state: OrderState, summary: OrderSummary): void {
     if (!section || !list) {
       return;
     }
-    const products = ideaProducts(summary);
+    const products = summary.blockProducts;
     setHidden(section, products.length === 0);
     reconcile(
       list,
@@ -439,55 +422,64 @@ export function mountCartView(options: CartViewOptions): CartView {
     control<HTMLElement>("[data-checkout-focus]")?.focus();
   }
 
-  function paintCheckout(state: OrderState, summary: OrderSummary): void {
-    const container = control<HTMLElement>("[data-checkout]");
+  function paintCheckout({ checkout: container }: Panel, state: OrderState, summary: OrderSummary): void {
     if (!container) {
-      return;
-    }
-    const html = checkoutContent(checkoutStage(state, summary));
-    if (html === painted.checkout) {
       return;
     }
     const active = doc.activeElement;
     const hadFocus = !active || active === doc.body || container.contains(active);
-    const first = painted.checkout === "";
-    container.innerHTML = html;
-    painted.checkout = html;
+    // Recién armado por cartContent: todavía no mostró ningún paso.
+    const first = container.childElementCount === 0;
+    if (!setHtml(container, checkoutContent(checkoutStage(state, summary)))) {
+      return;
+    }
     // Si el foco estaba en el paso anterior (por ejemplo "Continuar"), pasa al aviso del nuevo.
     if (!first && hadFocus && dialog?.open) {
       focusCheckout();
     }
   }
 
-  function paintContent(state: OrderState, summary: OrderSummary): void {
+  // Las líneas y las ideas se repintan solo si cambiaron (o si el panel se acaba de armar).
+  function paintContent(state: OrderState, summary: OrderSummary, linesKept: boolean, ideasKept: boolean): void {
     if (!content) {
       return;
     }
-    if (summary.lines.length === 0) {
-      if (!content.querySelector(".cart-empty")) {
-        content.innerHTML = cartContent(summary);
-        painted.checkout = "";
-      }
+    const empty = summary.lines.length === 0;
+    // Se arma de nuevo solo al pasar de vacío a con productos, o al revés.
+    if (!content.querySelector(empty ? ".cart-empty" : "[data-cart-lines]")) {
+      content.innerHTML = cartContent(summary);
+      panel = null;
+    }
+    if (empty) {
       return;
     }
-    if (!content.querySelector("[data-cart-lines]")) {
-      content.innerHTML = cartContent(summary);
-      painted.checkout = "";
+    const fresh = panel === null;
+    panel ??= findPanel(content);
+    if (fresh || !linesKept) {
+      paintLines(panel, summary);
     }
-    paintLines(summary);
-    paintForm(state);
-    paintIdeas(state, summary);
-    paintCheckout(state, summary);
+    paintForm(panel, state);
+    if (fresh || !ideasKept) {
+      paintIdeas(panel, state, summary);
+    }
+    paintCheckout(panel, state, summary);
   }
 
   // Única función de actualización de las islas del pedido: la usan la hidratación y los cambios.
+  // Lo que depende de partes del estado que no cambiaron desde la última vez no se vuelve a armar.
   function paint(): void {
     const state = store.getState();
     const summary = store.getSummary();
+    const last = previous;
+    const kept = (...keys: (keyof OrderState)[]) => last !== null && keys.every((key) => last[key] === state[key]);
     paintHeader(state, summary);
-    paintBar(state, summary);
-    paintRestore(state);
-    paintContent(state, summary);
+    if (!kept("lines", "notices", "status", "sentVia")) {
+      paintBar(state, summary);
+    }
+    if (!kept("notices")) {
+      paintRestore(state);
+    }
+    paintContent(state, summary, kept("lines"), kept("lines") && last?.form.ideas === state.form.ideas);
     const reopened = previous !== null && previous.status !== "borrador" && state.status === "borrador";
     if (reopened && state.changedSinceConfirm && state.lines.length > 0) {
       announce(ORDER_CHANGED_NOTE);
@@ -722,20 +714,10 @@ export function mountCartView(options: CartViewOptions): CartView {
     },
   };
 
-  function onClick(event: MouseEvent): void {
-    const target = event.target instanceof Element ? event.target : null;
-    const element = target?.closest<HTMLElement>("[data-action]");
-    const handler = element ? actions[element.dataset.action ?? ""] : undefined;
-    if (!element || !handler || (element instanceof HTMLButtonElement && element.disabled)) {
-      return;
-    }
-    handler(element);
-  }
-
   function onFormInput(target: EventTarget | null): void {
     if (target instanceof HTMLTextAreaElement && target.dataset.idea) {
+      // Si cambia, el repintado del pedido actualiza también el contador.
       store.setIdea(target.dataset.idea, target.value);
-      paintCounter(target);
       return;
     }
     if (!(target instanceof HTMLInputElement)) {
@@ -744,7 +726,7 @@ export function mountCartView(options: CartViewOptions): CartView {
     const field = target.dataset.formField;
     if (field === "name" || field === "locality" || field === "date") {
       store.updateForm({ [field]: target.value });
-    } else if (field === "delivery" && target.checked && (target.value === "retiro" || target.value === "envio")) {
+    } else if (field === "delivery" && target.checked && isDeliveryMethod(target.value)) {
       store.updateForm({ delivery: target.value });
     }
   }
@@ -770,15 +752,21 @@ export function mountCartView(options: CartViewOptions): CartView {
     }
   }
 
+  // La barra se oculta mientras el foco está en un campo de texto.
+  function syncTyping(focused: EventTarget | null): void {
+    const next = isTextField(focused);
+    if (next !== typing) {
+      typing = next;
+      paintBar();
+    }
+  }
+
   function onFocusIn(event: FocusEvent): void {
     const target = event.target;
     if (target instanceof HTMLTextAreaElement && target.hasAttribute("data-manual-copy-text")) {
       target.select();
     }
-    if (isTextField(target) !== typing) {
-      typing = isTextField(target);
-      paintBar();
-    }
+    syncTyping(target);
   }
 
   function onFocusOut(event: FocusEvent): void {
@@ -786,10 +774,7 @@ export function mountCartView(options: CartViewOptions): CartView {
     if (target instanceof HTMLInputElement && target.hasAttribute("data-quantity") && target.isConnected) {
       commitQuantity(target);
     }
-    if (isTextField(event.relatedTarget) !== typing) {
-      typing = isTextField(event.relatedTarget);
-      paintBar();
-    }
+    syncTyping(event.relatedTarget);
   }
 
   if (dialog) {
@@ -797,7 +782,7 @@ export function mountCartView(options: CartViewOptions): CartView {
   }
   const unsubscribeStore = store.subscribe(paint);
   const unsubscribeOverlays = overlays.subscribe(() => paintBar());
-  root.addEventListener("click", onClick);
+  const removeActions = delegateActions(root, actions);
   root.addEventListener("input", onInput);
   root.addEventListener("change", onChange);
   root.addEventListener("keydown", onKeyDown);
@@ -814,7 +799,7 @@ export function mountCartView(options: CartViewOptions): CartView {
     destroy() {
       unsubscribeStore();
       unsubscribeOverlays();
-      root.removeEventListener("click", onClick);
+      removeActions();
       root.removeEventListener("input", onInput);
       root.removeEventListener("change", onChange);
       root.removeEventListener("keydown", onKeyDown);

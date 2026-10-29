@@ -4,6 +4,7 @@ import {
   imageUrl,
   initialSelection,
   intents,
+  lineName,
   resolveSelection,
   type AddOn,
   type CatalogProduct,
@@ -128,7 +129,8 @@ function leadTimeRange(catalog: readonly CatalogProduct[]): string | null {
 // Islas del cliente: el prerender y el cliente arman este HTML con las mismas funciones.
 
 export function cardPrice(resolved: ResolvedSelection): string {
-  const unit = resolved.addOns.length > 0 ? `${resolved.unit}, con adicionales` : resolved.unit;
+  const { unit: base } = resolved.combination;
+  const unit = resolved.addOns.length > 0 ? `${base}, con adicionales` : base;
   return `<span class="product-price-amount">${formatPrice(resolved.total)}</span> <span class="product-price-unit">${escapeHtml(unit)}</span>`;
 }
 
@@ -150,21 +152,17 @@ export function cartCountContent(quantity: number): string {
   return `<span aria-hidden="true">${quantity}</span><span class="visually-hidden">, ${label}</span>`;
 }
 
-export function lineName(line: ResolvedLine): string {
-  return line.combination.label ? `${line.product.name} (${line.combination.label})` : line.product.name;
-}
-
 // Panel del pedido. La estructura sale de acá; cart-view.ts la crea una vez y después solo
 // actualiza valores en su lugar (cantidades, totales, campos), sin volver a pintarla entera.
 
 export function cartAddon(line: ResolvedLine, addOn: AddOn): string {
-  const name = `${addOn.label} de ${lineName(line)}`;
+  const name = `${addOn.label} de ${lineName(line.product, line.combination)}`;
   return `<li class="cart-addon" data-addon-id="${attr(addOn.id)}"><span class="cart-addon-name">${escapeHtml(addOn.label)}</span> <span class="cart-addon-price">+ ${formatPrice(addOn.price)} <span class="addon-unit">${escapeHtml(addOn.unit)}</span></span> <button class="text-button cart-remove" type="button" data-action="remove-addon" data-line-id="${attr(line.id)}" data-addon-id="${attr(addOn.id)}">Quitar<span class="visually-hidden"> ${escapeHtml(name)}</span></button></li>`;
 }
 
 export function cartLine(line: ResolvedLine): string {
   const id = attr(line.id);
-  const name = lineName(line);
+  const name = lineName(line.product, line.combination);
   const option = line.combination.label
     ? `<p class="cart-item-variant">${escapeHtml(line.combination.label)}</p>`
     : "";
@@ -173,7 +171,7 @@ export function cartLine(line: ResolvedLine): string {
     <li class="cart-item" data-line-id="${id}">
       <div class="cart-item-head">
         <span class="cart-item-name">${escapeHtml(line.product.name)}</span>
-        <span class="cart-item-price" data-line-total>${formatPrice(line.combination.price * line.quantity)}</span>
+        <span class="cart-item-price" data-line-total>${formatPrice(line.baseTotal)}</span>
       </div>
       ${option}
       <p class="cart-item-variant">${formatPrice(line.combination.price)} ${escapeHtml(line.combination.unit)}</p>

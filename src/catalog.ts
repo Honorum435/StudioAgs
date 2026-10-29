@@ -95,8 +95,8 @@ export interface CatalogProduct {
 
 export interface ResolvedSelection {
   combination: Combination;
-  unit: string;
   addOns: readonly AddOn[];
+  // Precio de la combinación más los adicionales elegidos.
   total: number;
 }
 
@@ -155,7 +155,7 @@ function fichaImage(productId: string): ImageSpec {
 }
 
 function heroImage(productId: string, widths: readonly number[], height: number): ImageSpec {
-  return { base: `hero-${productId}`, widths, width: Math.max(...widths), height };
+  return cardImage(`hero-${productId}`, widths, height);
 }
 
 export function imageUrl(spec: ImageSpec, width: number): string {
@@ -428,6 +428,16 @@ export function initialSelection(product: CatalogProduct): Selection {
   return Object.fromEntries(product.groups.map((group) => [group.id, group.options[0].id]));
 }
 
+// "Nombre (opción)" para el pedido, el mensaje y los avisos; sin opciones, solo el nombre.
+export function lineName(product: Pick<CatalogProduct, "name">, combination: Pick<Combination, "label">): string {
+  return combination.label ? `${product.name} (${combination.label})` : product.name;
+}
+
+// Los adicionales del producto con esos ids, una vez cada uno y en el orden del catálogo.
+export function pickAddOns(product: CatalogProduct, ids: readonly string[]): AddOn[] {
+  return product.addOns.filter((addOn) => ids.includes(addOn.id));
+}
+
 export function resolveSelection(
   product: CatalogProduct,
   selection: Selection,
@@ -438,13 +448,8 @@ export function resolveSelection(
     return null;
   }
 
-  const complete = product.groups.every((group) =>
-    group.options.some((option) => option.id === selection[group.id]),
-  );
-  if (!complete) {
-    return null;
-  }
-
+  // Los valores de cada combinación son opciones de su grupo: si falta un grupo o la opción no
+  // existe, ninguna coincide.
   const combination = product.combinations.find((item) =>
     product.groups.every((group) => item.values[group.id] === selection[group.id]),
   );
@@ -452,9 +457,9 @@ export function resolveSelection(
     return null;
   }
 
-  const addOns = product.addOns.filter((addOn) => addOnIds.includes(addOn.id));
+  const addOns = pickAddOns(product, addOnIds);
   const total = addOns.reduce((sum, addOn) => sum + addOn.price, combination.price);
-  return { combination, unit: combination.unit, addOns, total };
+  return { combination, addOns, total };
 }
 
 // Campos del catálogo que siguen con la marca de ejemplo, como "calendarios.leadTime".

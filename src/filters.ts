@@ -25,8 +25,7 @@ export function normalizeText(text: string): string {
     .trim();
 }
 
-// Todo lo que la búsqueda mira de un producto, ya normalizado.
-export function searchText(product: CatalogProduct, intentList: readonly Intent[] = allIntents): string {
+function buildSearchText(product: CatalogProduct, intentList: readonly Intent[]): string {
   const intentLabels = intentList
     .filter((intent) => product.intents.includes(intent.id))
     .map((intent) => intent.label);
@@ -42,14 +41,39 @@ export function searchText(product: CatalogProduct, intentList: readonly Intent[
   );
 }
 
+// Los productos no cambian: el texto de cada uno se arma una sola vez por lista de intenciones.
+const searchTexts = new WeakMap<readonly Intent[], WeakMap<CatalogProduct, string>>();
+
+// Todo lo que la búsqueda mira de un producto, ya normalizado.
+export function searchText(product: CatalogProduct, intentList: readonly Intent[] = allIntents): string {
+  let texts = searchTexts.get(intentList);
+  if (!texts) {
+    texts = new WeakMap();
+    searchTexts.set(intentList, texts);
+  }
+  let text = texts.get(product);
+  if (text === undefined) {
+    text = buildSearchText(product, intentList);
+    texts.set(product, text);
+  }
+  return text;
+}
+
 export function matchesIntent(product: CatalogProduct, intent: IntentFilter): boolean {
   return intent === ALL_INTENTS || product.intents.includes(intent);
 }
 
+function queryWords(query: string): string[] {
+  return normalizeText(query).split(" ").filter(Boolean);
+}
+
 // Cada palabra buscada tiene que aparecer en algún lado, en cualquier orden.
-export function matchesQuery(haystack: string, query: string): boolean {
-  const words = normalizeText(query).split(" ").filter(Boolean);
+function containsAll(haystack: string, words: readonly string[]): boolean {
   return words.every((word) => haystack.includes(word));
+}
+
+export function matchesQuery(haystack: string, query: string): boolean {
+  return containsAll(haystack, queryWords(query));
 }
 
 export function visibleProductIds(
@@ -57,8 +81,10 @@ export function visibleProductIds(
   state: FilterState,
   intentList: readonly Intent[] = allIntents,
 ): string[] {
+  // La búsqueda se normaliza una vez por llamada, no una vez por producto.
+  const words = queryWords(state.query);
   return catalog
     .filter((product) => matchesIntent(product, state.intent))
-    .filter((product) => matchesQuery(searchText(product, intentList), state.query))
+    .filter((product) => words.length === 0 || containsAll(searchText(product, intentList), words))
     .map((product) => product.id);
 }

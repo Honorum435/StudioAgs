@@ -1,3 +1,5 @@
+import { windowOf } from "./dom";
+
 // Microinteracciones: el movimiento lo hace styles.css y este módulo solo cambia clases y variables.
 // Con "reducir movimiento" todo llega al estado final al instante: sin fases, sin clases de
 // animación y con desplazamiento instantáneo. No toca el DOM al importarse.
@@ -17,10 +19,6 @@ const ENTER = "is-enter-start";
 const BUMP = "is-bumping";
 const SNAP = "is-snapping";
 const WITH_PILL = "has-pill";
-
-function windowOf(node: Node): Window & typeof globalThis {
-  return node.ownerDocument?.defaultView ?? window;
-}
 
 function matches(win: Window, query: string): boolean {
   return typeof win.matchMedia === "function" && win.matchMedia(query).matches;

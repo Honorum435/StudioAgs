@@ -1,5 +1,7 @@
 import { business, businessValue, type CalendarDate } from "./business";
 import {
+  lineName,
+  pickAddOns,
   products,
   resolveSelection,
   type AddOn,
@@ -7,12 +9,26 @@ import {
   type Combination,
   type Selection,
 } from "./catalog";
+import {
+  addBusinessDays,
+  calendarDateOf,
+  capText,
+  compareDates,
+  formatCalendarDate,
+  isCalendarDate,
+  parseIsoDate,
+} from "./format";
+import { ORDER_CODE_PATTERN } from "./validation";
 
 // Módulo puro: no toca el DOM al importarse. Almacenamiento, reloj y generador de código se inyectan.
 
-export type DeliveryMethod = "retiro" | "envio";
-export type OrderStatus = "borrador" | "confirmado" | "enviado";
-export type SentVia = "whatsapp" | "copy";
+export const DELIVERY_METHODS = ["retiro", "envio"] as const;
+export const ORDER_STATUSES = ["borrador", "confirmado", "enviado"] as const;
+export const SENT_VIA = ["whatsapp", "copy"] as const;
+
+export type DeliveryMethod = (typeof DELIVERY_METHODS)[number];
+export type OrderStatus = (typeof ORDER_STATUSES)[number];
+export type SentVia = (typeof SENT_VIA)[number];
 
 export const MIN_QUANTITY = 1;
 export const MAX_QUANTITY = 99;
@@ -80,6 +96,9 @@ export interface ResolvedLine {
   combination: Combination;
   quantity: number;
   addOns: readonly AddOn[];
+  // Precio de la combinación por la cantidad, sin adicionales.
+  baseTotal: number;
+  // Con los adicionales, que van siempre de a uno.
   total: number;
 }
 
@@ -97,6 +116,8 @@ export interface OrderSummary {
   // Un campo de idea por producto personalizable del pedido, en el orden de las líneas.
   ideas: readonly OrderIdea[];
   photoProducts: readonly CatalogProduct[];
+  // Los productos que llevan bloque de idea o de fotos en el panel, en el orden de las líneas.
+  blockProducts: readonly CatalogProduct[];
 }
 
 export type OrderField = "lines" | "name" | "delivery" | "locality" | "date";
@@ -149,83 +170,11 @@ export interface OrderStore {
   earliestDate(): CalendarDate | null;
 }
 
-// Fechas: siempre año, mes y día literales en hora local; nunca se parsea "AAAA-MM-DD" con Date.
-
-function daysInMonth(year: number, month: number): number {
-  return new Date(Date.UTC(year, month, 0)).getUTCDate();
-}
-
-function isCalendarDate(value: unknown): value is CalendarDate {
-  if (!isRecord(value)) {
-    return false;
-  }
-  const { year, month, day } = value;
-  return (
-    Number.isInteger(year) &&
-    Number.isInteger(month) &&
-    Number.isInteger(day) &&
-    (year as number) >= 1000 &&
-    (year as number) <= 9999 &&
-    (month as number) >= 1 &&
-    (month as number) <= 12 &&
-    (day as number) >= 1 &&
-    (day as number) <= daysInMonth(year as number, month as number)
-  );
-}
-
-export function calendarDateOf(date: Date): CalendarDate {
-  return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
-}
-
-export function parseIsoDate(value: string): CalendarDate | null {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-  if (!match) {
-    return null;
-  }
-  const date = { year: Number(match[1]), month: Number(match[2]), day: Number(match[3]) };
-  return isCalendarDate(date) ? date : null;
-}
-
-export function toIsoDate({ year, month, day }: CalendarDate): string {
-  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-export function formatCalendarDate({ year, month, day }: CalendarDate): string {
-  return `${day}/${month}/${year}`;
-}
-
-export function compareDates(a: CalendarDate, b: CalendarDate): number {
-  return (a.year - b.year) * 10000 + (a.month - b.month) * 100 + (a.day - b.day);
-}
-
-// Días hábiles: de lunes a viernes, sin feriados.
-export function addBusinessDays(date: CalendarDate, days: number): CalendarDate {
-  const cursor = new Date(Date.UTC(date.year, date.month - 1, date.day));
-  let remaining = days;
-  while (remaining > 0) {
-    cursor.setUTCDate(cursor.getUTCDate() + 1);
-    const weekday = cursor.getUTCDay();
-    if (weekday !== 0 && weekday !== 6) {
-      remaining -= 1;
-    }
-  }
-  return { year: cursor.getUTCFullYear(), month: cursor.getUTCMonth() + 1, day: cursor.getUTCDate() };
-}
-
 export function clampQuantity(value: number): number {
   if (!Number.isFinite(value)) {
     return MIN_QUANTITY;
   }
   return Math.min(MAX_QUANTITY, Math.max(MIN_QUANTITY, Math.trunc(value)));
-}
-
-// Recorta sin partir un emoji (par sustituto) al final.
-export function capText(text: string, max: number): string {
-  if (text.length <= max) {
-    return text;
-  }
-  const last = text.charCodeAt(max - 1);
-  return text.slice(0, last >= 0xd800 && last <= 0xdbff ? max - 1 : max);
 }
 
 export function createMemoryStorage(): StorageLike {
@@ -249,7 +198,7 @@ export function noticeMessage(notice: RestoreNotice): string {
     if (item.kind === "addOn") {
       return `${item.label} de ${item.product}`;
     }
-    return item.label ? `${item.product} (${item.label})` : item.product;
+    return lineName({ name: item.product }, item);
   });
   return `Sacamos lo que ya no está en el catálogo: ${items.join(", ")}.`;
 }
@@ -295,7 +244,7 @@ function browserStorage(): StorageLike | null {
 }
 
 function sortedAddOnIds(product: CatalogProduct, ids: readonly string[]): string[] {
-  return product.addOns.filter((addOn) => ids.includes(addOn.id)).map((addOn) => addOn.id);
+  return pickAddOns(product, ids).map((addOn) => addOn.id);
 }
 
 function sameIds(a: readonly string[], b: readonly string[]): boolean {
@@ -386,6 +335,10 @@ function isOneOf<T extends string>(value: unknown, options: readonly T[]): value
   return typeof value === "string" && (options as readonly string[]).includes(value);
 }
 
+export function isDeliveryMethod(value: unknown): value is DeliveryMethod {
+  return isOneOf(value, DELIVERY_METHODS);
+}
+
 function isStoredLine(value: unknown): value is StoredLine {
   return (
     isRecord(value) &&
@@ -405,7 +358,7 @@ function isStoredForm(value: unknown): value is OrderForm {
   return (
     isRecord(value) &&
     isString(value.name) &&
-    (value.delivery === null || isOneOf(value.delivery, ["retiro", "envio"] as const)) &&
+    (value.delivery === null || isDeliveryMethod(value.delivery)) &&
     isString(value.locality) &&
     isString(value.date) &&
     isRecord(value.ideas) &&
@@ -449,9 +402,9 @@ function parseStoredOrder(raw: string): StoredOrder | null {
   const valid =
     isTimestamp(data.savedAt) &&
     isCalendarDate(data.pricesUpdatedAt) &&
-    isOneOf(data.status, ["borrador", "confirmado", "enviado"] as const) &&
-    (data.code === null || (isString(data.code) && /^[A-Z0-9-]{1,16}$/.test(data.code))) &&
-    (data.sentVia === null || isOneOf(data.sentVia, ["whatsapp", "copy"] as const)) &&
+    isOneOf(data.status, ORDER_STATUSES) &&
+    (data.code === null || (isString(data.code) && ORDER_CODE_PATTERN.test(data.code))) &&
+    (data.sentVia === null || isOneOf(data.sentVia, SENT_VIA)) &&
     (data.sentAt === null || isTimestamp(data.sentAt)) &&
     typeof data.changedSinceConfirm === "boolean" &&
     Array.isArray(data.lines) &&
@@ -490,9 +443,10 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
     if (!product || !combination) {
       return null;
     }
-    const addOns = product.addOns.filter((addOn) => line.addOnIds.includes(addOn.id));
-    const total = addOns.reduce((sum, addOn) => sum + addOn.price, combination.price * line.quantity);
-    return { id: line.id, product, combination, quantity: line.quantity, addOns, total };
+    const addOns = pickAddOns(product, line.addOnIds);
+    const baseTotal = combination.price * line.quantity;
+    const total = addOns.reduce((sum, addOn) => sum + addOn.price, baseTotal);
+    return { id: line.id, product, combination, quantity: line.quantity, addOns, baseTotal, total };
   }
 
   function ideaProducts(lines: readonly OrderLine[]): CatalogProduct[] {
@@ -521,11 +475,11 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
     }
   }
 
-  function save(): void {
+  function save(snapshot: OrderState): void {
     if (!storage) {
       return;
     }
-    if (isBlank(state)) {
+    if (isBlank(snapshot)) {
       discardStored();
       return;
     }
@@ -533,12 +487,12 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
       version: STORAGE_VERSION,
       savedAt: now().getTime(),
       pricesUpdatedAt,
-      status: state.status,
-      code: state.code,
-      sentVia: state.sentVia,
-      sentAt: state.sentAt,
-      changedSinceConfirm: state.changedSinceConfirm,
-      lines: state.lines.flatMap((line) => {
+      status: snapshot.status,
+      code: snapshot.code,
+      sentVia: snapshot.sentVia,
+      sentAt: snapshot.sentAt,
+      changedSinceConfirm: snapshot.changedSinceConfirm,
+      lines: snapshot.lines.flatMap((line) => {
         const resolved = resolveLine(line);
         if (!resolved) {
           return [];
@@ -554,8 +508,8 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
           },
         ];
       }),
-      form: state.form,
-      notices: [...state.notices],
+      form: snapshot.form,
+      notices: [...snapshot.notices],
     };
     try {
       storage.setItem(STORAGE_KEY, JSON.stringify(stored));
@@ -644,16 +598,14 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
       restored = backToDraft(restored);
     }
 
+    // Lo corregido al restaurar se guarda enseguida.
     if (added.length > 0) {
-      state = restored;
-      save();
+      save(restored);
     }
     return restored;
   }
 
-  // restore() puede guardar el pedido corregido, y save() lee state.
-  let state: OrderState = emptyState();
-  state = restore();
+  let state: OrderState = restore();
 
   function notify(): void {
     for (const listener of [...listeners]) {
@@ -663,7 +615,7 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
 
   function commit(next: OrderState): void {
     state = next;
-    save();
+    save(next);
     notify();
   }
 
@@ -718,6 +670,28 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
     const days = longestLeadTime();
     return state.lines.length === 0 ? null : addBusinessDays(today(), days);
   }
+
+  function summarize(current: OrderState): OrderSummary {
+    const lines = current.lines.flatMap((line) => resolveLine(line) ?? []);
+    const blockProducts = [...new Set(lines.map((line) => line.product))].filter(
+      (product) => product.personalizable || product.needsPhotos,
+    );
+    return {
+      code: current.code,
+      lines,
+      quantity: lines.reduce((sum, line) => sum + line.quantity, 0),
+      subtotal: lines.reduce((sum, line) => sum + line.total, 0),
+      form: current.form,
+      ideas: ideaProducts(current.lines).map((product) => ({
+        product,
+        text: current.form.ideas[product.id] ?? "",
+      })),
+      photoProducts: blockProducts.filter((product) => product.needsPhotos),
+      blockProducts,
+    };
+  }
+
+  let summary: { state: OrderState; value: OrderSummary } | null = null;
 
   function validate(): OrderValidation {
     const { form } = state;
@@ -801,11 +775,9 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
           : line,
       ),
 
-    // "Ya lo envié · vaciar pedido" y vaciar: borra también lo guardado.
+    // "Ya lo envié · vaciar pedido" y vaciar: el pedido vacío borra también lo guardado.
     clear() {
-      state = emptyState();
-      discardStored();
-      notify();
+      commit(emptyState());
     },
 
     updateForm(patch) {
@@ -821,7 +793,7 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
       const { delivery } = patch;
       if (
         delivery !== undefined &&
-        (delivery === null || isOneOf(delivery, ["retiro", "envio"] as const)) &&
+        (delivery === null || isDeliveryMethod(delivery)) &&
         delivery !== form.delivery
       ) {
         form.delivery = delivery;
@@ -876,22 +848,11 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
     },
 
     getSummary() {
-      const lines = state.lines.flatMap((line) => resolveLine(line) ?? []);
-      const photoProducts = [...new Set(lines.map((line) => line.product))].filter(
-        (product) => product.needsPhotos,
-      );
-      return {
-        code: state.code,
-        lines,
-        quantity: lines.reduce((sum, line) => sum + line.quantity, 0),
-        subtotal: lines.reduce((sum, line) => sum + line.total, 0),
-        form: state.form,
-        ideas: ideaProducts(state.lines).map((product) => ({
-          product,
-          text: state.form.ideas[product.id] ?? "",
-        })),
-        photoProducts,
-      };
+      // El estado nunca se modifica en su lugar: mientras sea el mismo, el resumen también.
+      if (summary?.state !== state) {
+        summary = { state, value: summarize(state) };
+      }
+      return summary.value;
     },
 
     today,

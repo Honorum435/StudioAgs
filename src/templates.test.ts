@@ -73,13 +73,15 @@ function line(productId: string, selection: Record<string, string>, quantity: nu
   if (!resolved) {
     throw new Error("Selección inválida");
   }
+  const baseTotal = resolved.combination.price * quantity;
   return {
     id: resolved.combination.id,
     product: item,
     combination: resolved.combination,
     quantity,
     addOns: resolved.addOns,
-    total: resolved.combination.price * quantity + resolved.addOns.reduce((sum, addOn) => sum + addOn.price, 0),
+    baseTotal,
+    total: baseTotal + resolved.addOns.reduce((sum, addOn) => sum + addOn.price, 0),
   };
 }
 
@@ -104,7 +106,7 @@ describe("página prerenderizada", () => {
       const resolved = initialResolved(item);
       expect(text(element.querySelector("h3"))).toBe(item.name);
       expect(text(element.querySelector(".product-price-amount"))).toBe(formatPrice(resolved.total));
-      expect(text(element.querySelector(".product-price-unit"))).toBe(resolved.unit);
+      expect(text(element.querySelector(".product-price-unit"))).toBe(resolved.combination.unit);
       expect(text(element.querySelector(".product-lead-time")).toLowerCase()).toContain(
         businessValue(item.leadTime).text.toLowerCase(),
       );

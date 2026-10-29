@@ -1,13 +1,7 @@
-import {
-  IDEA_MAX_LENGTH,
-  capText,
-  formatCalendarDate,
-  parseIsoDate,
-  type OrderSummary,
-  type ResolvedLine,
-} from "./cart";
-import { formatPrice } from "./format";
-import { isValidWhatsAppNumber } from "./validation";
+import { IDEA_MAX_LENGTH, type OrderSummary, type ResolvedLine } from "./cart";
+import { lineName } from "./catalog";
+import { capText, formatCalendarDate, formatPrice, parseIsoDate } from "./format";
+import { ORDER_CODE_PATTERN, isValidWhatsAppNumber } from "./validation";
 
 // Módulo puro: código de pedido, mensaje y link de Click to Chat.
 
@@ -15,7 +9,7 @@ export const ORDER_CODE_PREFIX = "AGS-";
 // Sin 0, O, 1 ni I, que se confunden al dictarlos o copiarlos.
 export const ORDER_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 export const ORDER_CODE_LENGTH = 4;
-export const ORDER_CODE_PATTERN = /^AGS-[A-HJ-NP-Z2-9]{4}$/;
+export { ORDER_CODE_PATTERN };
 // Largo de link a partir del cual algunos navegadores y la app recortan el texto.
 export const WHATSAPP_URL_LIMIT = 2000;
 
@@ -83,13 +77,12 @@ function customerParagraph(text: string, max: number): string {
 
 function lineText(line: ResolvedLine): string[] {
   const { product, combination, quantity } = line;
-  const name = combination.label ? `${product.name} (${combination.label})` : product.name;
   const price =
     quantity > 1
-      ? `${formatPrice(combination.price)} c/u = ${formatPrice(combination.price * quantity)}`
+      ? `${formatPrice(combination.price)} c/u = ${formatPrice(line.baseTotal)}`
       : formatPrice(combination.price);
   return [
-    `- ${quantity} x ${name}, ${combination.unit}: ${price}`,
+    `- ${quantity} x ${lineName(product, combination)}, ${combination.unit}: ${price}`,
     ...line.addOns.map((addOn) => `  + ${addOn.label}, ${addOn.unit}: ${formatPrice(addOn.price)}`),
   ];
 }

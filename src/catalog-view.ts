@@ -1,5 +1,6 @@
 import type { OrderStore } from "./cart";
 import { initialSelection, products, resolveSelection, type CatalogProduct, type Selection } from "./catalog";
+import { announceTo, delegateActions, rememberHtml, setHtml, windowOf, type ActionHandler } from "./dom";
 import { ALL_INTENTS, isIntentFilter, visibleProductIds, type FilterState } from "./filters";
 import { popNumber, slidingIndicator, swapText, type SlidingIndicator } from "./motion";
 import type { Overlays } from "./overlays";
@@ -30,8 +31,6 @@ interface CardIsland {
   card: HTMLElement;
   price: HTMLElement | null;
   button: HTMLButtonElement | null;
-  paintedPrice: string;
-  paintedButton: string;
 }
 
 interface Choice {
@@ -46,8 +45,6 @@ interface OpenFicha {
   ready: boolean;
   zoomed: boolean;
 }
-
-type ActionHandler = (element: HTMLElement, event: MouseEvent) => void;
 
 // Lee la opción marcada de cada grupo (la primera si no hay) y los adicionales marcados.
 function readChoice({ card, product }: CardIsland): Choice {
@@ -83,7 +80,7 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   const catalog = options.catalog ?? products;
   const countDelay = options.countDelay ?? RESULT_COUNT_DELAY;
   const doc = root.ownerDocument;
-  const win = doc.defaultView ?? window;
+  const win = windowOf(root);
 
   const toolbar = root.querySelector<HTMLElement>(".catalog-toolbar");
   const chips = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-action="filter"]'));
@@ -103,14 +100,21 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     if (!product) {
       return;
     }
-    cards.set(product.id, {
+    const island: CardIsland = {
       product,
       card,
       price: card.querySelector<HTMLElement>("[data-card-price]"),
       button: card.querySelector<HTMLButtonElement>('[data-action="add"]'),
-      paintedPrice: "",
-      paintedButton: "",
-    });
+    };
+    // El prerender pintó la primera opción: si sigue elegida, hidratar no reescribe nada.
+    const initial = resolveSelection(product, initialSelection(product));
+    if (initial && island.price) {
+      rememberHtml(island.price, cardPrice(initial));
+    }
+    if (initial && island.button) {
+      rememberHtml(island.button, addButtonContent(product, initial));
+    }
+    cards.set(product.id, island);
   });
 
   let filters: FilterState = { intent: ALL_INTENTS, query: searchInput?.value ?? "" };
@@ -128,29 +132,22 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     if (!resolved) {
       return;
     }
-    const price = cardPrice(resolved);
-    if (island.price && price !== island.paintedPrice) {
-      const before = island.price.querySelector(".product-price-amount")?.textContent;
-      island.price.innerHTML = price;
-      island.paintedPrice = price;
-      const amount = island.price.querySelector<HTMLElement>(".product-price-amount");
+    if (island.price) {
+      const before = animate ? island.price.querySelector(".product-price-amount")?.textContent : undefined;
+      const amount = setHtml(island.price, cardPrice(resolved))
+        ? island.price.querySelector<HTMLElement>(".product-price-amount")
+        : null;
       if (animate && amount && amount.textContent !== before) {
         popNumber(amount, amount.textContent ?? "");
       }
     }
-    const button = addButtonContent(island.product, resolved);
-    if (island.button && button !== island.paintedButton) {
-      island.button.innerHTML = button;
-      island.paintedButton = button;
+    if (island.button) {
+      setHtml(island.button, addButtonContent(island.product, resolved));
     }
   }
 
   function announce(message: string): void {
-    if (!announcer) {
-      return;
-    }
-    // El mismo texto dos veces seguidas no se vuelve a leer: se alterna un espacio duro.
-    announcer.textContent = announcer.textContent === message ? `${message} ` : message;
+    announceTo(announcer, message);
   }
 
   function scheduleCount(count: number): void {
@@ -344,16 +341,6 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     },
   };
 
-  function onClick(event: MouseEvent): void {
-    const target = event.target instanceof Element ? event.target : null;
-    const element = target?.closest<HTMLElement>("[data-action]");
-    const handler = element ? actions[element.dataset.action ?? ""] : undefined;
-    if (!element || !handler || (element instanceof HTMLButtonElement && element.disabled)) {
-      return;
-    }
-    handler(element, event);
-  }
-
   function onChange(event: Event): void {
     const target = event.target;
     if (!(target instanceof HTMLInputElement)) {
@@ -386,12 +373,13 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   if (fichaDialog) {
     overlays.register(FICHA_LAYER, fichaDialog, { onClose: clearFicha });
   }
-  root.addEventListener("click", onClick);
+  const removeActions = delegateActions(root, actions);
   root.addEventListener("change", onChange);
   root.addEventListener("input", onInput);
   root.addEventListener("keydown", onKeyDown);
 
-  // Hidratación: pinta cada tarjeta según lo marcado y habilita sus controles.
+  // Hidratación: pinta cada tarjeta según lo marcado y habilita sus controles. Los indicadores
+  // miden el layout, así que van después de todas las escrituras.
   cards.forEach((island) => {
     paintCard(island);
     island.card.querySelectorAll<HTMLInputElement>("input").forEach((input) => {
@@ -400,6 +388,8 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     if (island.button) {
       island.button.disabled = false;
     }
+  });
+  cards.forEach((island) => {
     island.card.querySelectorAll<HTMLElement>(".option-list").forEach((list) => {
       indicators.set(list, slidingIndicator(list));
     });
@@ -417,7 +407,7 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   return {
     getFilters: () => filters,
     destroy() {
-      root.removeEventListener("click", onClick);
+      removeActions();
       root.removeEventListener("change", onChange);
       root.removeEventListener("input", onInput);
       root.removeEventListener("keydown", onKeyDown);

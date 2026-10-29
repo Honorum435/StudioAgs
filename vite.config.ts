@@ -35,6 +35,10 @@ export interface StudioAgsOptions {
   catalog?: readonly CatalogProduct[];
 }
 
+function envProblem(name: string, raw: string, rule: string): string {
+  return raw === "" ? `Falta ${name}: ${rule}` : `El valor de ${name} (${JSON.stringify(raw)}) no es válido: ${rule}`;
+}
+
 function resolvePublishSettings(
   command: "build" | "serve",
   mode: string,
@@ -47,31 +51,33 @@ function resolvePublishSettings(
   const problems: string[] = [];
 
   if (!isValidWhatsAppNumber(whatsappNumber)) {
-    const rule =
-      "tiene que ser el número en formato internacional, solo dígitos y sin +, espacios ni guiones (por ejemplo 5491123456789).";
     problems.push(
-      whatsappNumber === ""
-        ? `Falta VITE_WHATSAPP_NUMBER: ${rule}`
-        : `El valor de VITE_WHATSAPP_NUMBER (${JSON.stringify(whatsappNumber)}) no es válido: ${rule}`,
+      envProblem(
+        "VITE_WHATSAPP_NUMBER",
+        whatsappNumber,
+        "tiene que ser el número en formato internacional, solo dígitos y sin +, espacios ni guiones (por ejemplo 5491123456789).",
+      ),
     );
   }
 
   if (siteUrl === null) {
-    const rule =
-      "tiene que ser la dirección pública de la tienda, con https:// y sin ruta (por ejemplo https://studioags.com.ar).";
     problems.push(
-      rawSiteUrl === ""
-        ? `Falta VITE_SITE_URL: ${rule}`
-        : `El valor de VITE_SITE_URL (${JSON.stringify(rawSiteUrl)}) no es válido: ${rule}`,
+      envProblem(
+        "VITE_SITE_URL",
+        rawSiteUrl,
+        "tiene que ser la dirección pública de la tienda, con https:// y sin ruta (por ejemplo https://studioags.com.ar).",
+      ),
     );
   }
 
-  if (pending.business.length > 0) {
-    problems.push(`src/business.ts todavía tiene datos de ejemplo: ${pending.business.join(", ")}.`);
-  }
-
-  if (pending.catalog.length > 0) {
-    problems.push(`src/catalog.ts todavía tiene datos de ejemplo: ${pending.catalog.join(", ")}.`);
+  const pendingData: [file: string, fields: readonly string[]][] = [
+    ["src/business.ts", pending.business],
+    ["src/catalog.ts", pending.catalog],
+  ];
+  for (const [file, fields] of pendingData) {
+    if (fields.length > 0) {
+      problems.push(`${file} todavía tiene datos de ejemplo: ${fields.join(", ")}.`);
+    }
   }
 
   return {
@@ -83,9 +89,8 @@ function resolvePublishSettings(
 }
 
 export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
-  let isPreview = false;
-  let testBuild = false;
-  // Se resuelven una sola vez y los usan la guardia y el prerender (canonical y Open Graph).
+  // Se resuelven una sola vez y los usan la guardia, el prerender (canonical y Open Graph) y el
+  // HTML del build.
   let settings: PublishSettings = {
     strict: false,
     siteUrl: LOCAL_PREVIEW_URL,
@@ -93,18 +98,19 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
     problems: [],
   };
 
-  const publishGuard: Plugin = {
-    name: "studioags:publish-guard",
-    config(_config, env) {
-      isPreview = env.isPreview === true;
-    },
+  const publishSettings: Plugin = {
+    name: "studioags:publish-settings",
     configResolved(config) {
       const env = loadEnv(config.mode, config.envDir, "VITE_");
       settings = resolvePublishSettings(config.command, config.mode, env, pendingFields(options));
+    },
+  };
 
-      if (isPreview || (config.command === "serve" && config.mode === "test")) {
-        return;
-      }
+  // La vista previa sirve un build ya revisado y Vitest no publica nada: ahí no se revisa.
+  const publishGuard: Plugin = {
+    name: "studioags:publish-guard",
+    apply: (_config, env) => env.isPreview !== true && !(env.command === "serve" && env.mode === "test"),
+    configResolved(config) {
       if (settings.problems.length === 0) {
         return;
       }
@@ -150,9 +156,6 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
   const buildHtml: Plugin = {
     name: "studioags:build-html",
     apply: "build",
-    configResolved(config) {
-      testBuild = config.mode === TEST_BUILD_MODE;
-    },
     transformIndexHtml: {
       order: "post",
       handler() {
@@ -163,7 +166,8 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
             injectTo: "head-prepend",
           },
         ];
-        if (testBuild) {
+        // El único build no estricto es la versión de prueba, que no se indexa.
+        if (!settings.strict) {
           tags.push({ tag: "meta", attrs: { name: "robots", content: "noindex" }, injectTo: "head" });
         }
         return tags;
@@ -171,7 +175,7 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
     },
   };
 
-  return [publishGuard, prerender, buildHtml];
+  return [publishSettings, publishGuard, prerender, buildHtml];
 }
 
 export default defineConfig({
