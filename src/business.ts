@@ -47,9 +47,9 @@ export function listPendingFields(info: BusinessInfo): (keyof BusinessInfo)[] {
 }
 
 export const business: BusinessInfo = {
-  pickupArea: example("Retiro sin cargo en Palermo, CABA, coordinando día y horario por WhatsApp."),
+  pickupArea: example("Retiro sin cargo en Paraná, Entre Ríos, coordinando día y horario por WhatsApp."),
   shipping: example(
-    "Envíos a todo el país por correo y en moto dentro de CABA y GBA. El costo lo pagás vos y te lo pasamos antes de despachar.",
+    "Envíos a todo el país por correo. El costo lo pagás vos y te lo pasamos antes de despachar.",
   ),
   paymentMethods: example(["Transferencia bancaria", "Efectivo al retirar"]),
   instagramHandle: example("studioags"),

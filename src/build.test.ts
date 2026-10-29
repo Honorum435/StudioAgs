@@ -17,7 +17,7 @@ const CSP =
   "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'";
 
 const completeBusiness: BusinessInfo = {
-  pickupArea: "Retiro en Palermo, CABA.",
+  pickupArea: "Retiro en Parana, Entre Ríos.",
   shipping: "Envíos a todo el país.",
   paymentMethods: ["Transferencia bancaria"],
   instagramHandle: "studioags",

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { business, businessValue, example, listPendingFields, type BusinessInfo } from "./business";
 
 const complete: BusinessInfo = {
-  pickupArea: "Retiro en Palermo, CABA.",
+  pickupArea: "Retiro en Parana, Entre Ríos.",
   shipping: "Envíos a todo el país.",
   paymentMethods: ["Transferencia bancaria"],
   instagramHandle: "studioags",
