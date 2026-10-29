@@ -690,6 +690,10 @@ export function mountCartView(options: CartViewOptions): CartView {
       const result = store.confirm();
       if (result.valid) {
         flagged = new Set();
+        // El foco pasa al aviso de WhatsApp; el resumen de errores anterior no tiene que quedar.
+        if (live) {
+          live.textContent = "";
+        }
         return;
       }
       flagged = new Set(result.errors.map((issue) => issue.field));
