@@ -5,6 +5,7 @@ import { mountCartView } from "./cart-view";
 import { products } from "./catalog";
 import { mountCatalogView } from "./catalog-view";
 import { WHATSAPP_NUMBER } from "./config";
+import { enableTouchActive, tilt } from "./motion";
 import { createOverlays } from "./overlays";
 import { renderPage } from "./templates";
 import { createOrderCode } from "./whatsapp";
@@ -41,5 +42,11 @@ export const overlays = createOverlays();
 
 mountCatalogView({ root, store: orderStore, overlays });
 mountCartView({ root, store: orderStore, overlays, whatsappNumber: WHATSAPP_NUMBER });
+
+enableTouchActive(document);
+const heroArt = root.querySelector<HTMLElement>(".hero-art");
+if (heroArt) {
+  tilt(heroArt);
+}
 
 root.removeAttribute("data-prerendered");

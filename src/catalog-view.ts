@@ -1,6 +1,7 @@
 import type { OrderStore } from "./cart";
 import { initialSelection, products, resolveSelection, type CatalogProduct, type Selection } from "./catalog";
 import { ALL_INTENTS, isIntentFilter, visibleProductIds, type FilterState } from "./filters";
+import { popNumber, slidingIndicator, swapText, type SlidingIndicator } from "./motion";
 import type { Overlays } from "./overlays";
 import { FICHA_SIZES, addButtonContent, cardPrice, fichaContent, fichaTitle, resultCount } from "./templates";
 
@@ -9,6 +10,7 @@ import { FICHA_SIZES, addButtonContent, cardPrice, fichaContent, fichaTitle, res
 
 export const FICHA_LAYER = "ficha";
 export const RESULT_COUNT_DELAY = 500;
+export const ADDED_LABEL = "¡Sumado!";
 
 export interface CatalogViewOptions {
   root: HTMLElement;
@@ -114,9 +116,11 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   let filters: FilterState = { intent: ALL_INTENTS, query: searchInput?.value ?? "" };
   let countTimer: ReturnType<typeof setTimeout> | null = null;
   let ficha: OpenFicha | null = null;
+  const indicators = new Map<HTMLElement, SlidingIndicator>();
 
   // Única función de actualización de la isla de la tarjeta: la usan la hidratación y los cambios.
-  function paintCard(island: CardIsland): void {
+  // Al hidratar no hay animación; al cambiar una opción el precio entra de nuevo.
+  function paintCard(island: CardIsland, animate = false): void {
     const { selection, addOnIds } = readChoice(island);
     const resolved =
       resolveSelection(island.product, selection, addOnIds) ??
@@ -126,8 +130,13 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     }
     const price = cardPrice(resolved);
     if (island.price && price !== island.paintedPrice) {
+      const before = island.price.querySelector(".product-price-amount")?.textContent;
       island.price.innerHTML = price;
       island.paintedPrice = price;
+      const amount = island.price.querySelector<HTMLElement>(".product-price-amount");
+      if (animate && amount && amount.textContent !== before) {
+        popNumber(amount, amount.textContent ?? "");
+      }
     }
     const button = addButtonContent(island.product, resolved);
     if (island.button && button !== island.paintedButton) {
@@ -303,6 +312,10 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
       const { selection, addOnIds } = readChoice(island);
       if (store.add(island.product.id, selection, addOnIds)) {
         announce(`${island.product.name} sumado al pedido`);
+        const label = island.button?.querySelector<HTMLElement>(".add-button-label");
+        if (label) {
+          swapText(label, ADDED_LABEL);
+        }
       }
     },
     filter(element) {
@@ -349,7 +362,11 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     const card = target.closest<HTMLElement>(".product-card");
     const island = card ? cards.get(card.dataset.productId ?? "") : undefined;
     if (island) {
-      paintCard(island);
+      paintCard(island, true);
+      const list = target.closest<HTMLElement>(".option-list");
+      if (list) {
+        indicators.get(list)?.update(true);
+      }
     }
   }
 
@@ -383,6 +400,9 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     if (island.button) {
       island.button.disabled = false;
     }
+    island.card.querySelectorAll<HTMLElement>(".option-list").forEach((list) => {
+      indicators.set(list, slidingIndicator(list));
+    });
   });
   chips.forEach((chip) => {
     chip.disabled = false;
@@ -404,6 +424,8 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
       if (countTimer !== null) {
         clearTimeout(countTimer);
       }
+      indicators.forEach((indicator) => indicator.destroy());
+      indicators.clear();
     },
   };
 }

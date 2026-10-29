@@ -315,6 +315,9 @@ const textPairs: ContrastPair[] = [
   text("botón secundario del pedido al pasar", "--ink", "--sand"),
   text("botón secundario del pedido al tocar", "--ink", "--sand-deep"),
   text("botones de cantidad inactivos", "--ink-mid", "--surface"),
+  text("opción elegida sobre el indicador deslizante", "--white", "--ink"),
+  text("opciones sin elegir junto al indicador deslizante", "--ink", "--surface"),
+  text("etiqueta ¡Sumado! del botón de sumar", "--ink", "--surface"),
 ];
 
 const nonTextPairs: ContrastPair[] = [
@@ -331,6 +334,7 @@ const nonTextPairs: ContrastPair[] = [
   nonText("borde del botón secundario sobre papel", "--ink", "--paper"),
   nonText("anillo del contador cuando hay avisos", "--coral-dark", "--paper"),
   nonText("borde del aviso de restauración", "--coral-dark", "--sand"),
+  nonText("indicador deslizante de la opción elegida sobre la tarjeta", "--ink", "--surface"),
 ];
 
 const stylesheet = readFileSync(new URL("./styles.css", import.meta.url), "utf8");

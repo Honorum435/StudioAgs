@@ -64,6 +64,33 @@
   --sticky-bar-space: calc(88px + env(safe-area-inset-bottom));
   /* Margen lateral del panel del pedido: su pie fijo lo usa para ocupar todo el ancho. */
   --cart-pad: 27px;
+  /* Movimiento: pocas curvas y duraciones cortas, como papel que se apoya. motion.ts lee
+     --text-swap-dur para sus fases. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-pop: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --lift-dur: 220ms;
+  --press-dur: 120ms;
+  --text-swap-dur: 150ms;
+  --text-swap-translate-y: 4px;
+  --text-swap-blur: 2px;
+  --badge-slide-dur: 260ms;
+  --badge-pop-dur: 420ms;
+  --badge-blur: 1px;
+  --badge-offset-x: -3px;
+  --badge-offset-y: 4px;
+  --digit-dur: 420ms;
+  --digit-distance: 6px;
+  --digit-stagger: 50ms;
+  --digit-blur: 2px;
+  --tabs-dur: 250ms;
+  --tilt-perspective: 900px;
+  --tilt-return: 900ms;
+  --tilt-follow: 400ms;
+  --tilt-glare-opacity: 0.28;
+  --tilt-glare-fade: 300ms;
+  --glare-strong: rgb(255 255 255 / 48%);
+  --glare-faint: rgb(255 255 255 / 6%);
+  --glare-soft: rgb(255 255 255 / 16%);
 }
 
 * {
@@ -71,8 +98,13 @@
 }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 96px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -378,7 +410,10 @@ p {
   color: var(--white);
   font-size: 14px;
   font-weight: 600;
-  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform var(--lift-dur) var(--ease-out);
 }
 
 .primary-button svg,
@@ -419,6 +454,7 @@ p {
   padding: 10px 10px 37px;
   background: var(--white);
   box-shadow: var(--shadow-photo);
+  transform: rotate(var(--photo-turn, 0deg));
 }
 
 .hero-photo img {
@@ -434,7 +470,7 @@ p {
   right: 11%;
   width: 280px;
   height: 355px;
-  transform: rotate(4deg);
+  --photo-turn: 4deg;
 }
 
 .hero-photo-main span {
@@ -458,7 +494,7 @@ p {
   height: 218px;
   padding: 8px 8px 30px;
   background: var(--yellow-soft);
-  transform: rotate(-9deg);
+  --photo-turn: -9deg;
 }
 
 .hero-sticker {
@@ -692,7 +728,9 @@ p {
   overflow: hidden;
   border: 1px solid var(--line-soft);
   background: var(--surface);
-  transition: box-shadow 220ms ease, transform 220ms ease;
+  transition:
+    box-shadow var(--lift-dur) var(--ease-out),
+    transform var(--lift-dur) var(--ease-out);
 }
 
 /* Filtrar y buscar ocultan las tarjetas existentes; display: flex no tiene que ganarle a hidden. */
@@ -714,7 +752,7 @@ p {
   display: block;
   object-fit: cover;
   object-position: center 42%;
-  transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: transform 500ms var(--ease-out);
 }
 
 .product-category {
@@ -814,6 +852,7 @@ p {
 }
 
 .option-list {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -1298,10 +1337,6 @@ p {
   background: var(--paper);
   color: var(--ink);
   box-shadow: var(--shadow-drawer);
-}
-
-.cart-dialog[open] {
-  animation: drawer-in 220ms ease-out;
 }
 
 .cart-panel {
@@ -1866,15 +1901,129 @@ textarea.field-input {
   min-height: 48px;
 }
 
-@keyframes drawer-in {
+/* Movimiento (motion.ts pone y saca las clases). Los diálogos abren y cierran sin animación. */
+
+/* "Sumar" pasa a "¡Sumado!": la etiqueta sale hacia arriba y la nueva entra desde abajo. */
+.add-button-label {
+  display: inline-block;
+  transition:
+    transform var(--text-swap-dur) ease-in-out,
+    filter var(--text-swap-dur) ease-in-out,
+    opacity var(--text-swap-dur) ease-in-out;
+}
+
+.add-button-label.is-exit {
+  transform: translateY(calc(var(--text-swap-translate-y) * -1));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+}
+
+.add-button-label.is-enter-start {
+  transform: translateY(var(--text-swap-translate-y));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+  transition: none;
+}
+
+/* El contador vuelve a entrar cada vez que sube; el botón del pedido no se mueve. */
+@keyframes badge-slide-in {
   from {
-    transform: translateX(26px);
-    opacity: 0.7;
+    translate: var(--badge-offset-x) var(--badge-offset-y);
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
+}
+
+@keyframes badge-pop {
+  from {
+    scale: 0.55;
+    opacity: 0.35;
+    filter: blur(var(--badge-blur));
   }
+}
+
+.cart-count.is-bumping {
+  animation:
+    badge-slide-in var(--badge-slide-dur) var(--ease-out),
+    badge-pop var(--badge-pop-dur) var(--ease-pop);
+}
+
+/* Precio y subtotal: los caracteres entran desde abajo y los dos últimos un poco después.
+   El texto que se lee está en un span oculto; los dígitos visibles salen de data-char. */
+@keyframes digit-pop-in {
+  from {
+    transform: translateY(var(--digit-distance));
+    opacity: 0;
+    filter: blur(var(--digit-blur));
+  }
+}
+
+.digit-group {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.digit {
+  display: inline-block;
+  white-space: pre;
+}
+
+.digit::before {
+  content: attr(data-char);
+}
+
+.digit-group.is-animating .digit {
+  animation: digit-pop-in var(--digit-dur) var(--ease-pop) both;
+}
+
+.digit-group.is-animating .digit[data-stagger="1"] {
+  animation-delay: var(--digit-stagger);
+}
+
+.digit-group.is-animating .digit[data-stagger="2"] {
+  animation-delay: calc(var(--digit-stagger) * 2);
+}
+
+/* Opciones en una sola línea: la elegida se marca con una pieza que se desliza debajo. Si el
+   grupo pasa a otra línea, motion.ts no pone .has-pill y queda el estilo fijo. */
+.option-pill {
+  display: none;
+}
+
+.option-list.has-pill > .option-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: var(--pill-w, 0px);
+  height: var(--pill-h, 0px);
+  border-radius: 2px;
+  background: var(--ink);
+  transform: translate(var(--pill-x, 0px), var(--pill-y, 0px));
+  transition:
+    transform var(--tabs-dur) var(--ease-out),
+    width var(--tabs-dur) var(--ease-out);
+  pointer-events: none;
+}
+
+.option-list.has-pill > .option-pill.is-snapping {
+  transition: none;
+}
+
+.option-list.has-pill .option-chip {
+  z-index: 1;
+}
+
+.option-list.has-pill .option-chip span {
+  background: transparent;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color var(--tabs-dur) var(--ease-out),
+    transform var(--press-dur) ease;
+}
+
+.option-list.has-pill .option-chip input:checked + span {
+  border-color: transparent;
+  background: transparent;
 }
 
 /* Estados. El hover existe solo con puntero fino, así en el celular no queda pegado;
@@ -1936,6 +2085,42 @@ textarea.field-input {
   .product-card:hover .product-image {
     transform: scale(1.035);
   }
+
+  /* Polaroids del hero: se inclinan hacia el mouse sobre su giro propio, con un reflejo. */
+  .hero-photo {
+    transform:
+      perspective(var(--tilt-perspective))
+      rotateX(var(--tilt-rx, 0deg))
+      rotateY(var(--tilt-ry, 0deg))
+      rotate(var(--photo-turn, 0deg));
+    transition: transform var(--tilt-return) var(--ease-out);
+  }
+
+  .hero-photo.is-tilting {
+    transition-duration: var(--tilt-follow);
+  }
+
+  .hero-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        circle 95px at var(--tilt-gx, 50%) var(--tilt-gy, 50%),
+        var(--glare-strong),
+        var(--glare-faint) 52%,
+        transparent 84%
+      ),
+      radial-gradient(circle 220px at var(--tilt-gx, 50%) var(--tilt-gy, 50%), var(--glare-soft), transparent 80%);
+    opacity: 0;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transition: opacity var(--tilt-glare-fade) var(--ease-out);
+  }
+
+  .hero-photo.is-hover::after {
+    opacity: var(--tilt-glare-opacity);
+  }
 }
 
 /* :has() va en reglas sueltas: si un navegador no lo entiende, solo se pierde esa regla. */
@@ -1960,6 +2145,7 @@ textarea.field-input {
   transform: translateY(1px);
   border-color: var(--coral-dark);
   background: var(--coral-dark);
+  transition-duration: var(--press-dur);
 }
 
 .add-button:enabled:active {
@@ -2365,7 +2551,36 @@ textarea.field-input {
   *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  /* Nada se desplaza: sin elevación, sin hundimiento, sin inclinación ni reflejo. */
+  .product-card,
+  .product-image,
+  .primary-button,
+  .add-button,
+  .add-button-label,
+  .filter-chip,
+  .option-chip span,
+  .icon-button,
+  .quantity-controls button,
+  .secondary-button {
+    transform: none !important;
+  }
+
+  .cart-count,
+  .digit {
+    animation: none !important;
+  }
+
+  .hero-photo {
+    transform: rotate(var(--photo-turn, 0deg)) !important;
+  }
+
+  .hero-photo::after {
+    display: none;
   }
 }

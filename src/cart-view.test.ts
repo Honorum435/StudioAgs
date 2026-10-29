@@ -606,7 +606,7 @@ describe("panel y barra fija", () => {
     document.getElementById("catalogo")!.scrollIntoView = scroll;
     $<HTMLButtonElement>('[data-cart-content] [data-action="browse-products"]').click();
 
-    await vi.waitFor(() => expect(scroll).toHaveBeenCalledWith({ block: "start" }));
+    await vi.waitFor(() => expect(scroll).toHaveBeenCalledWith({ block: "start", behavior: "smooth" }));
     expect(dialog().open).toBe(false);
     expect(document.activeElement).toBe(document.getElementById("catalog-title"));
   });

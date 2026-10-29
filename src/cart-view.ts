@@ -15,6 +15,7 @@ import {
 } from "./cart";
 import type { CatalogProduct } from "./catalog";
 import { formatPrice } from "./format";
+import { bumpBadge, popNumber, scrollToTarget } from "./motion";
 import type { Overlays } from "./overlays";
 import {
   ORDER_CHANGED_NOTE,
@@ -160,6 +161,8 @@ export function mountCartView(options: CartViewOptions): CartView {
   const barSummary = bar?.querySelector<HTMLElement>(".sticky-bar-summary") ?? null;
 
   const painted = { count: "", bar: "", restore: "", checkout: "" };
+  // Cantidad que muestra el contador; null hasta la hidratación, que restaura sin animar.
+  let paintedQuantity: number | null = null;
   let previous: OrderState | null = null;
   // Los campos que marcó el último "Continuar": se desmarcan solos al corregirlos.
   let flagged = new Set<OrderField>();
@@ -246,7 +249,11 @@ export function mountCartView(options: CartViewOptions): CartView {
         painted.count = html;
       }
       count.classList.toggle("is-empty", summary.quantity === 0);
+      if (paintedQuantity !== null && summary.quantity > paintedQuantity) {
+        bumpBadge(count);
+      }
     }
+    paintedQuantity = summary.quantity;
     const note = state.notices.length > 0;
     if (triggerNote) {
       // El punto separa la nota del contador en el nombre del botón.
@@ -285,7 +292,7 @@ export function mountCartView(options: CartViewOptions): CartView {
     restoreRegion.innerHTML = html;
     painted.restore = html;
     if (html && dialog?.open) {
-      notices?.scrollIntoView?.({ block: "nearest" });
+      scrollToTarget(notices, { block: "nearest" });
     }
   }
 
@@ -319,8 +326,16 @@ export function mountCartView(options: CartViewOptions): CartView {
       (element) => element.dataset.lineId,
     );
     summary.lines.forEach((line) => patchLine(items.get(line.id)!, line));
-    content?.querySelectorAll("[data-cart-subtotal]").forEach((element) => {
-      setText(element, formatPrice(summary.subtotal));
+    const subtotal = formatPrice(summary.subtotal);
+    content?.querySelectorAll<HTMLElement>("[data-cart-subtotal]").forEach((element) => {
+      // Con el panel cerrado no se ve: cambia sin animación.
+      if (element.textContent !== subtotal) {
+        if (dialog?.open) {
+          popNumber(element, subtotal);
+        } else {
+          element.textContent = subtotal;
+        }
+      }
     });
   }
 
@@ -602,7 +617,7 @@ export function mountCartView(options: CartViewOptions): CartView {
       }
       heading.focus({ preventScroll: true });
     }
-    doc.getElementById("catalogo")?.scrollIntoView?.({ block: "start" });
+    scrollToTarget(doc.getElementById("catalogo"), { block: "start" });
   }
 
   // Un manejador por data-action.
