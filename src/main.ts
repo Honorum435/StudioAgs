@@ -1,6 +1,7 @@
 import "./styles.css";
 import { categories, products, type CatalogProduct, type ProductVariant } from "./catalog";
 import { WHATSAPP_NUMBER } from "./config";
+import { isValidWhatsAppNumber } from "./validation";
 
 interface CartLine {
   productId: string;
@@ -413,8 +414,8 @@ function sendWhatsAppOrder(): void {
     return;
   }
 
-  if (!/^\d{8,15}$/.test(WHATSAPP_NUMBER)) {
-    showToast("Falta configurar el número de WhatsApp en src/config.ts antes de publicar la tienda.");
+  if (!isValidWhatsAppNumber(WHATSAPP_NUMBER)) {
+    showToast("El envío por WhatsApp todavía no está configurado.");
     return;
   }
 
