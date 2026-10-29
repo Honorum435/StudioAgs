@@ -156,6 +156,8 @@ function counterText(length: number): string {
   return left === 1 ? "Te queda 1 carácter." : `Te quedan ${left} caracteres.`;
 }
 
+const DOUBLE_TAP_GUARD_MS = 600;
+
 export function mountCartView(options: CartViewOptions): CartView {
   const { root, store, overlays, whatsappNumber } = options;
   const doc = root.ownerDocument;
@@ -180,6 +182,8 @@ export function mountCartView(options: CartViewOptions): CartView {
   // Los campos que marcó el último "Continuar": se desmarcan solos al corregirlos.
   let flagged = new Set<OrderField>();
   let typing = false;
+  // Cuándo cambió por última vez el paso del pie (para no vaciar por un doble toque).
+  let checkoutPaintedAt = Number.NEGATIVE_INFINITY;
 
   function fromHtml(html: string): Element {
     const template = doc.createElement("template");
@@ -433,6 +437,7 @@ export function mountCartView(options: CartViewOptions): CartView {
     if (!setHtml(container, checkoutContent(checkoutStage(state, summary)))) {
       return;
     }
+    checkoutPaintedAt = win.performance.now();
     // Si el foco estaba en el paso anterior (por ejemplo "Continuar"), pasa al aviso del nuevo.
     if (!first && hadFocus && dialog?.open) {
       focusCheckout();
@@ -703,6 +708,10 @@ export function mountCartView(options: CartViewOptions): CartView {
       void copyOrder();
     },
     "sent-clear"() {
+      // Un doble toque en "Abrir WhatsApp" o "Copiar" no puede caer en el botón que vacía el pedido.
+      if (win.performance.now() - checkoutPaintedAt < DOUBLE_TAP_GUARD_MS) {
+        return;
+      }
       clearOrder("Listo, vaciamos el pedido. ¡Gracias!");
     },
     "clear-order"() {

@@ -612,8 +612,12 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
     if (next.status !== "borrador") {
       next = { ...backToDraft(next), changedSinceConfirm: true };
     }
+    // Sin productos no hay pedido: el nombre y la localidad de la clienta no quedan guardados.
     if (lines.length === 0) {
       next = { ...next, changedSinceConfirm: false };
+      if (state.lines.length > 0) {
+        next = { ...next, form: emptyForm };
+      }
     }
     commit(next);
   }

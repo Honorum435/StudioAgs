@@ -601,7 +601,14 @@ describe("copiar y después de enviar", () => {
     await vi.waitFor(() => expect(store.getState().status).toBe("enviado"));
     expect(storage.getItem(STORAGE_KEY)).not.toBeNull();
 
+    // Un toque inmediato (doble toque sobre "Copiar") no vacía nada.
     $<HTMLButtonElement>('[data-action="sent-clear"]').click();
+    expect(store.getState().lines).toHaveLength(1);
+
+    const later = window.performance.now() + 1000;
+    vi.spyOn(window.performance, "now").mockReturnValue(later);
+    $<HTMLButtonElement>('[data-action="sent-clear"]').click();
+    vi.restoreAllMocks();
     expect(store.getState().lines).toHaveLength(0);
     expect(store.getState().form.name).toBe("");
     expect(storage.getItem(STORAGE_KEY)).toBeNull();

@@ -565,6 +565,16 @@ describe("estados del pedido", () => {
     });
   });
 
+  it("quitar el último producto borra los datos de la clienta de lo guardado", () => {
+    const { store, env } = confirmedStore();
+    store.removeLine("tarjetas-200-doble-faz-laminado");
+    store.removeLine("fotos-polaroid");
+
+    expect(store.getState().form.name).toBe("");
+    expect(store.getState().form.delivery).toBeNull();
+    expect(env.storage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
   it("ya lo envié · vaciar deja el pedido vacío y borra lo guardado", () => {
     const { store, env } = confirmedStore();
     store.setIdea("fotos", "Fotos del viaje");
