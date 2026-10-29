@@ -1,7 +1,7 @@
 ---
 title: "feat: Pulido UX/UI y pedido completo de StudioAGS"
 type: feat
-status: active
+status: completed
 date: 2026-10-28
 origin: requisitos-pulido.md
 deepened: 2026-10-28
