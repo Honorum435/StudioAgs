@@ -170,6 +170,8 @@ describe("build", { timeout: 60_000 }, () => {
     expect(warnings.join("\n")).toContain("http://localhost:4173");
     expect(html).toContain('<meta name="robots" content="noindex">');
     expect(html).toContain('http-equiv="Content-Security-Policy"');
+    expect(html).toContain('<meta property="og:url" content="http://localhost:4173/">');
+    expect(html).toContain('<div id="app" data-prerendered>');
   });
 
   it("con todos los datos arma la página con la CSP antes del primer <link>", async () => {
@@ -186,5 +188,37 @@ describe("build", { timeout: 60_000 }, () => {
     expect(cspTag!.index).toBeLessThan(html.indexOf("<link"));
     expect(html).not.toContain("noindex");
     expect(warnings).toEqual([]);
+  });
+
+  it("deja el catálogo dentro de #app, con metadatos de URL absoluta y la CSP", async () => {
+    const { html } = await runBuild({
+      env: { VITE_WHATSAPP_NUMBER: "5491123456789", VITE_SITE_URL: "https://studioags.com.ar" },
+      business: completeBusiness,
+      catalog: completeCatalog,
+    });
+
+    expect(html).toContain('<html lang="es-AR">');
+    expect(html.match(/<div id="app"/g)).toHaveLength(1);
+    const appStart = html.indexOf('<div id="app" data-prerendered>');
+    expect(appStart).toBeGreaterThan(-1);
+    const app = html.slice(appStart, html.indexOf("</body>"));
+    expect(app.match(/<article class="product-card"/g)).toHaveLength(8);
+    for (const product of completeCatalog) {
+      expect(app).toContain(`<h3 id="producto-${product.id}-titulo">${product.name}</h3>`);
+    }
+    expect(app).toContain("Precios actualizados al 14 de julio de 2026");
+
+    const head = html.slice(0, html.indexOf("</head>"));
+    expect(head).toContain('<link rel="canonical" href="https://studioags.com.ar/">');
+    expect(head).toContain('<meta property="og:url" content="https://studioags.com.ar/">');
+    expect(head).toContain('<meta property="og:image" content="https://studioags.com.ar/images/compartir.jpg">');
+    expect(head).toContain('<meta name="twitter:image" content="https://studioags.com.ar/images/compartir.jpg">');
+    expect(head).toContain('<link rel="icon" href="/favicon.svg" type="image/svg+xml"');
+    expect(head).toMatch(/<meta http-equiv="Content-Security-Policy" content="[^"]+">/);
+
+    const ld = /<script type="application\/ld\+json">([^<]*)<\/script>/.exec(head);
+    expect(ld).not.toBeNull();
+    const data = JSON.parse(ld![1]) as { "@graph": Array<{ "@type": string; numberOfItems?: number }> };
+    expect(data["@graph"].find((node) => node["@type"] === "ItemList")?.numberOfItems).toBe(8);
   });
 });

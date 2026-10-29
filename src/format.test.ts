@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { escapeHtml, formatPrice } from "./format";
+import { escapeHtml, formatLongDate, formatPrice } from "./format";
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -40,5 +40,13 @@ describe("escapeHtml", () => {
 
   it("deja igual el texto sin caracteres especiales", () => {
     expect(escapeHtml("Láminas A3+ · 7.000")).toBe("Láminas A3+ · 7.000");
+  });
+});
+
+describe("formatLongDate", () => {
+  it("escribe el día, el mes en palabras y el año", () => {
+    expect(formatLongDate({ year: 2026, month: 7, day: 14 })).toBe("14 de julio de 2026");
+    expect(formatLongDate({ year: 2027, month: 1, day: 1 })).toBe("1 de enero de 2027");
+    expect(formatLongDate({ year: 2026, month: 12, day: 31 })).toBe("31 de diciembre de 2026");
   });
 });

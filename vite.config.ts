@@ -1,11 +1,8 @@
 /// <reference types="vitest/config" />
 import { defineConfig, loadEnv, type HtmlTagDescriptor, type Plugin } from "vite";
-import { business as defaultBusiness, listPendingFields, type BusinessInfo } from "./src/business";
-import {
-  listPendingCatalogFields,
-  products as defaultCatalog,
-  type CatalogProduct,
-} from "./src/catalog";
+import type { BusinessInfo } from "./src/business";
+import type { CatalogProduct } from "./src/catalog";
+import { headTags, injectApp, pendingFields, renderDocument, type PendingFields } from "./src/prerender";
 import { isValidWhatsAppNumber, normalizeSiteUrl } from "./src/validation";
 
 export const CONTENT_SECURITY_POLICY = [
@@ -42,14 +39,11 @@ function resolvePublishSettings(
   command: "build" | "serve",
   mode: string,
   env: Record<string, string>,
-  business: BusinessInfo,
-  catalog: readonly CatalogProduct[],
+  pending: PendingFields,
 ): PublishSettings {
   const whatsappNumber = env.VITE_WHATSAPP_NUMBER ?? "";
   const rawSiteUrl = env.VITE_SITE_URL ?? "";
   const siteUrl = normalizeSiteUrl(rawSiteUrl);
-  const pendingFields = listPendingFields(business);
-  const pendingCatalogFields = listPendingCatalogFields(catalog);
   const problems: string[] = [];
 
   if (!isValidWhatsAppNumber(whatsappNumber)) {
@@ -72,12 +66,12 @@ function resolvePublishSettings(
     );
   }
 
-  if (pendingFields.length > 0) {
-    problems.push(`src/business.ts todavía tiene datos de ejemplo: ${pendingFields.join(", ")}.`);
+  if (pending.business.length > 0) {
+    problems.push(`src/business.ts todavía tiene datos de ejemplo: ${pending.business.join(", ")}.`);
   }
 
-  if (pendingCatalogFields.length > 0) {
-    problems.push(`src/catalog.ts todavía tiene datos de ejemplo: ${pendingCatalogFields.join(", ")}.`);
+  if (pending.catalog.length > 0) {
+    problems.push(`src/catalog.ts todavía tiene datos de ejemplo: ${pending.catalog.join(", ")}.`);
   }
 
   return {
@@ -91,6 +85,13 @@ function resolvePublishSettings(
 export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
   let isPreview = false;
   let testBuild = false;
+  // Se resuelven una sola vez y los usan la guardia y el prerender (canonical y Open Graph).
+  let settings: PublishSettings = {
+    strict: false,
+    siteUrl: LOCAL_PREVIEW_URL,
+    siteUrlFallback: true,
+    problems: [],
+  };
 
   const publishGuard: Plugin = {
     name: "studioags:publish-guard",
@@ -98,18 +99,12 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
       isPreview = env.isPreview === true;
     },
     configResolved(config) {
+      const env = loadEnv(config.mode, config.envDir, "VITE_");
+      settings = resolvePublishSettings(config.command, config.mode, env, pendingFields(options));
+
       if (isPreview || (config.command === "serve" && config.mode === "test")) {
         return;
       }
-
-      const env = loadEnv(config.mode, config.envDir, "VITE_");
-      const settings = resolvePublishSettings(
-        config.command,
-        config.mode,
-        env,
-        options.business ?? defaultBusiness,
-        options.catalog ?? defaultCatalog,
-      );
       if (settings.problems.length === 0) {
         return;
       }
@@ -133,6 +128,21 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
         ? `\nSin un VITE_SITE_URL válido se usa ${settings.siteUrl}.`
         : "";
       config.logger.warn(`${intro}\n${list}${fallback}`);
+    },
+  };
+
+  // En desarrollo y en los builds: la cáscara va en #app y los metadatos en el head.
+  const prerender: Plugin = {
+    name: "studioags:prerender",
+    transformIndexHtml: {
+      order: "pre",
+      handler(html) {
+        const tags: HtmlTagDescriptor[] = headTags({ ...options, siteUrl: settings.siteUrl }).map((tag) => ({
+          ...tag,
+          injectTo: "head",
+        }));
+        return { html: injectApp(html, renderDocument(options)), tags };
+      },
     },
   };
 
@@ -161,7 +171,7 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
     },
   };
 
-  return [publishGuard, buildHtml];
+  return [publishGuard, prerender, buildHtml];
 }
 
 export default defineConfig({
