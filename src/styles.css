@@ -77,6 +77,12 @@ body {
   margin: 0;
 }
 
+/* Con la ficha o el pedido abiertos la página no se desplaza (overlays.ts marca la capa). */
+html[data-layer] {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
 ::selection {
   background: var(--yellow-soft);
   color: var(--ink);
@@ -673,6 +679,12 @@ p {
   transition: box-shadow 220ms ease, transform 220ms ease;
 }
 
+/* Filtrar y buscar ocultan las tarjetas existentes; display: flex no tiene que ganarle a hidden. */
+.product-card[hidden],
+.text-button[hidden] {
+  display: none;
+}
+
 .product-image-wrap {
   position: relative;
   aspect-ratio: 4 / 3;
@@ -1207,6 +1219,50 @@ p {
 /* El contenedor desplazable recorta lo que sale de su caja: el anillo va hacia adentro. */
 .ficha-body:focus-visible {
   outline-offset: -3px;
+}
+
+.ficha-heading {
+  min-width: 0;
+}
+
+.ficha-hint {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* La página entra ajustada al ancho; tocarla la amplía y se recorre desplazando o pellizcando. */
+.ficha-frame {
+  position: relative;
+}
+
+.ficha-body:not([aria-busy]) .ficha-frame {
+  cursor: zoom-in;
+}
+
+.ficha-body:not([aria-busy]) .ficha-frame.is-zoomed {
+  cursor: zoom-out;
+}
+
+.ficha-image,
+.ficha-placeholder {
+  width: 100%;
+  height: auto;
+  vertical-align: top;
+}
+
+.ficha-frame.is-zoomed .ficha-image {
+  width: var(--ficha-zoom-width, 200%);
+  max-width: none;
+}
+
+.ficha-message {
+  margin: 0;
+  padding: 20px 24px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 /* Pedido: panel lateral desde 768 px, hoja de alto completo en celular. */

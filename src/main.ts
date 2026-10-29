@@ -2,6 +2,8 @@ import "./styles.css";
 import { business } from "./business";
 import { createOrderStore, type StorageLike } from "./cart";
 import { products } from "./catalog";
+import { mountCatalogView } from "./catalog-view";
+import { createOverlays } from "./overlays";
 import { renderPage } from "./templates";
 import { createOrderCode } from "./whatsapp";
 
@@ -30,3 +32,8 @@ export const orderStore = createOrderStore({
   createCode: createOrderCode,
   storage: localStorageOrNull(),
 });
+
+// Un solo coordinador de capas para la ficha y, después, el panel del pedido.
+const overlays = createOverlays();
+
+mountCatalogView({ root, store: orderStore, overlays });

@@ -293,6 +293,7 @@ const textPairs: ContrastPair[] = [
   text("plazo de la tarjeta y cantidad de la barra fija", "--ink-soft", "--surface"),
   text("barra fija del pedido", "--ink", "--surface"),
   text("mensajes dentro de la ficha", "--ink-soft", "--photo-bg"),
+  text("indicación para ampliar la ficha", "--muted", "--paper"),
   text("botón cuadrado al pasar", "--ink", "--sand"),
   text("filtro, opción, adicional y botón cuadrado al tocar", "--ink", "--sand-deep"),
   text("precio del adicional al tocar", "--muted", "--sand-deep"),

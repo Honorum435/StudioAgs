@@ -25,6 +25,8 @@ export type CartSummary = Pick<OrderSummary, "lines" | "quantity" | "subtotal">;
 // una columna, dos en celular ancho, dos en tablet y tres desde 1024 px.
 export const CARD_IMAGE_SIZES =
   "(max-width: 559px) 90vw, (max-width: 767px) calc(45vw - 8px), (max-width: 1023px) calc(50vw - 47px), (max-width: 1351px) calc(33.3vw - 39px), 412px";
+// La ficha ocupa todo el ancho en celular y hasta 880 px desde 768 px (styles.css).
+export const FICHA_SIZES = "(max-width: 767px) 100vw, (max-width: 927px) calc(100vw - 48px), 880px";
 export const HERO_MAIN_SIZES = "(max-width: 680px) 208px, 260px";
 export const HERO_SMALL_SIZES = "(max-width: 680px) 127px, 160px";
 
@@ -411,7 +413,7 @@ export function catalogSection(data: PageData): string {
       ${trustStrip(data)}
       ${catalogToolbar()}
       <div class="catalog-meta">
-        <span data-result-count>${resultCount(data.catalog.length)}</span>
+        <span data-result-count role="status">${resultCount(data.catalog.length)}</span>
         <span>Precios en pesos argentinos</span>
       </div>
       <div class="product-grid" id="product-grid">
@@ -506,15 +508,39 @@ export function siteFooter(): string {
     </footer>`;
 }
 
+export function fichaTitle(product: CatalogProduct): string {
+  return `Ficha de ${product.name}`;
+}
+
+export function fichaAlt(product: CatalogProduct): string {
+  return `Página del catálogo de ${product.name}, con sus formatos y precios`;
+}
+
+// Contenido de la ficha: la foto de la tarjeta queda a la vista hasta que carga la página.
+export function fichaContent(product: CatalogProduct, placeholderSrc?: string): string {
+  const card = product.images.card;
+  const ficha = product.images.ficha;
+  const placeholder = placeholderSrc ?? imageUrl(card, Math.min(...card.widths));
+  return `
+    <div class="ficha-frame" data-action="zoom-ficha">
+      <img class="ficha-placeholder" data-ficha-placeholder src="${attr(placeholder)}" width="${card.width}" height="${card.height}" alt="" />
+      <img class="ficha-image" data-ficha-image src="${attr(imageUrl(ficha, ficha.width))}" srcset="${attr(srcset(ficha))}" sizes="${attr(FICHA_SIZES)}" width="${ficha.width}" height="${ficha.height}" alt="${attr(fichaAlt(product))}" decoding="async" hidden />
+    </div>
+    <p class="ficha-message" data-ficha-error hidden>No pudimos cargar la ficha. Revisá tu conexión y volvé a abrirla.</p>`;
+}
+
 export function fichaDialog(): string {
   return `
     <dialog class="ficha-dialog" id="ficha-dialog" aria-labelledby="ficha-title">
       <div class="ficha-panel">
         <header class="ficha-header">
-          <h2 id="ficha-title" data-ficha-title>Ficha del catálogo</h2>
+          <div class="ficha-heading">
+            <h2 id="ficha-title" data-ficha-title>Ficha del catálogo</h2>
+            <p class="ficha-hint" id="ficha-hint">Tocá la página<span class="visually-hidden"> o presioná Enter</span> para ampliarla.</p>
+          </div>
           <button class="icon-button" type="button" data-action="close-ficha" aria-label="Cerrar ficha">${icon("close")}</button>
         </header>
-        <div class="ficha-body" data-ficha-body></div>
+        <div class="ficha-body" data-ficha-body tabindex="0" role="region" aria-label="Página del catálogo" aria-describedby="ficha-hint"></div>
       </div>
     </dialog>`;
 }
