@@ -781,7 +781,11 @@ export function mountCartView(options: CartViewOptions): CartView {
     overlays.register(ORDER_LAYER, dialog);
   }
   const unsubscribeStore = store.subscribe(paint);
-  const unsubscribeOverlays = overlays.subscribe(() => paintBar());
+  // Al abrir o cerrar una capa el foco cambia sin focusout confiable; si vuelve a un campo, focusin lo marca de nuevo.
+  const unsubscribeOverlays = overlays.subscribe(() => {
+    typing = false;
+    paintBar();
+  });
   const removeActions = delegateActions(root, actions);
   root.addEventListener("input", onInput);
   root.addEventListener("change", onChange);

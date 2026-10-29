@@ -587,6 +587,18 @@ describe("panel y barra fija", () => {
     expect(bar().hidden).toBe(false);
   });
 
+  it("cerrar el panel con un campo enfocado no deja la barra oculta", async () => {
+    mount();
+    add("laminas");
+    openPanel();
+    $<HTMLInputElement>("#pedido-nombre").focus();
+    expect(bar().hidden).toBe(true);
+
+    await overlays.close(ORDER_LAYER);
+    expect(dialog().open).toBe(false);
+    expect(bar().hidden).toBe(false);
+  });
+
   it("se oculta mientras hay un campo de texto enfocado", () => {
     mount();
     add("laminas");
