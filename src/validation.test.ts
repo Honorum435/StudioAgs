@@ -40,12 +40,15 @@ describe("normalizeSiteUrl", () => {
     expect(normalizeSiteUrl("https://localhost:4173")).toBe("https://localhost:4173");
   });
 
+  it("acepta una carpeta, como en GitHub Pages, sin la barra final", () => {
+    expect(normalizeSiteUrl("https://honorum435.github.io/StudioAgs/")).toBe("https://honorum435.github.io/StudioAgs");
+  });
+
   it.each([
     ["vacía", ""],
     ["sin definir", undefined],
     ["sin esquema", "studioags.com.ar"],
     ["con http", "http://studioags.com.ar"],
-    ["con ruta", "https://studioags.com.ar/tienda"],
     ["con consulta", "https://studioags.com.ar?ref=ig"],
     ["con ancla", "https://studioags.com.ar#catalogo"],
     ["con usuario", "https://dueña@studioags.com.ar"],

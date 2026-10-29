@@ -308,7 +308,7 @@ describe("Ver ficha", () => {
     const image = body().querySelector<HTMLImageElement>("[data-ficha-image]")!;
     const placeholder = body().querySelector<HTMLImageElement>("[data-ficha-placeholder]")!;
     expect(image.getAttribute("alt")).toBe("Página del catálogo de Tarjetas personales, con sus formatos y precios");
-    expect(image.getAttribute("src")).toBe("/images/ficha-tarjetas-1800.webp");
+    expect(image.getAttribute("src")).toBe("images/ficha-tarjetas-1800.webp");
     expect(image.hidden).toBe(true);
     expect(placeholder.hidden).toBe(false);
     expect(placeholder.getAttribute("alt")).toBe("");

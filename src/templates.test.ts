@@ -293,7 +293,7 @@ describe("controles antes de hidratar", () => {
   it("'Ver ficha' es un enlace común a la página de 1800 px, con el producto en el nombre", () => {
     for (const item of products) {
       const link = card(item.id).querySelector<HTMLAnchorElement>("a.ficha-link")!;
-      expect(link.getAttribute("href")).toBe(`/images/ficha-${item.id}-1800.webp`);
+      expect(link.getAttribute("href")).toBe(`images/ficha-${item.id}-1800.webp`);
       expect(link.dataset.action).toBe("open-ficha");
       expect(link.dataset.productId).toBe(item.id);
       expect(accessibleName(link)).toBe(`Ver ficha de ${item.name}`);
@@ -317,7 +317,7 @@ describe("imágenes", () => {
       const image = card(item.id).querySelector("img.product-image")!;
       const spec = item.images.card;
       const candidates = (image.getAttribute("srcset") ?? "").split(", ");
-      expect(candidates).toEqual(spec.widths.map((width) => `/images/${spec.base}-${width}.webp ${width}w`));
+      expect(candidates).toEqual(spec.widths.map((width) => `images/${spec.base}-${width}.webp ${width}w`));
       expect(image.getAttribute("sizes")).toBe(CARD_IMAGE_SIZES);
       expect(image.getAttribute("width")).toBe(String(spec.width));
       expect(image.getAttribute("height")).toBe(String(spec.height));
@@ -331,10 +331,10 @@ describe("imágenes", () => {
     const priority = [...doc.querySelectorAll('[fetchpriority="high"]')];
     expect(priority).toHaveLength(1);
     expect(priority[0].closest(".hero-photo-main")).not.toBeNull();
-    expect(priority[0].getAttribute("srcset")).toContain("/images/hero-bitacoras-800.webp 800w");
+    expect(priority[0].getAttribute("srcset")).toContain("images/hero-bitacoras-800.webp 800w");
 
     const small = doc.querySelector(".hero-photo-small img")!;
-    expect(small.getAttribute("srcset")).toContain("/images/hero-fotos-434.webp 434w");
+    expect(small.getAttribute("srcset")).toContain("images/hero-fotos-434.webp 434w");
     expect(small.hasAttribute("sizes")).toBe(true);
   });
 });

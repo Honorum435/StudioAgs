@@ -223,8 +223,8 @@ describe("catálogo", () => {
   });
 
   it("arma la ruta de cada imagen con su nombre base y su ancho", () => {
-    expect(imageUrl(product("tarjetas").images.card, 400)).toBe("/images/tarjetas-400.webp");
-    expect(imageUrl(product("tarjetas").images.ficha, 1800)).toBe("/images/ficha-tarjetas-1800.webp");
+    expect(imageUrl(product("tarjetas").images.card, 400)).toBe("images/tarjetas-400.webp");
+    expect(imageUrl(product("tarjetas").images.ficha, 1800)).toBe("images/ficha-tarjetas-1800.webp");
   });
 });
 

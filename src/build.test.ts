@@ -213,7 +213,7 @@ describe("build", { timeout: 60_000 }, () => {
     expect(head).toContain('<meta property="og:url" content="https://studioags.com.ar/">');
     expect(head).toContain('<meta property="og:image" content="https://studioags.com.ar/images/compartir.jpg">');
     expect(head).toContain('<meta name="twitter:image" content="https://studioags.com.ar/images/compartir.jpg">');
-    expect(head).toContain('<link rel="icon" href="/favicon.svg" type="image/svg+xml"');
+    expect(head).toContain('<link rel="icon" href="favicon.svg" type="image/svg+xml"');
     expect(head).toMatch(/<meta http-equiv="Content-Security-Policy" content="[^"]+">/);
 
     const ld = /<script type="application\/ld\+json">([^<]*)<\/script>/.exec(head);

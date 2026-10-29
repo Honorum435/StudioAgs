@@ -13,7 +13,7 @@ npm run dev
 Completá `.env` con dos datos (en el hosting, cargá las mismas variables en su panel):
 
 - `VITE_WHATSAPP_NUMBER`: el número del negocio en formato internacional, solo dígitos, sin `+`, espacios ni guiones. Por ejemplo `5491123456789`.
-- `VITE_SITE_URL`: la dirección pública de la tienda, con `https://` y sin ruta ni barra final. Por ejemplo `https://studioags.com.ar`.
+- `VITE_SITE_URL`: la dirección pública de la tienda, con `https://` y sin barra final. Por ejemplo `https://studioags.com.ar` o, en GitHub Pages, `https://honorum435.github.io/StudioAgs`.
 
 Sin un número válido la página no muestra el botón de WhatsApp: el pedido solo se puede copiar.
 
@@ -77,4 +77,11 @@ Escribe en `public/images/`, nunca amplía una foto y al terminar imprime los an
   4. Abrí el link desde Instagram (un mensaje directo o la bio) en iOS y en Android: copiar el pedido, abrir WhatsApp y cerrar y volver a abrir el link con el pedido guardado.
   5. Pasá la URL por un validador de Open Graph (por ejemplo el Sharing Debugger de Meta) para ver la vista previa del link.
 - [ ] Lighthouse en modo celular (Chrome DevTools → Lighthouse) sobre la versión publicada: 90 o más en rendimiento, accesibilidad, buenas prácticas y SEO. Sobre `build:prueba` el SEO baja por el `noindex`; es esperable.
-"# StudioAgs" 
+
+## GitHub Pages
+
+La tienda se publica sola en https://honorum435.github.io/StudioAgs/ con cada push a `main`, mediante el workflow `.github/workflows/deploy.yml`: instala, corre los tests, arma la página y la sube.
+
+- En el repo, **Settings → Pages → Source** tiene que estar en **GitHub Actions** (no en "Deploy from a branch", que publica el código sin armar y la página queda en blanco).
+- El número de WhatsApp va como variable del repo: **Settings → Secrets and variables → Actions → Variables → `VITE_WHATSAPP_NUMBER`**. Si cambiás de dominio, agregá también `VITE_SITE_URL`.
+- Mientras falten los datos del negocio, el workflow publica la versión de prueba (`npm run build:prueba`, con `noindex`). Cuando estén completos, cambiá esa línea del workflow por `npm run build`.

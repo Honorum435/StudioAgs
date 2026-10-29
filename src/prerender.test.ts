@@ -102,7 +102,7 @@ describe("jsonLd", () => {
 describe("headTags", () => {
   it("arma canonical, Open Graph y Twitter con URLs absolutas del sitio", () => {
     const tags = headTags({ siteUrl, business: completeBusiness });
-    const image = `${siteUrl}${SHARE_IMAGE.path}`;
+    const image = `${siteUrl}/${SHARE_IMAGE.path}`;
 
     expect(tags.find((tag) => tag.tag === "title")?.children).toBe(SITE_TITLE);
     expect(find(tags, "rel", "canonical")?.attrs?.href).toBe(`${siteUrl}/`);

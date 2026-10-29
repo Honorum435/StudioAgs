@@ -159,7 +159,7 @@ function heroImage(productId: string, widths: readonly number[], height: number)
 }
 
 export function imageUrl(spec: ImageSpec, width: number): string {
-  return `/images/${spec.base}-${width}.webp`;
+  return `images/${spec.base}-${width}.webp`;
 }
 
 // Plazo provisorio para los productos que el catálogo no informa.

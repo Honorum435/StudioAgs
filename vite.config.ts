@@ -65,7 +65,7 @@ function resolvePublishSettings(
       envProblem(
         "VITE_SITE_URL",
         rawSiteUrl,
-        "tiene que ser la dirección pública de la tienda, con https:// y sin ruta (por ejemplo https://studioags.com.ar).",
+        "tiene que ser la dirección pública de la tienda, con https:// (por ejemplo https://studioags.com.ar o https://usuario.github.io/StudioAgs).",
       ),
     );
   }
@@ -179,6 +179,8 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
 }
 
 export default defineConfig({
+  // Rutas relativas: la misma build sirve en un dominio propio o en una carpeta como GitHub Pages.
+  base: "./",
   plugins: [studioAgs()],
   test: {
     environment: "node",

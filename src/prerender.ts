@@ -21,7 +21,7 @@ export const SITE_DESCRIPTION =
   "Calendarios, fotos, tarjetas, vinilos y láminas personalizados. Elegí las opciones, mirá el precio y armá tu pedido por WhatsApp.";
 
 export const SHARE_IMAGE = {
-  path: "/images/compartir.jpg",
+  path: "images/compartir.jpg",
   width: 1200,
   height: 630,
   alt: "Un calendario magnético, un cuadro de flores prensadas y tarjetas personales de StudioAGS",
@@ -35,7 +35,7 @@ export interface ContentOptions {
 }
 
 export interface SiteOptions extends ContentOptions {
-  // Origen sin barra final, por ejemplo https://studioags.com.ar.
+  // Dirección pública sin barra final, por ejemplo https://studioags.com.ar o https://usuario.github.io/StudioAgs.
   siteUrl: string;
 }
 
@@ -79,8 +79,9 @@ export function serializeForScript(value: unknown): string {
   return JSON.stringify(value).replace(/</g, "\\u003c");
 }
 
+// Las rutas de la tienda son relativas ("images/…") para que funcione también dentro de una carpeta.
 function absolute(siteUrl: string, path: string): string {
-  return `${siteUrl}${path}`;
+  return `${siteUrl}/${path.replace(/^\//, "")}`;
 }
 
 function productOffer(product: CatalogProduct, storeId: string): Record<string, unknown> {

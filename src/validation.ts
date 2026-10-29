@@ -8,7 +8,7 @@ export function isValidWhatsAppNumber(value: string | undefined): boolean {
   return typeof value === "string" && WHATSAPP_NUMBER_PATTERN.test(value);
 }
 
-// Devuelve el origen (https://dominio[:puerto]) o null si no es un origen https:// sin ruta.
+// Devuelve la dirección https:// sin barra final (puede tener ruta, como en GitHub Pages) o null.
 export function normalizeSiteUrl(value: string | undefined): string | null {
   if (typeof value !== "string" || !value.startsWith("https://") || /\s/.test(value)) {
     return null;
@@ -22,12 +22,10 @@ export function normalizeSiteUrl(value: string | undefined): string | null {
   }
 
   const hasExtras =
-    url.username !== "" ||
-    url.password !== "" ||
-    url.pathname !== "/" ||
-    url.search !== "" ||
-    url.hash !== "" ||
-    /[?#]/.test(value);
+    url.username !== "" || url.password !== "" || url.search !== "" || url.hash !== "" || /[?#]/.test(value);
+  if (url.protocol !== "https:" || url.hostname === "" || hasExtras) {
+    return null;
+  }
 
-  return url.protocol === "https:" && url.hostname !== "" && !hasExtras ? url.origin : null;
+  return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
 }
