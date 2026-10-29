@@ -1,6 +1,8 @@
 import "./styles.css";
-import { categories, products, type CatalogProduct, type ProductVariant } from "./catalog";
+import { businessValue } from "./business";
+import { intents, products, type CatalogProduct, type IntentId } from "./catalog";
 import { WHATSAPP_NUMBER } from "./config";
+import { escapeHtml, formatPrice } from "./format";
 import { isValidWhatsAppNumber } from "./validation";
 
 interface CartLine {
@@ -37,7 +39,7 @@ cartDialog.innerHTML = `
 `;
 document.body.append(cartDialog);
 
-let activeCategory = "Todo";
+let activeIntent: IntentId | "todo" = "todo";
 let searchTerm = "";
 let cart: CartLine[] = [];
 const selectedVariants = new Map<string, string>();
@@ -56,49 +58,55 @@ function icon(name: "bag" | "close" | "search" | "arrow" | "plus" | "minus" | "t
   return `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${paths[name]}</svg>`;
 }
 
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (character) => {
-    const entities: Record<string, string> = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;",
-    };
-    return entities[character];
-  });
+interface ProductVariant {
+  id: string;
+  label: string;
+  price: number;
+  unit: string;
 }
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "ARS",
-    maximumFractionDigits: 0,
-  }).format(price);
+// Lista plana provisoria (combinaciones y adicionales) hasta que las tarjetas tengan botones por grupo.
+function getVariants(product: CatalogProduct): ProductVariant[] {
+  return [
+    ...product.combinations.map(({ id, label, price, unit }) => ({
+      id,
+      label: label || product.name,
+      price,
+      unit,
+    })),
+    ...product.addOns.map(({ id, label, price, unit }) => ({
+      id,
+      label: `Adicional: ${label}`,
+      price,
+      unit,
+    })),
+  ];
 }
 
 function getVariant(product: CatalogProduct, variantId: string): ProductVariant | undefined {
-  return product.variants.find((variant) => variant.id === variantId);
+  return getVariants(product).find((variant) => variant.id === variantId);
 }
 
 function getInitialVariant(product: CatalogProduct): ProductVariant {
+  const variants = getVariants(product);
   const savedVariantId = selectedVariants.get(product.id);
-  return product.variants.find((variant) => variant.id === savedVariantId) ?? product.variants[0];
+  return variants.find((variant) => variant.id === savedVariantId) ?? variants[0];
 }
 
 function renderProductCard(product: CatalogProduct): string {
+  const variants = getVariants(product);
   const variant = getInitialVariant(product);
-  const price = Math.min(...product.variants.map((item) => item.price));
+  const price = Math.min(...product.combinations.map((item) => item.price));
   const picker =
-    product.variants.length > 1
+    variants.length > 1
       ? `
         <label class="variant-picker">
           <span>Elegí una opción</span>
           <select data-variant-select data-product-id="${product.id}" aria-label="Elegí una opción para ${escapeHtml(product.name)}">
-            ${product.variants
+            ${variants
               .map(
                 (item) =>
-                  `<option value="${item.id}" ${item.id === variant.id ? "selected" : ""}>${escapeHtml(item.label)} · ${formatPrice(item.price)}</option>`,
+                  `<option value="${item.id}" ${item.id === variant.id ? "selected" : ""}>${escapeHtml(item.label)} · ${formatPrice(item.price)} (${escapeHtml(item.unit)})</option>`,
               )
               .join("")}
           </select>
@@ -111,20 +119,21 @@ function renderProductCard(product: CatalogProduct): string {
       <div class="product-image-wrap">
         <img
           class="product-image"
-          src="${product.image}"
+          src="/images/${product.id}.webp"
           alt="${escapeHtml(product.imageAlt)}"
           loading="lazy"
           width="760"
           height="1070"
         />
-        <span class="product-category">${escapeHtml(product.category)}</span>
+        ${product.personalizable ? '<span class="product-category">Personalizable</span>' : ""}
       </div>
       <div class="product-content">
         <div class="product-title-row">
           <h3>${escapeHtml(product.name)}</h3>
-          <span class="starting-price">${product.variants.length > 1 ? "Desde " : ""}${formatPrice(price)}</span>
+          <span class="starting-price">${product.combinations.length > 1 ? "Desde " : ""}${formatPrice(price)}</span>
         </div>
         <p class="product-description">${escapeHtml(product.description)}</p>
+        <p class="product-note">Producción: ${escapeHtml(businessValue(product.leadTime).text)}</p>
         ${product.note ? `<p class="product-note">${escapeHtml(product.note)}</p>` : ""}
         ${picker}
         <button class="add-button" type="button" data-action="add" data-product-id="${product.id}" data-variant-id="${variant.id}">
@@ -140,12 +149,15 @@ function getVisibleProducts(): CatalogProduct[] {
   const normalizedTerm = searchTerm.trim().toLocaleLowerCase("es");
 
   return products.filter((product) => {
-    const matchesCategory = activeCategory === "Todo" || product.category === activeCategory;
-    const searchable = `${product.name} ${product.category} ${product.description} ${product.variants
+    const matchesIntent = activeIntent === "todo" || product.intents.includes(activeIntent);
+    const intentLabels = intents
+      .filter((intent) => product.intents.includes(intent.id))
+      .map((intent) => intent.label);
+    const searchable = `${product.name} ${intentLabels.join(" ")} ${product.description} ${getVariants(product)
       .map((variant) => variant.label)
       .join(" ")}`.toLocaleLowerCase("es");
 
-    return matchesCategory && (!normalizedTerm || searchable.includes(normalizedTerm));
+    return matchesIntent && (!normalizedTerm || searchable.includes(normalizedTerm));
   });
 }
 
@@ -164,20 +176,24 @@ function renderProducts(): void {
     : `<div class="empty-state"><p>No encontramos productos con esa búsqueda.</p><button type="button" class="text-button" data-action="clear-filters">Ver todo el catálogo ${icon("arrow")}</button></div>`;
 }
 
-function renderCategories(): string {
-  return ["Todo", ...categories]
+function renderIntents(): string {
+  return [{ id: "todo", label: "Todo" }, ...intents]
     .map(
-      (category) => `
+      (intent) => `
         <button
-          class="filter-chip ${category === activeCategory ? "is-active" : ""}"
+          class="filter-chip ${intent.id === activeIntent ? "is-active" : ""}"
           type="button"
           data-action="filter"
-          data-category="${escapeHtml(category)}"
-          aria-pressed="${category === activeCategory}"
-        >${escapeHtml(category)}</button>
+          data-intent="${escapeHtml(intent.id)}"
+          aria-pressed="${intent.id === activeIntent}"
+        >${escapeHtml(intent.label)}</button>
       `,
     )
     .join("");
+}
+
+function toIntent(value: string | undefined): IntentId | "todo" {
+  return intents.find((intent) => intent.id === value)?.id ?? "todo";
 }
 
 function renderPage(): void {
@@ -242,7 +258,7 @@ function renderPage(): void {
           <p class="section-intro">Explorá las colecciones, elegí tus opciones y armá tu pedido en unos pocos pasos.</p>
         </div>
         <div class="catalog-toolbar">
-          <div class="filter-list" aria-label="Filtrar por colección">${renderCategories()}</div>
+          <div class="filter-list" aria-label="Filtrar por intención">${renderIntents()}</div>
           <label class="search-field">
             ${icon("search")}
             <span class="visually-hidden">Buscar en el catálogo</span>
@@ -453,9 +469,9 @@ document.addEventListener("click", (event) => {
 
   switch (action) {
     case "filter":
-      activeCategory = actionTarget.dataset.category ?? "Todo";
+      activeIntent = toIntent(actionTarget.dataset.intent);
       document.querySelectorAll<HTMLButtonElement>(".filter-chip").forEach((button) => {
-        const isActive = button.dataset.category === activeCategory;
+        const isActive = button.dataset.intent === activeIntent;
         button.classList.toggle("is-active", isActive);
         button.setAttribute("aria-pressed", String(isActive));
       });
@@ -489,14 +505,14 @@ document.addEventListener("click", (event) => {
       sendWhatsAppOrder();
       break;
     case "clear-filters":
-      activeCategory = "Todo";
+      activeIntent = "todo";
       searchTerm = "";
       const searchInput = document.querySelector<HTMLInputElement>("[data-search]");
       if (searchInput) {
         searchInput.value = "";
       }
       document.querySelectorAll<HTMLButtonElement>(".filter-chip").forEach((button) => {
-        const isActive = button.dataset.category === "Todo";
+        const isActive = button.dataset.intent === "todo";
         button.classList.toggle("is-active", isActive);
         button.setAttribute("aria-pressed", String(isActive));
       });

@@ -1,6 +1,11 @@
 /// <reference types="vitest/config" />
 import { defineConfig, loadEnv, type HtmlTagDescriptor, type Plugin } from "vite";
 import { business as defaultBusiness, listPendingFields, type BusinessInfo } from "./src/business";
+import {
+  listPendingCatalogFields,
+  products as defaultCatalog,
+  type CatalogProduct,
+} from "./src/catalog";
 import { isValidWhatsAppNumber, normalizeSiteUrl } from "./src/validation";
 
 export const CONTENT_SECURITY_POLICY = [
@@ -29,6 +34,8 @@ interface PublishSettings {
 export interface StudioAgsOptions {
   // Para tests: reemplaza los datos de src/business.ts.
   business?: BusinessInfo;
+  // Para tests: reemplaza los productos de src/catalog.ts.
+  catalog?: readonly CatalogProduct[];
 }
 
 function resolvePublishSettings(
@@ -36,11 +43,13 @@ function resolvePublishSettings(
   mode: string,
   env: Record<string, string>,
   business: BusinessInfo,
+  catalog: readonly CatalogProduct[],
 ): PublishSettings {
   const whatsappNumber = env.VITE_WHATSAPP_NUMBER ?? "";
   const rawSiteUrl = env.VITE_SITE_URL ?? "";
   const siteUrl = normalizeSiteUrl(rawSiteUrl);
   const pendingFields = listPendingFields(business);
+  const pendingCatalogFields = listPendingCatalogFields(catalog);
   const problems: string[] = [];
 
   if (!isValidWhatsAppNumber(whatsappNumber)) {
@@ -65,6 +74,10 @@ function resolvePublishSettings(
 
   if (pendingFields.length > 0) {
     problems.push(`src/business.ts todavía tiene datos de ejemplo: ${pendingFields.join(", ")}.`);
+  }
+
+  if (pendingCatalogFields.length > 0) {
+    problems.push(`src/catalog.ts todavía tiene datos de ejemplo: ${pendingCatalogFields.join(", ")}.`);
   }
 
   return {
@@ -95,6 +108,7 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
         config.mode,
         env,
         options.business ?? defaultBusiness,
+        options.catalog ?? defaultCatalog,
       );
       if (settings.problems.length === 0) {
         return;
@@ -106,7 +120,7 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
           [
             "No se puede preparar la tienda para publicar:",
             list,
-            'Completá .env (copiá .env.example) o las variables del hosting y sacá los example(...) de src/business.ts. Para una versión de prueba usá "npm run build:prueba".',
+            'Completá .env (copiá .env.example) o las variables del hosting y sacá los example(...) de src/business.ts y src/catalog.ts. Para una versión de prueba usá "npm run build:prueba".',
           ].join("\n"),
         );
       }

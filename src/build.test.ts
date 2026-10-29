@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 import { build, createLogger, type InlineConfig, type Logger } from "vite";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { studioAgs } from "../vite.config";
-import { example, type BusinessInfo } from "./business";
+import { businessValue, example, type BusinessInfo } from "./business";
+import { products, type CatalogProduct } from "./catalog";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const configFile = join(root, "vite.config.ts");
@@ -25,11 +26,17 @@ const completeBusiness: BusinessInfo = {
   pricesUpdatedAt: { year: 2026, month: 7, day: 14 },
 };
 
+const completeCatalog: CatalogProduct[] = products.map((product) => ({
+  ...product,
+  leadTime: businessValue(product.leadTime),
+}));
+
 interface BuildCase {
   env: Record<string, string>;
   mode?: string;
-  // Sin datos propios usa vite.config.ts tal cual, con src/business.ts real.
+  // Sin datos propios usa vite.config.ts tal cual, con src/business.ts y src/catalog.ts reales.
   business?: BusinessInfo;
+  catalog?: readonly CatalogProduct[];
 }
 
 let workDir = "";
@@ -64,7 +71,7 @@ function outDir(): string {
   return join(workDir, "dist");
 }
 
-async function runBuild({ env, mode, business }: BuildCase): Promise<{ html: string; warnings: string[] }> {
+async function runBuild({ env, mode, business, catalog }: BuildCase): Promise<{ html: string; warnings: string[] }> {
   const envDir = join(workDir, "env");
   await mkdir(envDir);
   const envFile = Object.entries(env).map(([key, value]) => `${key}=${value}`);
@@ -80,8 +87,8 @@ async function runBuild({ env, mode, business }: BuildCase): Promise<{ html: str
 
   const config: InlineConfig = {
     root,
-    configFile: business ? false : configFile,
-    plugins: business ? studioAgs({ business }) : [],
+    configFile: business || catalog ? false : configFile,
+    plugins: business || catalog ? studioAgs({ business, catalog }) : [],
     mode,
     envDir,
     cacheDir: join(workDir, "cache"),
@@ -139,6 +146,23 @@ describe("build", { timeout: 60_000 }, () => {
     ).rejects.toThrow(/src\/business\.ts todavía tiene datos de ejemplo: shipping\./);
   });
 
+  it("falla si quedan plazos de ejemplo en el catálogo y los nombra", async () => {
+    const catalog = completeCatalog.map((product) =>
+      product.id === "tarjetas"
+        ? { ...product, leadTime: example(businessValue(product.leadTime)) }
+        : product,
+    );
+    const result = runBuild({
+      env: { VITE_WHATSAPP_NUMBER: "5491123456789", VITE_SITE_URL: "https://studioags.com.ar" },
+      business: completeBusiness,
+      catalog,
+    });
+    await expect(result).rejects.toThrow(
+      /src\/catalog\.ts todavía tiene datos de ejemplo: tarjetas\.leadTime\./,
+    );
+    await expect(result).rejects.not.toThrow(/src\/business\.ts todavía/);
+  });
+
   it("en modo prueba arma sin número, avisa y agrega noindex", async () => {
     const { html, warnings } = await runBuild({ env: {}, mode: "prueba" });
 
@@ -152,6 +176,7 @@ describe("build", { timeout: 60_000 }, () => {
     const { html, warnings } = await runBuild({
       env: { VITE_WHATSAPP_NUMBER: "5491123456789", VITE_SITE_URL: "https://studioags.com.ar" },
       business: completeBusiness,
+      catalog: completeCatalog,
     });
 
     const cspTag = /<meta http-equiv="Content-Security-Policy" content="([^"]*)">/.exec(html);
