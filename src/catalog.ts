@@ -143,17 +143,19 @@ function singleGroup(
   return { groups, combinations };
 }
 
-function cardImage(base: string): ImageSpec {
-  return { base, widths: [400, 800], width: 800, height: 600 };
+// Anchos y alto del archivo más ancho tal como los produce extraer-imagenes.py, que nunca
+// amplía: si el recorte del PDF mide menos de 800 px, el archivo mayor tiene ese ancho.
+function cardImage(base: string, widths: readonly number[], height: number): ImageSpec {
+  return { base, widths, width: Math.max(...widths), height };
 }
 
-// Páginas del PDF de 613 × 860 pt.
+// Páginas del PDF de 613 × 860 pt, renderizadas a 300 dpi.
 function fichaImage(productId: string): ImageSpec {
-  return { base: `ficha-${productId}`, widths: [1200, 1800], width: 1800, height: 2525 };
+  return { base: `ficha-${productId}`, widths: [1200, 1800], width: 1800, height: 2523 };
 }
 
-function heroImage(productId: string): ImageSpec {
-  return { base: `hero-${productId}`, widths: [400, 800], width: 800, height: 1000 };
+function heroImage(productId: string, widths: readonly number[], height: number): ImageSpec {
+  return { base: `hero-${productId}`, widths, width: Math.max(...widths), height };
 }
 
 export function imageUrl(spec: ImageSpec, width: number): string {
@@ -273,7 +275,7 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["organizarte", "regalar", "marca"],
     leadTime: pendingLeadTime(),
-    images: { card: cardImage("calendarios"), ficha: fichaImage("calendarios") },
+    images: { card: cardImage("calendarios", [400, 800], 600), ficha: fichaImage("calendarios") },
   },
   {
     id: "fotos",
@@ -298,7 +300,11 @@ export const products: readonly CatalogProduct[] = [
       quality: photoQuality,
       howToSend: photoSending,
     },
-    images: { card: cardImage("fotos"), ficha: fichaImage("fotos"), hero: heroImage("fotos") },
+    images: {
+      card: cardImage("fotos", [400, 585], 439),
+      ficha: fichaImage("fotos"),
+      hero: heroImage("fotos", [400, 434], 542),
+    },
   },
   {
     id: "pizarra-orma",
@@ -321,7 +327,7 @@ export const products: readonly CatalogProduct[] = [
       quality: photoQuality,
       howToSend: photoSending,
     },
-    images: { card: cardImage("pizarra-orma"), ficha: fichaImage("pizarra-orma") },
+    images: { card: cardImage("pizarra-orma", [400, 617], 463), ficha: fichaImage("pizarra-orma") },
   },
   {
     id: "entre-flores",
@@ -337,7 +343,7 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["regalar", "decorar"],
     leadTime: pendingLeadTime(),
-    images: { card: cardImage("entre-flores"), ficha: fichaImage("entre-flores") },
+    images: { card: cardImage("entre-flores", [400, 512], 384), ficha: fichaImage("entre-flores") },
   },
   {
     id: "vinilos",
@@ -356,7 +362,7 @@ export const products: readonly CatalogProduct[] = [
     intents: ["marca", "decorar"],
     // El catálogo dice "de 1 a 4 días", sin aclarar si son hábiles.
     leadTime: { min: 1, max: 4, text: "De 1 a 4 días" },
-    images: { card: cardImage("vinilos"), ficha: fichaImage("vinilos") },
+    images: { card: cardImage("vinilos", [369], 277), ficha: fichaImage("vinilos") },
   },
   {
     id: "tarjetas",
@@ -371,7 +377,7 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["marca"],
     leadTime: pendingLeadTime(),
-    images: { card: cardImage("tarjetas"), ficha: fichaImage("tarjetas") },
+    images: { card: cardImage("tarjetas", [400, 679], 509), ficha: fichaImage("tarjetas") },
   },
   {
     id: "bitacoras",
@@ -390,9 +396,9 @@ export const products: readonly CatalogProduct[] = [
     intents: ["organizarte", "regalar"],
     leadTime: pendingLeadTime(),
     images: {
-      card: cardImage("bitacoras"),
+      card: cardImage("bitacoras", [400, 800], 600),
       ficha: fichaImage("bitacoras"),
-      hero: heroImage("bitacoras"),
+      hero: heroImage("bitacoras", [400, 800], 1000),
     },
   },
   {
@@ -414,7 +420,7 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["decorar", "regalar"],
     leadTime: pendingLeadTime(),
-    images: { card: cardImage("laminas"), ficha: fichaImage("laminas") },
+    images: { card: cardImage("laminas", [400, 740], 555), ficha: fichaImage("laminas") },
   },
 ];
 
