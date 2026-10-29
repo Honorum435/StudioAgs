@@ -1,14 +1,11 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LAYER_STATE_KEY, createOverlays, type Overlays } from "./overlays";
+import { nextPopState } from "./test-utils";
 
 // happy-dom abre y cierra <dialog> y maneja pushState/back/popstate, pero no traduce Escape ni el
 // gesto Atrás en un cierre: esos casos se simulan con la secuencia que dispara el navegador
 // (cancel y después close, sin popstate).
-
-function nextPopState(): Promise<PopStateEvent> {
-  return new Promise((resolve) => window.addEventListener("popstate", resolve, { once: true }));
-}
 
 function markedLayer(): unknown {
   const state = window.history.state as Record<string, unknown> | null;
@@ -59,7 +56,6 @@ describe("abrir", () => {
     expect(markedLayer()).toBe("ficha");
     expect(document.documentElement.dataset.layer).toBe("ficha");
     expect(overlays.current()).toBe("ficha");
-    expect(overlays.isOpen("ficha")).toBe(true);
   });
 
   it("no abre una segunda capa encima ni la misma dos veces", () => {

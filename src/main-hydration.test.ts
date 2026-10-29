@@ -4,14 +4,11 @@ import { STORAGE_KEY, createOrderStore, type OrderStore } from "./cart";
 import { initialSelection, products } from "./catalog";
 import type { Overlays } from "./overlays";
 import { injectApp, renderDocument } from "./prerender";
+import { nextPopState, squash } from "./test-utils";
 
 // Hidratación completa sobre el HTML que genera el prerender, con main.ts tal cual arranca.
 
 let overlays: Overlays | null = null;
-
-function squash(value: string | null | undefined): string {
-  return (value ?? "").replace(/[ \t\n\r\f]+/g, " ").trim();
-}
 
 function loadPrerenderedPage(): void {
   const html = injectApp('<div id="app"></div>', renderDocument());
@@ -42,10 +39,6 @@ function $<T extends Element = HTMLElement>(selector: string): T {
 
 function bar(): HTMLElement {
   return $("[data-sticky-bar]");
-}
-
-function nextPopState(): Promise<Event> {
-  return new Promise((resolve) => window.addEventListener("popstate", resolve, { once: true }));
 }
 
 beforeEach(() => {

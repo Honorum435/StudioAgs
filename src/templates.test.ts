@@ -16,6 +16,7 @@ import {
   stickyBarContent,
   type CartSummary,
 } from "./templates";
+import { squash } from "./test-utils";
 
 function product(id: string): CatalogProduct {
   const found = products.find((item) => item.id === id);
@@ -27,11 +28,6 @@ function product(id: string): CatalogProduct {
 
 function parse(html: string): Document {
   return new DOMParser().parseFromString(`<!doctype html><html><body>${html}</body></html>`, "text/html");
-}
-
-// Solo espacios ASCII: el espacio duro de los precios tiene que llegar intacto.
-function squash(value: string): string {
-  return value.replace(/[ \t\n\r\f]+/g, " ").trim();
 }
 
 function text(element: Element | null): string {

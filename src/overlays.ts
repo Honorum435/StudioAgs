@@ -21,7 +21,6 @@ export interface Overlays {
   open(name: string, options?: OpenOptions): boolean;
   // Se resuelve cuando el historial ya volvió: recién ahí conviene desplazar la página.
   close(name: string): Promise<void>;
-  isOpen(name: string): boolean;
   current(): string | null;
   subscribe(listener: (current: string | null) => void): () => void;
   destroy(): void;
@@ -209,8 +208,6 @@ export function createOverlays(win: Window = window): Overlays {
       layer.dialog.close();
       return closed;
     },
-
-    isOpen: (name) => layers.get(name)?.dialog.open ?? false,
 
     current: () => openLayer()?.name ?? null,
 

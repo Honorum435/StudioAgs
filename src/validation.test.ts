@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isValidSiteUrl, isValidWhatsAppNumber, normalizeSiteUrl } from "./validation";
+import { isValidWhatsAppNumber, normalizeSiteUrl } from "./validation";
 
 describe("isValidWhatsAppNumber", () => {
   it("acepta un número internacional de 13 dígitos", () => {
@@ -27,9 +27,9 @@ describe("isValidWhatsAppNumber", () => {
   });
 });
 
-describe("isValidSiteUrl", () => {
+describe("normalizeSiteUrl", () => {
   it("acepta un origen https", () => {
-    expect(isValidSiteUrl("https://studioags.com.ar")).toBe(true);
+    expect(normalizeSiteUrl("https://studioags.com.ar")).toBe("https://studioags.com.ar");
   });
 
   it("acepta la barra final y devuelve el origen sin ella", () => {
@@ -52,7 +52,6 @@ describe("isValidSiteUrl", () => {
     ["con espacios", " https://studioags.com.ar"],
     ["sin barras", "https:studioags.com.ar"],
   ])("rechaza una URL %s", (_case, value) => {
-    expect(isValidSiteUrl(value)).toBe(false);
     expect(normalizeSiteUrl(value)).toBeNull();
   });
 });

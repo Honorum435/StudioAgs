@@ -3,7 +3,6 @@ import { products } from "./catalog";
 import {
   ALL_INTENTS,
   isIntentFilter,
-  matchesQuery,
   normalizeText,
   searchText,
   visibleProductIds,
@@ -74,9 +73,10 @@ describe("búsqueda", () => {
     expect(visible({ ...state, intent: ALL_INTENTS })).toEqual(["laminas"]);
   });
 
-  it("matchesQuery compara contra el texto normalizado", () => {
+  it("compara la búsqueda normalizada contra el texto normalizado del producto", () => {
     const tarjetas = products.find((product) => product.id === "tarjetas")!;
-    expect(matchesQuery(searchText(tarjetas), "Laminado")).toBe(true);
-    expect(matchesQuery(searchText(tarjetas), "laminas")).toBe(false);
+    expect(searchText(tarjetas)).toContain("laminado");
+    expect(visible({ query: "LAMINADO" })).toContain("tarjetas");
+    expect(visible({ query: "laminas" })).not.toContain("tarjetas");
   });
 });

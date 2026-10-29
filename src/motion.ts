@@ -25,7 +25,7 @@ function matches(win: Window, query: string): boolean {
 }
 
 // Se consulta en cada uso: si la persona cambia la preferencia, vale desde el próximo gesto.
-export function prefersReducedMotion(win: Window = window): boolean {
+function prefersReducedMotion(win: Window = window): boolean {
   return matches(win, REDUCED_MOTION);
 }
 

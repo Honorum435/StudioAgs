@@ -31,7 +31,3 @@ export function normalizeSiteUrl(value: string | undefined): string | null {
 
   return url.protocol === "https:" && url.hostname !== "" && !hasExtras ? url.origin : null;
 }
-
-export function isValidSiteUrl(value: string | undefined): boolean {
-  return normalizeSiteUrl(value) !== null;
-}

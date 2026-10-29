@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { createOrderStore, type OrderSummary } from "./cart";
 import { formatPrice } from "./format";
+import { ORDER_CODE_PATTERN } from "./validation";
 import {
   ORDER_CODE_ALPHABET,
-  ORDER_CODE_PATTERN,
   WHATSAPP_URL_LIMIT,
   buildOrderMessage,
   buildWhatsAppLink,

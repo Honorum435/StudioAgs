@@ -177,19 +177,6 @@ export function clampQuantity(value: number): number {
   return Math.min(MAX_QUANTITY, Math.max(MIN_QUANTITY, Math.trunc(value)));
 }
 
-export function createMemoryStorage(): StorageLike {
-  const items = new Map<string, string>();
-  return {
-    getItem: (key) => items.get(key) ?? null,
-    setItem: (key, value) => {
-      items.set(key, String(value));
-    },
-    removeItem: (key) => {
-      items.delete(key);
-    },
-  };
-}
-
 export function noticeMessage(notice: RestoreNotice): string {
   if (notice.kind === "prices") {
     return `Actualizamos los precios al ${formatCalendarDate(notice.current)}: revisá el subtotal.`;

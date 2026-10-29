@@ -12,6 +12,8 @@ import {
   type ResolvedSelection,
 } from "./catalog";
 import { escapeHtml, formatLongDate, formatPrice } from "./format";
+// Solo el tipo: el prerender de vite.config.ts no carga el código de whatsapp.ts.
+import type { WhatsAppLink } from "./whatsapp";
 
 // Módulo puro: lo usan el prerender de vite.config.ts y el cliente. Nada de DOM, import.meta.env
 // ni estilos en línea (la CSP no permite 'unsafe-inline').
@@ -300,21 +302,16 @@ export function restoreNotice(messages: readonly string[]): string {
     </div>`;
 }
 
-export interface WhatsAppLinkView {
-  url: string;
-  tooLong: boolean;
-}
-
 export type CheckoutStage =
   | { kind: "draft"; changed: boolean }
-  | { kind: "confirmed"; code: string; link: WhatsAppLinkView | null }
-  | { kind: "sent"; code: string; via: SentVia; link: WhatsAppLinkView | null };
+  | { kind: "confirmed"; code: string; link: WhatsAppLink | null }
+  | { kind: "sent"; code: string; via: SentVia; link: WhatsAppLink | null };
 
 export function sentQuestion(via: SentVia): string {
   return via === "copy" ? "Copiaste el pedido. ¿Lo enviaste?" : "Abriste WhatsApp con este pedido. ¿Lo enviaste?";
 }
 
-function whatsappLink(link: WhatsAppLinkView, label: string, className: string): string {
+function whatsappLink(link: WhatsAppLink, label: string, className: string): string {
   return `<a class="${className} checkout-button" href="${attr(link.url)}" target="_blank" rel="noopener noreferrer" data-action="open-whatsapp">${escapeHtml(label)}<span class="visually-hidden"> (se abre en otra pestaña)</span></a>`;
 }
 
@@ -719,7 +716,7 @@ export function fichaContent(product: CatalogProduct, placeholderSrc?: string): 
       <img class="ficha-placeholder" data-ficha-placeholder src="${attr(placeholder)}" width="${card.width}" height="${card.height}" alt="" />
       <img class="ficha-image" data-ficha-image src="${attr(imageUrl(ficha, ficha.width))}" srcset="${attr(srcset(ficha))}" sizes="${attr(FICHA_SIZES)}" width="${ficha.width}" height="${ficha.height}" alt="${attr(fichaAlt(product))}" decoding="async" hidden />
     </div>
-    <p class="ficha-message" data-ficha-error hidden>No pudimos cargar la ficha. Revisá tu conexión y volvé a abrirla.</p>`;
+    <p class="ficha-message" role="alert" data-ficha-error hidden>No pudimos cargar la ficha. Revisá tu conexión y volvé a abrirla.</p>`;
 }
 
 export function fichaDialog(): string {

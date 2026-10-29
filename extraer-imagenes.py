@@ -257,7 +257,13 @@ def generar_compartir(doc, salida: Path) -> Path:
     return ruta
 
 
+def validar_pagina(doc: fitz.Document, pagina: int, origen: str) -> None:
+    if not 1 <= pagina <= doc.page_count:
+        raise SystemExit(f"{origen}: la página {pagina} no existe; el PDF tiene de la 1 a la {doc.page_count}.")
+
+
 def listar(doc: fitz.Document, pagina: int) -> None:
+    validar_pagina(doc, pagina, "--listar")
     page = doc[pagina - 1]
     for indice, imagen in enumerate(page.get_images(full=True)):
         xref, _, ancho, alto = imagen[:4]
@@ -278,12 +284,24 @@ def main() -> None:
     parser.add_argument("--listar", type=int, metavar="PAGINA", help="lista las imágenes embebidas de una página")
     args = parser.parse_args()
 
+    if not args.pdf.is_file():
+        raise SystemExit(f"No existe el PDF {args.pdf}.")
     doc = fitz.open(args.pdf)
-    if args.listar:
+    if args.listar is not None:
         listar(doc, args.listar)
         return
     if not args.salida.is_dir():
         raise SystemExit(f"No existe la carpeta {args.salida}.")
+
+    # Antes de escribir nada: cada página de la dirección de arte tiene que existir en este PDF.
+    paginas = [
+        *((f"TARJETAS[{producto!r}]", origen.pagina) for producto, origen in TARJETAS.items()),
+        *((f"HERO[{producto!r}]", origen.pagina) for producto, origen in HERO.items()),
+        *((f"FICHAS[{producto!r}]", pagina) for producto, pagina in FICHAS.items()),
+        *((f"COMPARTIR[{indice}]", foto.pagina) for indice, foto in enumerate(COMPARTIR)),
+    ]
+    for origen, pagina in paginas:
+        validar_pagina(doc, pagina, origen)
 
     tarjetas = {producto: generar_foto(doc, origen, 4 / 3, producto, args.salida) for producto, origen in TARJETAS.items()}
     heroes = {producto: generar_foto(doc, origen, 4 / 5, f"hero-{producto}", args.salida) for producto, origen in HERO.items()}
@@ -317,4 +335,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
     main()

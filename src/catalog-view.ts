@@ -22,7 +22,6 @@ export interface CatalogViewOptions {
 }
 
 export interface CatalogView {
-  getFilters(): FilterState;
   destroy(): void;
 }
 
@@ -405,7 +404,6 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   }
 
   return {
-    getFilters: () => filters,
     destroy() {
       removeActions();
       root.removeEventListener("change", onChange);

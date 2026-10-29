@@ -1,12 +1,10 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { business } from "./business";
 import { createOrderStore, type OrderStore } from "./cart";
-import { products } from "./catalog";
 import { FICHA_LAYER, RESULT_COUNT_DELAY, mountCatalogView, type CatalogView } from "./catalog-view";
 import { formatPrice } from "./format";
 import { LAYER_STATE_KEY, createOverlays, type Overlays } from "./overlays";
-import { renderPage } from "./templates";
+import { mountShell, nextPopState, squash } from "./test-utils";
 
 let root: HTMLElement;
 let store: OrderStore;
@@ -21,8 +19,7 @@ function mount(): void {
 
 beforeEach(() => {
   window.history.replaceState(null, "");
-  document.body.innerHTML = `<div id="app" data-prerendered>${renderPage({ business, catalog: products })}</div>`;
-  root = document.querySelector<HTMLElement>("#app")!;
+  root = mountShell();
 });
 
 afterEach(() => {
@@ -35,10 +32,6 @@ afterEach(() => {
 
 function card(id: string): HTMLElement {
   return root.querySelector<HTMLElement>(`#producto-${id}`)!;
-}
-
-function squash(value: string | null | undefined): string {
-  return (value ?? "").replace(/[ \t\n\r\f]+/g, " ").trim();
 }
 
 function priceText(id: string): string {
@@ -230,7 +223,6 @@ describe("filtros y búsqueda", () => {
 
     searchAll.click();
     expect(input.value).toBe("laminas");
-    expect(view.getFilters()).toEqual({ intent: "todo", query: "laminas" });
     expect(chip("todo").getAttribute("aria-pressed")).toBe("true");
     expect(visibleIds()).toEqual(["laminas"]);
     expect(emptyState().hidden).toBe(true);
@@ -303,10 +295,6 @@ describe("Ver ficha", () => {
     return intercepted;
   }
 
-  function nextPopState(): Promise<Event> {
-    return new Promise((resolve) => window.addEventListener("popstate", resolve, { once: true }));
-  }
-
   it("intercepta el enlace y abre el diálogo con la foto de la tarjeta mientras carga la página", () => {
     mount();
     const link = fichaLink("tarjetas");
@@ -360,6 +348,19 @@ describe("Ver ficha", () => {
     expect(image.hidden).toBe(true);
     body().dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
     expect(body().querySelector(".ficha-frame")!.classList.contains("is-zoomed")).toBe(false);
+  });
+
+  // El anunciador de afuera queda inerte con el diálogo modal abierto: el aviso va como alerta adentro.
+  it("el mensaje de error de la ficha se anuncia como alerta dentro del diálogo", () => {
+    mount();
+    clickLink(fichaLink("tarjetas"));
+    body().querySelector<HTMLImageElement>("[data-ficha-image]")!.dispatchEvent(new Event("error"));
+
+    const error = body().querySelector<HTMLElement>("[data-ficha-error]")!;
+    expect(error.hidden).toBe(false);
+    expect(error.getAttribute("role")).toBe("alert");
+    expect(dialog().contains(error)).toBe(true);
+    expect(squash(error.textContent)).toBe("No pudimos cargar la ficha. Revisá tu conexión y volvé a abrirla.");
   });
 
   it("con Ctrl o Cmd el enlace abre la imagen como siempre", () => {

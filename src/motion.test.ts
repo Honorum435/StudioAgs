@@ -1,14 +1,13 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { business } from "./business";
-import { createMemoryStorage, createOrderStore, type OrderStore, type StorageLike } from "./cart";
+import { createOrderStore, type OrderStore, type StorageLike } from "./cart";
 import { mountCartView, type CartView } from "./cart-view";
 import { initialSelection, products } from "./catalog";
 import { ADDED_LABEL, mountCatalogView, type CatalogView } from "./catalog-view";
 import { formatPrice } from "./format";
 import { SWAP_DURATION, SWAP_HOLD, popNumber, scrollToTarget, slidingIndicator, swapText, tilt } from "./motion";
 import { createOverlays, type Overlays } from "./overlays";
-import { renderPage } from "./templates";
+import { createMemoryStorage, mountShell, squash } from "./test-utils";
 
 // Las animaciones se ven en el navegador; acá se prueba qué clases, textos y variables se ponen,
 // en qué orden, y que con "reducir movimiento" todo llega al estado final al instante.
@@ -51,8 +50,7 @@ function mount(storage: StorageLike | null = null): void {
 
 beforeEach(() => {
   window.history.replaceState(null, "");
-  document.body.innerHTML = `<div id="app" data-prerendered>${renderPage({ business, catalog: products })}</div>`;
-  root = document.querySelector<HTMLElement>("#app")!;
+  root = mountShell();
 });
 
 afterEach(() => {
@@ -66,10 +64,6 @@ afterEach(() => {
   vi.restoreAllMocks();
   delete document.documentElement.dataset.layer;
 });
-
-function squash(value: string | null | undefined): string {
-  return (value ?? "").replace(/[ \t\n\r\f]+/g, " ").trim();
-}
 
 function $<T extends Element = HTMLElement>(selector: string): T {
   return root.querySelector<T>(selector)!;

@@ -72,10 +72,6 @@ function containsAll(haystack: string, words: readonly string[]): boolean {
   return words.every((word) => haystack.includes(word));
 }
 
-export function matchesQuery(haystack: string, query: string): boolean {
-  return containsAll(haystack, queryWords(query));
-}
-
 export function visibleProductIds(
   catalog: readonly CatalogProduct[],
   state: FilterState,

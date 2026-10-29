@@ -1,19 +1,17 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { business } from "./business";
 import {
   IDEA_MAX_LENGTH,
   STORAGE_KEY,
-  createMemoryStorage,
   createOrderStore,
   type OrderStore,
   type StorageLike,
 } from "./cart";
 import { initialSelection, products } from "./catalog";
 import { IDEA_COUNTER_FROM, ORDER_LAYER, mountCartView, type CartView } from "./cart-view";
-import { formatPrice } from "./format";
+import { formatPrice, toIsoDate } from "./format";
 import { createOverlays, type Overlays } from "./overlays";
-import { renderPage } from "./templates";
+import { createMemoryStorage, mountShell, squash } from "./test-utils";
 import { buildOrderMessage } from "./whatsapp";
 
 const NUMBER = "5491123456789";
@@ -43,8 +41,7 @@ function mount(options: MountOptions = {}): void {
 
 beforeEach(() => {
   window.history.replaceState(null, "");
-  document.body.innerHTML = `<div id="app" data-prerendered>${renderPage({ business, catalog: products })}</div>`;
-  root = document.querySelector<HTMLElement>("#app")!;
+  root = mountShell();
 });
 
 afterEach(() => {
@@ -55,10 +52,6 @@ afterEach(() => {
   delete (document as unknown as Record<string, unknown>).execCommand;
   delete document.documentElement.dataset.layer;
 });
-
-function squash(value: string | null | undefined): string {
-  return (value ?? "").replace(/[ \t\n\r\f]+/g, " ").trim();
-}
 
 function add(id: string, addOnIds: string[] = [], quantity = 1): string {
   const product = products.find((item) => item.id === id)!;
@@ -336,6 +329,26 @@ describe("formulario", () => {
     add("laminas");
     expect(squash($(".cart-privacy").textContent)).toContain("quedan guardados solo en este navegador");
   });
+
+  it("'Vaciar pedido' vacía las líneas, borra lo guardado, lo anuncia y enfoca 'Ver el catálogo'", () => {
+    mount();
+    add("laminas");
+    add("fotos");
+    openPanel();
+    fillForm();
+    expect(storage.getItem(STORAGE_KEY)).not.toBeNull();
+
+    const clear = $<HTMLButtonElement>('[data-action="clear-order"]');
+    clear.focus();
+    clear.click();
+
+    expect(store.getState().lines).toEqual([]);
+    expect(store.getState().form.name).toBe("");
+    expect(storage.getItem(STORAGE_KEY)).toBeNull();
+    expect(live()).toBe("Vaciaste el pedido.");
+    expect(root.querySelector('[data-action="clear-order"]')).toBeNull();
+    expect(document.activeElement).toBe($('[data-cart-content] [data-action="browse-products"]'));
+  });
 });
 
 describe("Continuar", () => {
@@ -434,6 +447,81 @@ describe("Continuar", () => {
       "El envío por WhatsApp todavía no está configurado. Copiá el pedido y mandalo por el chat.",
     );
     expect($('[data-action="copy-order"]').classList.contains("primary-button")).toBe(true);
+  });
+
+  it("después de un intento con errores, el Continuar válido limpia el resumen y enfoca el aviso", () => {
+    mount();
+    add("tarjetas");
+    openPanel();
+    continueOrder();
+    expect(live().startsWith("Revisá")).toBe(true);
+
+    fillForm();
+    continueOrder();
+    expect(store.getState().status).toBe("confirmado");
+    expect($("[data-cart-live]").textContent).toBe("");
+    expect(document.activeElement).toBe($("[data-checkout-focus]"));
+  });
+
+  it("con envío y sin localidad marca la localidad, la describe con su error y la enfoca", () => {
+    mount();
+    add("tarjetas");
+    openPanel();
+    fillForm("Ana", "envio");
+    continueOrder();
+    const locality = $<HTMLInputElement>("#pedido-localidad");
+    const error = $("#pedido-localidad-error");
+
+    expect(error.hidden).toBe(false);
+    expect(squash(error.textContent)).toBe("Escribí la localidad para el envío.");
+    expect(locality.getAttribute("aria-invalid")).toBe("true");
+    expect(locality.getAttribute("aria-describedby")).toBe("pedido-localidad-error");
+    expect(document.activeElement).toBe(locality);
+    expect(live()).toBe("Revisá un dato: Escribí la localidad para el envío.");
+    expect(store.getState().status).toBe("borrador");
+  });
+
+  it("una fecha antes del plazo de producción avisa sin frenar: Continuar confirma igual", () => {
+    mount();
+    add("laminas");
+    openPanel();
+    fillForm();
+    const today = toIsoDate(store.today());
+    // Hoy no es pasado pero queda antes del primer día posible según el plazo.
+    expect(toIsoDate(store.earliestDate()!) > today).toBe(true);
+    const date = $<HTMLInputElement>("#pedido-fecha");
+    type(date, today);
+    const warning = $("#pedido-fecha-aviso");
+
+    expect(warning.hidden).toBe(false);
+    expect(squash(warning.textContent)).toContain("Puede que no llegue para esa fecha");
+    expect(date.getAttribute("aria-describedby")?.split(" ")).toContain("pedido-fecha-aviso");
+    expect(date.hasAttribute("aria-invalid")).toBe(false);
+
+    continueOrder();
+    expect(store.getState().status).toBe("confirmado");
+    expect($("#pedido-fecha-error").hidden).toBe(true);
+    expect(whatsappLink()).not.toBeNull();
+  });
+
+  it("una fecha pasada es un error: Continuar no confirma y enfoca la fecha", () => {
+    mount();
+    add("laminas");
+    openPanel();
+    fillForm();
+    const date = $<HTMLInputElement>("#pedido-fecha");
+    // El reloj del almacén está fijo en el 29 de octubre de 2026.
+    type(date, "2026-10-28");
+    continueOrder();
+    const error = $("#pedido-fecha-error");
+
+    expect(error.hidden).toBe(false);
+    expect(squash(error.textContent)).toBe("Elegí una fecha desde hoy.");
+    expect(date.getAttribute("aria-invalid")).toBe("true");
+    expect(date.getAttribute("aria-describedby")).toBe("pedido-fecha-error");
+    expect(document.activeElement).toBe(date);
+    expect(store.getState().status).toBe("borrador");
+    expect(whatsappLink()).toBeNull();
   });
 
   it("si el enlace es demasiado largo, destaca 'Copiar pedido'", () => {

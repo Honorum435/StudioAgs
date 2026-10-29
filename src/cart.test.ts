@@ -7,7 +7,6 @@ import {
   SENT_LIFETIME,
   STORAGE_KEY,
   STORAGE_VERSION,
-  createMemoryStorage,
   createOrderStore,
   noticeMessage,
   type OrderStoreOptions,
@@ -15,7 +14,9 @@ import {
 } from "./cart";
 import { products, type CatalogProduct } from "./catalog";
 import { addBusinessDays, parseIsoDate, toIsoDate } from "./format";
-import { ORDER_CODE_PATTERN, createOrderCode } from "./whatsapp";
+import { createMemoryStorage } from "./test-utils";
+import { ORDER_CODE_PATTERN } from "./validation";
+import { createOrderCode } from "./whatsapp";
 
 const HOUR = 60 * 60 * 1000;
 const PRICES_DATE: CalendarDate = { year: 2026, month: 7, day: 14 };
