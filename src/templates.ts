@@ -21,9 +21,10 @@ export interface PageData {
 
 export type CartSummary = Pick<OrderSummary, "lines" | "quantity" | "subtotal">;
 
-// Anchos de la foto según el layout de styles.css: una, dos o tres columnas.
+// Anchos de la foto según el layout de styles.css (margen lateral de 5vw hasta 36 px):
+// una columna, dos en celular ancho, dos en tablet y tres desde 1024 px.
 export const CARD_IMAGE_SIZES =
-  "(max-width: 680px) calc(100vw - 36px), (max-width: 980px) calc(50vw - 47px), (max-width: 1352px) calc(33.3vw - 39px), 412px";
+  "(max-width: 559px) 90vw, (max-width: 767px) calc(45vw - 8px), (max-width: 1023px) calc(50vw - 47px), (max-width: 1351px) calc(33.3vw - 39px), 412px";
 export const HERO_MAIN_SIZES = "(max-width: 680px) 208px, 260px";
 export const HERO_SMALL_SIZES = "(max-width: 680px) 127px, 160px";
 
