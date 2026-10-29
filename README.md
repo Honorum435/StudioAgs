@@ -77,3 +77,4 @@ Escribe en `public/images/`, nunca amplía una foto y al terminar imprime los an
   4. Abrí el link desde Instagram (un mensaje directo o la bio) en iOS y en Android: copiar el pedido, abrir WhatsApp y cerrar y volver a abrir el link con el pedido guardado.
   5. Pasá la URL por un validador de Open Graph (por ejemplo el Sharing Debugger de Meta) para ver la vista previa del link.
 - [ ] Lighthouse en modo celular (Chrome DevTools → Lighthouse) sobre la versión publicada: 90 o más en rendimiento, accesibilidad, buenas prácticas y SEO. Sobre `build:prueba` el SEO baja por el `noindex`; es esperable.
+"# StudioAgs" 
