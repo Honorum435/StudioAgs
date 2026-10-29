@@ -387,7 +387,13 @@ describe("islas del cliente", () => {
       "vinilos-blanco-sin-laca",
     ]);
     expect(text(items[0].querySelector(".cart-item-price"))).toBe(formatPrice(26300 * 2));
-    expect(text(items[1].querySelector(".cart-addon"))).toBe(`Maqueta + ${formatPrice(2500)}`);
+    const addOn = items[1].querySelector(".cart-addon")!;
+    expect(text(addOn.querySelector(".cart-addon-name"))).toBe("Maqueta");
+    expect(text(addOn.querySelector(".cart-addon-price"))).toBe(`+ ${formatPrice(2500)} cada 5 diseños`);
+    expect(text(addOn.querySelector("[data-action=\"remove-addon\"]"))).toBe("Quitar Maqueta de Vinilos impresos (Blanco · Sin laca)");
+    expect(text(items[0].querySelector("[data-action=\"remove-line\"]"))).toBe(
+      "Quitar Tarjetas personales (200 · Doble faz · Laminado mate o brillo)",
+    );
     expect(text(filled.querySelector(".cart-summary strong"))).toBe(formatPrice(26300 * 2 + 14500 + 2500));
   });
 

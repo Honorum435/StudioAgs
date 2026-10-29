@@ -300,6 +300,21 @@ const textPairs: ContrastPair[] = [
   text("adicional al pasar", "--ink", "--surface-soft"),
   text("precio del adicional al pasar", "--muted", "--surface-soft"),
   text("botón de texto al tocar", "--coral-dark", "--sand"),
+  text("aviso de restauración del pedido", "--ink-soft", "--sand"),
+  text("título del aviso de restauración", "--ink", "--sand"),
+  text("Entendido del aviso de restauración", "--coral-dark", "--sand"),
+  text("nota del botón del pedido y mensajes de error de los campos", "--coral-dark", "--paper"),
+  text("campos y cantidades del pedido", "--ink", "--surface"),
+  text("etiquetas opcionales, ayudas y contador de los campos", "--muted", "--paper"),
+  text("instrucciones de fotos del pedido", "--muted", "--surface-soft"),
+  text("título de las instrucciones de fotos del pedido", "--ink", "--surface-soft"),
+  text("aviso de que se abre WhatsApp y pregunta de si se envió", "--ink", "--green"),
+  text("aviso de envío por WhatsApp sin configurar", "--ink", "--yellow-soft"),
+  text("nota de la barra fija con aviso", "--coral-dark", "--surface"),
+  text("botón secundario del pedido", "--ink", "--paper"),
+  text("botón secundario del pedido al pasar", "--ink", "--sand"),
+  text("botón secundario del pedido al tocar", "--ink", "--sand-deep"),
+  text("botones de cantidad inactivos", "--ink-mid", "--surface"),
 ];
 
 const nonTextPairs: ContrastPair[] = [
@@ -311,6 +326,11 @@ const nonTextPairs: ContrastPair[] = [
   nonText("anillo de foco sobre la tarjeta y la barra fija", "--focus-ring", "--surface"),
   nonText("anillo de foco dentro de la ficha", "--focus-ring", "--photo-bg"),
   nonText("botón de la barra fija sobre su fondo", "--ink", "--surface"),
+  nonText("borde de campo con error sobre el campo", "--coral-dark", "--surface"),
+  nonText("borde de campo con error sobre papel", "--coral-dark", "--paper"),
+  nonText("borde del botón secundario sobre papel", "--ink", "--paper"),
+  nonText("anillo del contador cuando hay avisos", "--coral-dark", "--paper"),
+  nonText("borde del aviso de restauración", "--coral-dark", "--sand"),
 ];
 
 const stylesheet = readFileSync(new URL("./styles.css", import.meta.url), "utf8");

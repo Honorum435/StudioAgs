@@ -62,6 +62,8 @@
   --gutter: clamp(18px, 5vw, 36px);
   --page-max: 1280px;
   --sticky-bar-space: calc(88px + env(safe-area-inset-bottom));
+  /* Margen lateral del panel del pedido: su pie fijo lo usa para ocupar todo el ancho. */
+  --cart-pad: 27px;
 }
 
 * {
@@ -269,6 +271,20 @@ button:disabled {
 .cart-count.is-empty {
   background: var(--sand-dark);
   color: var(--ink-mid);
+}
+
+/* "Actualizamos tu pedido · revisalo": debajo del botón; en celular lo muestra la barra fija. */
+.cart-trigger.has-note {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 0;
+}
+
+.cart-trigger-note {
+  flex-basis: 100%;
+  color: var(--coral-dark);
+  line-height: 1.3;
+  text-align: right;
 }
 
 .noscript-note {
@@ -1276,6 +1292,8 @@ p {
   padding: 0;
   overflow: auto;
   overscroll-behavior: contain;
+  /* Lo que recibe el foco no queda debajo del pie fijo. */
+  scroll-padding-block: 16px 176px;
   border: 0;
   background: var(--paper);
   color: var(--ink);
@@ -1290,7 +1308,7 @@ p {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 29px 27px max(29px, env(safe-area-inset-bottom));
+  padding: 29px var(--cart-pad) 0;
 }
 
 .cart-header {
@@ -1310,8 +1328,30 @@ p {
   letter-spacing: -0.04em;
 }
 
-.cart-notices:not(:empty) {
+/* Avisos de restauración: arriba del contenido, hasta que se toca "Entendido". */
+.cart-notice {
   margin-top: 16px;
+  padding: 14px 16px 8px;
+  border-left: 3px solid var(--coral-dark);
+  background: var(--sand);
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.cart-notice-title {
+  margin: 0 0 4px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.cart-notice ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.cart-notice .text-button {
+  margin-left: -10px;
 }
 
 .cart-content {
@@ -1326,7 +1366,7 @@ p {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 50px 14px;
+  padding: 50px 14px max(50px, env(safe-area-inset-bottom));
   text-align: center;
 }
 
@@ -1364,25 +1404,28 @@ p {
 }
 
 .cart-items {
-  flex: 1;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* Con tabindex=-1 recibe el foco después de "Entendido": el anillo va hacia adentro. */
+.cart-items:focus-visible {
+  outline-offset: -3px;
+}
+
 .cart-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 22px 0;
+  display: grid;
+  gap: 4px;
+  padding: 20px 0;
   border-bottom: 1px solid var(--line);
 }
 
-.cart-item-copy {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 6px 12px;
+.cart-item-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .cart-item-name {
@@ -1392,38 +1435,36 @@ p {
 }
 
 .cart-item-variant {
-  grid-column: 1 / -1;
+  margin: 0;
   color: var(--muted);
   font-size: 14px;
+  line-height: 1.5;
 }
 
 .cart-item-price {
-  grid-column: 2;
-  grid-row: 1;
+  flex: 0 0 auto;
   font-size: 14px;
   font-weight: 700;
 }
 
-.cart-addons {
-  margin: 8px 0 0;
-  padding: 0;
-  list-style: none;
-  color: var(--muted);
-  font-size: 14px;
+.cart-item-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-top: 8px;
 }
 
 .quantity-controls {
-  grid-column: 1 / -1;
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 4px;
-  color: var(--ink-soft);
-  font-size: 14px;
+  gap: 6px;
 }
 
 .quantity-controls button {
   background: var(--surface);
+  color: var(--ink);
 }
 
 .quantity-controls svg {
@@ -1431,10 +1472,55 @@ p {
   height: 15px;
 }
 
+.quantity-input {
+  width: 52px;
+  height: 44px;
+  padding: 0 4px;
+  border: 1px solid var(--control-border);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.cart-remove {
+  margin-right: -10px;
+}
+
+.cart-addons {
+  display: grid;
+  gap: 2px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.cart-addons[hidden] {
+  display: none;
+}
+
+.cart-addon {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 10px;
+  line-height: 1.4;
+}
+
+.cart-addon-name {
+  color: var(--ink-soft);
+}
+
+.cart-addon-price {
+  margin-left: auto;
+}
+
 .cart-summary {
-  margin-top: auto;
-  padding-top: 22px;
-  border-top: 1px solid var(--line);
+  padding-top: 20px;
 }
 
 .cart-summary > div {
@@ -1449,14 +1535,279 @@ p {
 }
 
 .cart-summary p {
-  margin: 10px 0 16px;
+  margin: 10px 0 0;
   color: var(--muted);
   font-size: 14px;
   line-height: 1.5;
 }
 
+/* Formulario, ideas y fotos. */
+.cart-form,
+.cart-ideas {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.cart-ideas[hidden] {
+  display: none;
+}
+
+.cart-section-title {
+  margin: 0 0 16px;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.cart-section-intro {
+  margin: -8px 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.field {
+  min-width: 0;
+  margin: 0 0 20px;
+  padding: 0;
+  border: 0;
+}
+
+.field[hidden] {
+  display: none;
+}
+
+.field-label {
+  display: block;
+  margin: 0 0 8px;
+  padding: 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.field-tag {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.field-input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.4;
+  transition: border-color 160ms ease;
+}
+
+textarea.field-input {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.field-input[aria-invalid="true"],
+.field[aria-invalid="true"] .option-chip span {
+  border-color: var(--coral-dark);
+  border-width: 2px;
+}
+
+.field-error,
+.field-hint,
+.field-counter {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.field-error {
+  color: var(--coral-dark);
+  font-weight: 600;
+}
+
+.field-hint,
+.field-counter {
+  color: var(--muted);
+}
+
+.idea-block + .idea-block {
+  margin-top: 22px;
+}
+
+.cart-photo-help {
+  margin-top: 10px;
+  padding: 12px 14px 12px 16px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cart-photo-title {
+  margin: 0 0 4px;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.cart-photo-help ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.cart-photo-help li + li {
+  margin-top: 4px;
+}
+
+.cart-privacy {
+  margin: 4px 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cart-privacy p {
+  margin: 0;
+}
+
+.cart-clear {
+  margin-left: -10px;
+}
+
+/* Pie fijo del panel: subtotal y la acción principal, siempre a la vista. */
+.cart-footer {
+  position: sticky;
+  z-index: 1;
+  bottom: 0;
+  display: grid;
+  gap: 10px;
+  margin: auto calc(-1 * var(--cart-pad)) 0;
+  padding: 14px var(--cart-pad) max(16px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  box-shadow: var(--shadow-bar);
+}
+
+/* Con el texto para copiar a mano el pie crece mucho: deja de ser fijo y se desplaza con el resto. */
+.cart-footer:has([data-manual-copy]) {
+  position: static;
+  box-shadow: none;
+}
+
+.cart-footer-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.cart-footer-total strong {
+  font-size: 16px;
+}
+
+.checkout {
+  display: grid;
+  gap: 10px;
+}
+
+.checkout-notice {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--green);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.checkout-notice.is-warning {
+  background: var(--yellow-soft);
+}
+
+.checkout-changed {
+  margin: 0;
+  color: var(--coral-dark);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.checkout-hint,
+.checkout-code {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.checkout-code strong {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.checkout-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkout-actions > .checkout-button {
+  flex: 1 1 160px;
+}
+
 .checkout-button {
   width: 100%;
+}
+
+.secondary-button {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 18px;
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  transition: background-color 160ms ease, transform 120ms ease;
+}
+
+.manual-copy {
+  display: grid;
+}
+
+.manual-copy-text {
+  min-height: 168px;
+  font-size: 16px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* Textarea del respaldo con execCommand: existe un instante y no se ve. */
+.copy-buffer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px;
+  pointer-events: none;
 }
 
 /* Barra fija del pedido: solo por debajo de 768 px y cuando el cliente le quita hidden. */
@@ -1504,6 +1855,12 @@ p {
   color: var(--muted);
 }
 
+/* Avisos de restauración o la pregunta de si se envió: se distinguen de la nota del total. */
+.sticky-bar-note.is-alert {
+  color: var(--coral-dark);
+  font-weight: 600;
+}
+
 .sticky-bar-button {
   flex: 0 0 auto;
   min-height: 48px;
@@ -1544,12 +1901,15 @@ p {
 
   .option-chip input:enabled:not(:checked) + span:hover,
   .icon-button:enabled:hover,
-  .quantity-controls button:enabled:hover {
+  .quantity-controls button:enabled:not([aria-disabled="true"]):hover,
+  .field-input:not([readonly]):hover,
+  .quantity-input:hover {
     border-color: var(--ink);
   }
 
   .icon-button:enabled:hover,
-  .quantity-controls button:enabled:hover {
+  .quantity-controls button:enabled:not([aria-disabled="true"]):hover,
+  .secondary-button:hover {
     background: var(--sand);
   }
 
@@ -1612,7 +1972,8 @@ p {
 .filter-chip:enabled:active,
 .option-chip input:enabled + span:active,
 .icon-button:enabled:active,
-.quantity-controls button:enabled:active {
+.quantity-controls button:enabled:not([aria-disabled="true"]):active,
+.secondary-button:active {
   transform: translateY(1px);
   border-color: var(--ink);
 }
@@ -1620,7 +1981,8 @@ p {
 .filter-chip:enabled:not(.is-active):active,
 .option-chip input:enabled:not(:checked) + span:active,
 .icon-button:enabled:active,
-.quantity-controls button:enabled:active {
+.quantity-controls button:enabled:not([aria-disabled="true"]):active,
+.secondary-button:active {
   background: var(--sand-deep);
   color: var(--ink);
 }
@@ -1638,9 +2000,15 @@ p {
 .filter-chip:disabled:not(.is-active),
 .option-chip input:disabled:not(:checked) + span,
 .icon-button:disabled,
-.quantity-controls button:disabled {
+.quantity-controls button:disabled,
+.quantity-controls button[aria-disabled="true"] {
   border-color: var(--line-strong);
   color: var(--ink-mid);
+}
+
+/* "–" en 1 y "+" en 99 siguen enfocables (aria-disabled), pero no invitan a tocarlos. */
+.quantity-controls button[aria-disabled="true"] {
+  cursor: default;
 }
 
 .add-button:disabled svg {
@@ -1931,17 +2299,40 @@ p {
     font-size: 20px;
   }
 
+  :root {
+    --cart-pad: var(--gutter);
+  }
+
   .cart-dialog {
     width: 100%;
     box-shadow: none;
   }
 
   .cart-panel {
-    padding: max(23px, env(safe-area-inset-top)) var(--gutter) max(23px, env(safe-area-inset-bottom));
+    padding: max(23px, env(safe-area-inset-top)) var(--cart-pad) 0;
   }
 
-  /* La barra fija no tapa el pie: la página suma su alto mientras se ve. */
-  body:has(.sticky-bar:not([hidden])) {
+  .cart-trigger-note {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .cart-trigger.has-note {
+    flex-wrap: nowrap;
+  }
+
+  .cart-trigger.has-note .cart-count {
+    box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--coral-dark);
+  }
+
+  /* La barra fija no tapa el pie: la página suma su alto mientras hay productos, aunque la
+     barra se oculte un momento (capa abierta o teclado). */
+  body:has(.sticky-bar[data-active]) {
     padding-bottom: var(--sticky-bar-space);
   }
 }

@@ -1,10 +1,11 @@
 import { businessValue, type BusinessInfo } from "./business";
-import type { OrderSummary, ResolvedLine } from "./cart";
+import type { OrderSummary, ResolvedLine, SentVia } from "./cart";
 import {
   imageUrl,
   initialSelection,
   intents,
   resolveSelection,
+  type AddOn,
   type CatalogProduct,
   type ImageSpec,
   type ResolvedSelection,
@@ -31,14 +32,18 @@ export const HERO_MAIN_SIZES = "(max-width: 680px) 208px, 260px";
 export const HERO_SMALL_SIZES = "(max-width: 680px) 127px, 160px";
 
 export const TOTAL_NOTE = "El total final se confirma por WhatsApp.";
+export const ORDER_UPDATED_NOTE = "Actualizamos tu pedido · revisalo";
+export const ORDER_CHANGED_NOTE = "Cambiaste el pedido: volvé a tocar Continuar.";
 
-type IconName = "bag" | "close" | "search" | "arrow";
+type IconName = "bag" | "close" | "search" | "arrow" | "plus" | "minus";
 
 const iconPaths: Record<IconName, string> = {
   bag: '<path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
   close: '<path d="m6 6 12 12M18 6 6 18"/>',
   search: '<circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  minus: '<path d="M5 12h14"/>',
 };
 
 function icon(name: IconName): string {
@@ -145,30 +150,115 @@ export function cartCountContent(quantity: number): string {
   return `<span aria-hidden="true">${quantity}</span><span class="visually-hidden">, ${label}</span>`;
 }
 
-function lineName(line: ResolvedLine): string {
+export function lineName(line: ResolvedLine): string {
   return line.combination.label ? `${line.product.name} (${line.combination.label})` : line.product.name;
 }
 
-function cartLine(line: ResolvedLine): string {
-  const addOns = line.addOns
-    .map(
-      (addOn) =>
-        `<li class="cart-addon"><span>${escapeHtml(addOn.label)}</span> <span>+ ${formatPrice(addOn.price)}</span></li>`,
-    )
-    .join("");
+// Panel del pedido. La estructura sale de acá; cart-view.ts la crea una vez y después solo
+// actualiza valores en su lugar (cantidades, totales, campos), sin volver a pintarla entera.
+
+export function cartAddon(line: ResolvedLine, addOn: AddOn): string {
+  const name = `${addOn.label} de ${lineName(line)}`;
+  return `<li class="cart-addon" data-addon-id="${attr(addOn.id)}"><span class="cart-addon-name">${escapeHtml(addOn.label)}</span> <span class="cart-addon-price">+ ${formatPrice(addOn.price)} <span class="addon-unit">${escapeHtml(addOn.unit)}</span></span> <button class="text-button cart-remove" type="button" data-action="remove-addon" data-line-id="${attr(line.id)}" data-addon-id="${attr(addOn.id)}">Quitar<span class="visually-hidden"> ${escapeHtml(name)}</span></button></li>`;
+}
+
+export function cartLine(line: ResolvedLine): string {
+  const id = attr(line.id);
+  const name = lineName(line);
   const option = line.combination.label
-    ? `<span class="cart-item-variant">${escapeHtml(line.combination.label)}</span>`
+    ? `<p class="cart-item-variant">${escapeHtml(line.combination.label)}</p>`
     : "";
+  const addOns = line.addOns.map((addOn) => cartAddon(line, addOn)).join("");
   return `
-    <li class="cart-item" data-line-id="${attr(line.id)}">
-      <div class="cart-item-copy">
+    <li class="cart-item" data-line-id="${id}">
+      <div class="cart-item-head">
         <span class="cart-item-name">${escapeHtml(line.product.name)}</span>
-        <span class="cart-item-price">${formatPrice(line.combination.price * line.quantity)}</span>
-        ${option}
-        <span class="cart-item-variant">${line.quantity} × ${formatPrice(line.combination.price)}, ${escapeHtml(line.combination.unit)}</span>
+        <span class="cart-item-price" data-line-total>${formatPrice(line.combination.price * line.quantity)}</span>
       </div>
-      ${addOns ? `<ul class="cart-addons" aria-label="Adicionales de ${attr(lineName(line))}">${addOns}</ul>` : ""}
+      ${option}
+      <p class="cart-item-variant">${formatPrice(line.combination.price)} ${escapeHtml(line.combination.unit)}</p>
+      <div class="cart-item-controls">
+        <div class="quantity-controls">
+          <button type="button" data-action="decrement" data-line-id="${id}" aria-label="Restar uno: ${attr(name)}">${icon("minus")}</button>
+          <input class="quantity-input" type="text" inputmode="numeric" autocomplete="off" value="${line.quantity}" data-quantity data-line-id="${id}" aria-label="Cantidad de ${attr(name)}" />
+          <button type="button" data-action="increment" data-line-id="${id}" aria-label="Sumar uno: ${attr(name)}">${icon("plus")}</button>
+        </div>
+        <button class="text-button cart-remove" type="button" data-action="remove-line" data-line-id="${id}">Quitar<span class="visually-hidden"> ${escapeHtml(name)}</span></button>
+      </div>
+      <ul class="cart-addons" aria-label="Adicionales de ${attr(name)}"${addOns ? "" : " hidden"}>${addOns}</ul>
     </li>`;
+}
+
+function fieldTag(text = "obligatorio"): string {
+  return `<span class="field-tag">(${text})</span>`;
+}
+
+function orderForm(): string {
+  return `
+    <section class="cart-form" aria-labelledby="pedido-datos-titulo">
+      <h3 class="cart-section-title" id="pedido-datos-titulo">Tus datos</h3>
+      <div class="field" data-field="name">
+        <label class="field-label" for="pedido-nombre">Nombre ${fieldTag()}</label>
+        <input class="field-input" id="pedido-nombre" name="nombre" type="text" autocomplete="name" aria-required="true" data-form-field="name" />
+        <p class="field-error" id="pedido-nombre-error" data-field-error="name" hidden></p>
+      </div>
+      <fieldset class="field" data-field="delivery" role="radiogroup" aria-required="true" aria-labelledby="pedido-entrega-titulo">
+        <legend class="field-label" id="pedido-entrega-titulo">Entrega ${fieldTag()}</legend>
+        <div class="option-list">
+          <label class="option-chip"><input type="radio" name="pedido-entrega" value="retiro" autocomplete="off" data-form-field="delivery" /><span>Retiro</span></label>
+          <label class="option-chip"><input type="radio" name="pedido-entrega" value="envio" autocomplete="off" data-form-field="delivery" /><span>Envío</span></label>
+        </div>
+        <p class="field-hint" id="pedido-entrega-ayuda" data-delivery-hint hidden></p>
+        <p class="field-error" id="pedido-entrega-error" data-field-error="delivery" hidden></p>
+      </fieldset>
+      <div class="field" data-field="locality" hidden>
+        <label class="field-label" for="pedido-localidad">Localidad ${fieldTag("obligatoria para el envío")}</label>
+        <input class="field-input" id="pedido-localidad" name="localidad" type="text" autocomplete="address-level2" aria-required="true" data-form-field="locality" />
+        <p class="field-error" id="pedido-localidad-error" data-field-error="locality" hidden></p>
+      </div>
+      <div class="field" data-field="date">
+        <label class="field-label" for="pedido-fecha">¿Para cuándo lo necesitás? ${fieldTag("opcional")}</label>
+        <input class="field-input" id="pedido-fecha" name="fecha" type="date" data-form-field="date" />
+        <p class="field-hint" id="pedido-fecha-aviso" data-date-warning hidden></p>
+        <p class="field-error" id="pedido-fecha-error" data-field-error="date" hidden></p>
+      </div>
+    </section>`;
+}
+
+// Un bloque por producto del pedido que se personaliza o lleva fotos (Láminas no tiene ninguno).
+export function ideaBlock(product: CatalogProduct): string {
+  const id = attr(product.id);
+  const idea = product.personalizable
+    ? `
+        <label class="field-label" for="pedido-idea-${id}"><span class="visually-hidden">Tu idea para </span>${escapeHtml(product.name)} ${fieldTag("opcional")}</label>
+        <textarea class="field-input idea-input" id="pedido-idea-${id}" rows="3" maxlength="500" data-idea="${id}" aria-describedby="pedido-idea-${id}-contador"></textarea>
+        <p class="field-counter" id="pedido-idea-${id}-contador" data-idea-counter hidden></p>`
+    : `<p class="field-label">${escapeHtml(product.name)}</p>`;
+  const help = product.photoInstructions;
+  const photos =
+    product.needsPhotos && help
+      ? `
+        <div class="cart-photo-help">
+          <p class="cart-photo-title">Cómo mandar las fotos<span class="visually-hidden"> para ${escapeHtml(product.name)}</span></p>
+          <ul>
+            <li>${escapeHtml(help.quantity)}</li>
+            <li>${escapeHtml(help.quality)}</li>
+            <li>${escapeHtml(help.howToSend)}</li>
+          </ul>
+        </div>`
+      : "";
+  return `
+    <div class="idea-block" data-idea-product="${id}">${idea}${photos}
+    </div>`;
+}
+
+function ideasSection(): string {
+  return `
+    <section class="cart-ideas" aria-labelledby="pedido-ideas-titulo" data-cart-ideas-section hidden>
+      <h3 class="cart-section-title" id="pedido-ideas-titulo">Contanos tu idea</h3>
+      <p class="cart-section-intro">Nombres, colores, textos o lo que tengas en mente. Si todavía no lo sabés, lo vemos por WhatsApp.</p>
+      <div class="idea-list" data-cart-ideas></div>
+    </section>`;
 }
 
 export function cartContent(summary: CartSummary): string {
@@ -182,21 +272,125 @@ export function cartContent(summary: CartSummary): string {
       </div>`;
   }
 
+  const subtotal = formatPrice(summary.subtotal);
   return `
-    <ul class="cart-items">${summary.lines.map(cartLine).join("")}
+    <ul class="cart-items" data-cart-lines tabindex="-1" aria-label="Productos del pedido">${summary.lines.map(cartLine).join("")}
     </ul>
     <div class="cart-summary">
-      <div><span>Subtotal estimado</span><strong>${formatPrice(summary.subtotal)}</strong></div>
+      <div><span>Subtotal estimado</span><strong data-cart-subtotal>${subtotal}</strong></div>
       <p>${TOTAL_NOTE}</p>
+    </div>
+    ${orderForm()}
+    ${ideasSection()}
+    <div class="cart-privacy">
+      <p>Tus datos quedan guardados solo en este navegador hasta que vacíes el pedido.</p>
+      <button class="text-button cart-clear" type="button" data-action="clear-order">Vaciar pedido</button>
+    </div>
+    <div class="cart-footer">
+      <p class="cart-footer-total"><span>Subtotal estimado</span> <strong data-cart-subtotal>${subtotal}</strong></p>
+      <div class="checkout" data-checkout></div>
     </div>`;
 }
 
-export function stickyBarContent(summary: Pick<OrderSummary, "quantity" | "subtotal">): string {
+// Avisos de restauración: el texto trae nombres guardados en el navegador, así que va escapado.
+export function restoreNotice(messages: readonly string[]): string {
   return `
-    <p class="sticky-bar-summary">
+    <div class="cart-notice" data-restore-notice>
+      <p class="cart-notice-title">Actualizamos tu pedido</p>
+      <ul>${messages.map((message) => `<li>${escapeHtml(message)}</li>`).join("")}</ul>
+      <button class="text-button" type="button" data-action="acknowledge-notices">Entendido</button>
+    </div>`;
+}
+
+export interface WhatsAppLinkView {
+  url: string;
+  tooLong: boolean;
+}
+
+export type CheckoutStage =
+  | { kind: "draft"; changed: boolean }
+  | { kind: "confirmed"; code: string; link: WhatsAppLinkView | null }
+  | { kind: "sent"; code: string; via: SentVia; link: WhatsAppLinkView | null };
+
+export function sentQuestion(via: SentVia): string {
+  return via === "copy" ? "Copiaste el pedido. ¿Lo enviaste?" : "Abriste WhatsApp con este pedido. ¿Lo enviaste?";
+}
+
+function whatsappLink(link: WhatsAppLinkView, label: string, className: string): string {
+  return `<a class="${className} checkout-button" href="${attr(link.url)}" target="_blank" rel="noopener noreferrer" data-action="open-whatsapp">${escapeHtml(label)}<span class="visually-hidden"> (se abre en otra pestaña)</span></a>`;
+}
+
+function codeLine(code: string): string {
+  return `<p class="checkout-code">Código del pedido: <strong>${escapeHtml(code)}</strong></p>`;
+}
+
+// La acción principal del pie: "Continuar", después el enlace y copiar, y al final la pregunta.
+export function checkoutContent(stage: CheckoutStage): string {
+  if (stage.kind === "draft") {
+    const changed = stage.changed ? `<p class="checkout-changed">${ORDER_CHANGED_NOTE}</p>` : "";
+    return `${changed}<button class="primary-button checkout-button" type="button" data-action="checkout" data-checkout-focus>Continuar ${icon("arrow")}</button>`;
+  }
+
+  const { link } = stage;
+  if (stage.kind === "confirmed") {
+    const notice = link
+      ? `<p class="checkout-notice" tabindex="-1" data-checkout-focus>Se abre WhatsApp: solo tocá Enviar.</p>`
+      : `<p class="checkout-notice is-warning" tabindex="-1" data-checkout-focus>El envío por WhatsApp todavía no está configurado. Copiá el pedido y mandalo por el chat.</p>`;
+    const long = link?.tooLong
+      ? '<p class="checkout-hint">Tu pedido es largo y WhatsApp podría cortarlo: si pasa, copialo y pegalo en el chat.</p>'
+      : "";
+    const copyFirst = !link || link.tooLong;
+    const actions = [
+      link ? whatsappLink(link, "Abrir WhatsApp", copyFirst ? "secondary-button" : "primary-button") : "",
+      `<button class="${copyFirst ? "primary-button" : "secondary-button"} checkout-button" type="button" data-action="copy-order">Copiar pedido</button>`,
+    ].join("");
+    return `${notice}${long}${codeLine(stage.code)}<div class="checkout-actions">${actions}</div>`;
+  }
+
+  const reopen = link
+    ? whatsappLink(link, stage.via === "whatsapp" ? "Volver a abrir WhatsApp" : "Abrir WhatsApp", "secondary-button")
+    : "";
+  return `
+    <p class="checkout-notice" tabindex="-1" data-checkout-focus>${sentQuestion(stage.via)}</p>
+    ${codeLine(stage.code)}
+    <div class="checkout-actions">
+      <button class="primary-button checkout-button" type="button" data-action="sent-clear">Ya lo envié · vaciar pedido</button>
+      ${reopen}
+      <button class="text-button" type="button" data-action="copy-order">${stage.via === "copy" ? "Copiar de nuevo" : "Copiar pedido"}</button>
+    </div>`;
+}
+
+// Último respaldo si el navegador no deja copiar: el texto queda seleccionado para copiarlo a mano.
+export function manualCopyContent(): string {
+  return `
+    <div class="manual-copy" data-manual-copy>
+      <label class="field-label" for="pedido-texto">No pudimos copiarlo solo. Ya está seleccionado: copialo desde acá.</label>
+      <textarea class="field-input manual-copy-text" id="pedido-texto" rows="8" readonly data-manual-copy-text></textarea>
+    </div>`;
+}
+
+export interface StickyBarMessage {
+  text: string;
+  // Algo que la clienta tiene que mirar: avisos de restauración o la pregunta de si lo envió.
+  alert: boolean;
+}
+
+export function stickyBarSummary(
+  summary: Pick<OrderSummary, "quantity" | "subtotal">,
+  message: StickyBarMessage = { text: TOTAL_NOTE, alert: false },
+): string {
+  return `
       <span class="sticky-bar-count">${itemCount(summary.quantity)}</span>
       <strong class="sticky-bar-subtotal">${formatPrice(summary.subtotal)}</strong>
-      <span class="sticky-bar-note">${TOTAL_NOTE}</span>
+      <span class="sticky-bar-note${message.alert ? " is-alert" : ""}">${escapeHtml(message.text)}</span>`;
+}
+
+export function stickyBarContent(
+  summary: Pick<OrderSummary, "quantity" | "subtotal">,
+  message?: StickyBarMessage,
+): string {
+  return `
+    <p class="sticky-bar-summary">${stickyBarSummary(summary, message)}
     </p>
     <button class="primary-button sticky-bar-button" type="button" data-action="open-cart">Ver pedido</button>`;
 }
@@ -218,6 +412,7 @@ export function siteHeader(): string {
         <span>Mi pedido</span>
         ${icon("bag")}
         <span class="cart-count is-empty" data-cart-count>${cartCountContent(0)}</span>
+        <span class="cart-trigger-note" data-cart-trigger-note hidden></span>
       </button>
     </header>`;
 }
@@ -558,7 +753,10 @@ export function cartDialog(): string {
           </div>
           <button class="icon-button close-cart" type="button" data-action="close-cart" aria-label="Cerrar pedido">${icon("close")}</button>
         </header>
-        <div class="cart-notices" data-cart-notices role="status"></div>
+        <div class="cart-notices" data-cart-notices>
+          <p class="visually-hidden" role="status" data-cart-live></p>
+          <div data-cart-restore></div>
+        </div>
         <div class="cart-content" id="cart-content" data-cart-content>${cartContent(emptyCart)}
         </div>
       </div>

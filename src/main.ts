@@ -1,13 +1,16 @@
 import "./styles.css";
 import { business } from "./business";
 import { createOrderStore, type StorageLike } from "./cart";
+import { mountCartView } from "./cart-view";
 import { products } from "./catalog";
 import { mountCatalogView } from "./catalog-view";
+import { WHATSAPP_NUMBER } from "./config";
 import { createOverlays } from "./overlays";
 import { renderPage } from "./templates";
 import { createOrderCode } from "./whatsapp";
 
-// Arranque: la cáscara llega prerenderizada en #app y no se vuelve a pintar.
+// Arranque: la cáscara llega prerenderizada en #app y no se vuelve a pintar; el cliente solo
+// conecta las islas (tarjetas y pedido) y al final saca la marca data-prerendered.
 
 function localStorageOrNull(): StorageLike | null {
   try {
@@ -33,7 +36,10 @@ export const orderStore = createOrderStore({
   storage: localStorageOrNull(),
 });
 
-// Un solo coordinador de capas para la ficha y, después, el panel del pedido.
-const overlays = createOverlays();
+// Un solo coordinador de capas para la ficha y el panel del pedido.
+export const overlays = createOverlays();
 
 mountCatalogView({ root, store: orderStore, overlays });
+mountCartView({ root, store: orderStore, overlays, whatsappNumber: WHATSAPP_NUMBER });
+
+root.removeAttribute("data-prerendered");
