@@ -1,18 +1,66 @@
+/* Fuentes de la marca, alojadas en el sitio. Creato Display tiene licencia OFL
+   (creato-display-licencia.txt); falta confirmar la de Hemis y Bristol antes de publicar. */
 @font-face {
-  font-family: "Libre Bodoni Fallback";
-  src: local("Times New Roman");
-  size-adjust: 110.77%;
-  ascent-override: 83.42%;
-  descent-override: 29.43%;
+  font-family: "Creato Display";
+  src: url("./creato-display-regular.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Creato Display";
+  src: url("./creato-display-medium.otf") format("opentype");
+  font-weight: 500 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Creato Display";
+  src: url("./creato-display-bold.otf") format("opentype");
+  font-weight: 700 900;
+  font-display: swap;
+}
+
+/* Hemis y Bristol tienen un solo peso: el rango evita que el navegador invente una negrita. */
+@font-face {
+  font-family: "Hemis";
+  src: url("./hemis.otf") format("opentype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bristol";
+  src: url("./bristol.otf") format("opentype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Métricas medidas sobre los archivos frente a Arial, para que el texto no salte al cargar. */
+@font-face {
+  font-family: "Creato Display Fallback";
+  src: local("Arial");
+  size-adjust: 97.24%;
+  ascent-override: 97.7%;
+  descent-override: 24.48%;
   line-gap-override: 0%;
 }
 
 @font-face {
-  font-family: "Public Sans Fallback";
+  font-family: "Hemis Fallback";
   src: local("Arial");
-  size-adjust: 104.87%;
-  ascent-override: 90.59%;
-  descent-override: 21.46%;
+  size-adjust: 95.89%;
+  ascent-override: 85.1%;
+  descent-override: 35.25%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Bristol Fallback";
+  src: local("Arial");
+  size-adjust: 99.37%;
+  ascent-override: 100.63%;
+  descent-override: 50.82%;
   line-gap-override: 0%;
 }
 
@@ -26,38 +74,40 @@
   -moz-osx-font-smoothing: grayscale;
   font-optical-sizing: auto;
   font-weight: 400;
-  --paper: #fbf8f2;
+  letter-spacing: 0.012em;
+  --paper: #fffcf3;
   --white: #ffffff;
-  --surface: #fffdfa;
-  --surface-soft: #f8f5ee;
-  --surface-veil: rgb(255 253 250 / 94%);
-  --sand: #f0ebe3;
-  --sand-deep: #eee9e0;
-  --sand-dark: #e7e1d9;
-  --photo-bg: #f2eee7;
-  --ink: #292522;
-  --ink-soft: #514940;
-  --ink-mid: #5e5650;
-  --muted: #6c645e;
-  --line: #e9e2d9;
-  --line-soft: #eee7dd;
-  --line-strong: #dad0c4;
-  --rule: #b9afa4;
-  --control-border: #91897f;
-  --focus-ring: #b84b43;
-  --coral: #e66e61;
-  --coral-dark: #a33d36;
-  --yellow: #f3d872;
-  --yellow-soft: #f5e7ac;
-  --lavender: #e6e0f5;
-  --green: #d7e4d2;
+  --surface: #ffffff;
+  --surface-soft: #fff7df;
+  --surface-veil: rgb(255 255 255 / 94%);
+  --sand: #fdeb94;
+  --sand-deep: #fbe27a;
+  --sand-dark: #ece6d3;
+  --photo-bg: #f6f3ea;
+  --ink: #2f3737;
+  --ink-soft: #3f4747;
+  --ink-mid: #4f5757;
+  --muted: #5a6161;
+  --line: #ebe5d4;
+  --line-soft: #f1ecdf;
+  --line-strong: #d8d0bb;
+  --rule: #b9b19c;
+  --control-border: #8a8576;
+  --focus-ring: #3878b8;
+  --coral: #e84820;
+  --coral-dark: #2a5f99;
+  --yellow: #f8d818;
+  --yellow-soft: #fce77d;
+  --lavender: #e8a0c8;
+  --green: #4cbb6c;
   --shadow-photo: 0 19px 54px rgb(54 40 28 / 13%);
   --shadow-card: 0 15px 35px rgb(60 46 32 / 9%);
   --shadow-drawer: -20px 0 60px rgb(35 26 20 / 12%);
   --shadow-bar: 0 -10px 30px rgb(54 40 28 / 9%);
-  --backdrop: rgb(37 31 26 / 46%);
-  --sans: "Public Sans", "Public Sans Fallback", sans-serif;
-  --serif: "Libre Bodoni", "Libre Bodoni Fallback", Georgia, serif;
+  --backdrop: rgb(30 37 37 / 46%);
+  --sans: "Creato Display", "Creato Display Fallback", sans-serif;
+  /* Para probar Bristol en los títulos: "Bristol", "Bristol Fallback", sans-serif. */
+  --display: "Hemis", "Hemis Fallback", sans-serif;
   /* Medidas de la página: un solo margen lateral y un solo ancho máximo. */
   --gutter: clamp(18px, 5vw, 36px);
   --page-max: 1280px;
@@ -226,34 +276,17 @@ button:disabled {
   border-bottom: 1px solid var(--line);
 }
 
+/* El logo del kit es una máscara: el color sale del token y el texto queda para los lectores. */
 .wordmark {
-  min-height: 44px;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  width: 90px;
-  line-height: 0.78;
-  color: var(--ink);
+  display: inline-block;
+  width: 84px;
+  aspect-ratio: 693 / 430;
+  background-color: var(--coral-dark);
+  mask: url("./logo-studioags.png") center / contain no-repeat;
 }
 
-.wordmark-small {
-  padding-left: 3px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.31em;
-  text-transform: uppercase;
-}
-
-.wordmark-large {
-  font-family: var(--serif);
-  font-size: 38px;
-  font-weight: 700;
-  letter-spacing: -0.08em;
-}
-
-.wordmark-dot {
-  color: var(--coral);
+.wordmark > span {
+  display: none;
 }
 
 .main-nav {
@@ -382,16 +415,15 @@ p {
 .hero h1 {
   max-width: 640px;
   margin: 22px 0 17px;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(45px, 5.4vw, 78px);
-  font-weight: 500;
-  letter-spacing: -0.058em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 0.99;
 }
 
 .hero h1 span {
   color: var(--coral-dark);
-  font-style: italic;
   font-weight: 500;
 }
 
@@ -411,7 +443,7 @@ p {
   gap: 17px;
   padding: 0 21px;
   border: 1px solid var(--ink);
-  border-radius: 3px;
+  border-radius: 999px;
   background: var(--ink);
   color: var(--white);
   font-size: 14px;
@@ -485,9 +517,8 @@ p {
   bottom: 12px;
   left: 12px;
   color: var(--muted);
-  font-family: var(--serif);
-  font-size: 17px;
-  font-style: italic;
+  font-family: var(--display);
+  font-size: 21px;
   font-weight: 500;
   text-align: center;
 }
@@ -510,10 +541,10 @@ p {
   place-items: center;
   width: 105px;
   height: 105px;
+  padding: 0 10px;
   border-radius: 50%;
-  font-family: var(--serif);
-  font-size: 16px;
-  font-style: italic;
+  font-family: var(--display);
+  font-size: 19px;
   font-weight: 500;
   line-height: 1.16;
   text-align: center;
@@ -586,10 +617,10 @@ p {
 .trust-heading h2,
 .how-heading h2 {
   margin: 13px 0 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(36px, 4.1vw, 56px);
-  font-weight: 500;
-  letter-spacing: -0.045em;
+  font-weight: 600;
+  letter-spacing: 0;
   line-height: 1.08;
 }
 
@@ -680,8 +711,9 @@ p {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 0 12px;
+  padding: 0 16px;
   border: 1px solid var(--control-border);
+  border-radius: 999px;
   background: var(--surface);
   cursor: text;
   transition: border-color 180ms ease;
@@ -735,6 +767,7 @@ p {
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--line-soft);
+  border-radius: 18px;
   background: var(--surface);
   transition:
     box-shadow var(--lift-dur) var(--ease-out),
@@ -762,7 +795,7 @@ p {
   right: 12px;
   bottom: 12px;
   padding: 6px 10px;
-  border-radius: 2px;
+  border-radius: 8px;
   background: var(--surface-veil);
   color: var(--ink-soft);
   font-size: 14px;
@@ -788,10 +821,10 @@ p {
 .product-title-row h3 {
   min-width: 0;
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 22px;
   font-weight: 600;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
   line-height: 1.15;
 }
 
@@ -882,7 +915,7 @@ p {
   justify-content: center;
   padding: 6px 13px;
   border: 1px solid var(--control-border);
-  border-radius: 2px;
+  border-radius: 8px;
   background: var(--surface);
   color: var(--ink);
   font-size: 14px;
@@ -902,7 +935,7 @@ p {
   gap: 4px 10px;
   margin: 0 -8px;
   padding: 6px 8px;
-  border-radius: 2px;
+  border-radius: 8px;
   color: var(--ink);
   font-size: 14px;
   line-height: 1.4;
@@ -989,8 +1022,9 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 0 12px;
+  padding: 0 18px;
   border: 1px solid var(--control-border);
+  border-radius: 999px;
   background: transparent;
   color: var(--ink);
   font-size: 14px;
@@ -1032,7 +1066,7 @@ p {
   gap: 8px;
   padding: 0 10px;
   border: 0;
-  border-radius: 2px;
+  border-radius: 8px;
   background: transparent;
   color: var(--coral-dark);
   font-size: 14px;
@@ -1065,7 +1099,7 @@ p {
 
 .trust-row dt {
   flex: 0 0 200px;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 20px;
   font-weight: 600;
   line-height: 1.3;
@@ -1121,24 +1155,49 @@ p {
 }
 
 .step-card {
+  position: relative;
   min-height: 183px;
   padding: 23px 23px 20px;
   border: 1px solid var(--line-strong);
+  border-radius: 18px;
   background: var(--surface-soft);
+}
+
+/* Un personaje del kit en cada paso. */
+.step-card::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: center / cover no-repeat;
+}
+
+.step-card:nth-child(1)::after {
+  background-image: url("./mascota-rosa.webp");
+}
+
+.step-card:nth-child(2)::after {
+  background-image: url("./mascota-verde.webp");
+}
+
+.step-card:nth-child(3)::after {
+  background-image: url("./mascota-azul.webp");
 }
 
 .step-card > span {
   color: var(--coral-dark);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 19px;
-  font-style: italic;
   font-weight: 500;
 }
 
 .step-card h3 {
-  margin: 18px 0 8px;
-  font-family: var(--serif);
-  font-size: 21px;
+  margin: 26px 0 8px;
+  font-family: var(--display);
+  font-size: 25px;
   font-weight: 600;
 }
 
@@ -1160,24 +1219,15 @@ p {
 }
 
 .footer-wordmark {
-  width: 75px;
-}
-
-.footer-wordmark .wordmark-small {
-  padding-left: 2px;
-  font-size: 8.5px;
-}
-
-.footer-wordmark .wordmark-large {
-  font-size: 32px;
+  width: 72px;
+  background-color: var(--ink);
 }
 
 .site-footer p {
   margin: 0;
   color: var(--muted);
-  font-family: var(--serif);
-  font-size: 16px;
-  font-style: italic;
+  font-family: var(--display);
+  font-size: 21px;
   font-weight: 500;
 }
 
@@ -1251,7 +1301,7 @@ p {
 .ficha-header h2 {
   min-width: 0;
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -1353,10 +1403,10 @@ p {
 
 .cart-header h2 {
   margin: 6px 0 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 34px;
   font-weight: 500;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.015em;
 }
 
 /* Avisos de restauración: arriba del contenido, hasta que se toca "Entendido". */
@@ -1419,7 +1469,7 @@ p {
 
 .cart-empty h3 {
   margin-bottom: 8px;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 25px;
 }
 
@@ -1461,7 +1511,7 @@ p {
 }
 
 .cart-item-name {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 18px;
   font-weight: 600;
 }
@@ -1509,7 +1559,7 @@ p {
   height: 44px;
   padding: 0 4px;
   border: 1px solid var(--control-border);
-  border-radius: 2px;
+  border-radius: 8px;
   background: var(--surface);
   color: var(--ink);
   font-size: 16px;
@@ -1579,7 +1629,7 @@ p {
 
 .cart-section-title {
   margin: 0 0 16px;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -1619,7 +1669,7 @@ p {
   min-height: 46px;
   padding: 10px 12px;
   border: 1px solid var(--control-border);
-  border-radius: 2px;
+  border-radius: 8px;
   background: var(--surface);
   color: var(--ink);
   font-size: 16px;
@@ -1791,7 +1841,7 @@ textarea.field-input {
   gap: 10px;
   padding: 0 18px;
   border: 1px solid var(--ink);
-  border-radius: 3px;
+  border-radius: 999px;
   background: transparent;
   color: var(--ink);
   font-size: 14px;
@@ -1979,7 +2029,7 @@ textarea.field-input {
   display: block;
   width: var(--pill-w, 0px);
   height: var(--pill-h, 0px);
-  border-radius: 2px;
+  border-radius: 8px;
   background: var(--ink);
   transform: translate(var(--pill-x, 0px), var(--pill-y, 0px));
   transition:
@@ -2281,8 +2331,8 @@ textarea.field-input {
     height: 72px;
   }
 
-  .wordmark-large {
-    font-size: 34px;
+  .wordmark {
+    width: 72px;
   }
 
   .main-nav {

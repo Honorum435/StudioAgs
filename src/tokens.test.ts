@@ -358,7 +358,7 @@ describe("guardia de contraste", () => {
   it("marcaría #827a72 sobre papel nombrando el par", () => {
     const failures = findContrastFailures([text("nota de precios", "#827a72", "--paper")], tokens);
 
-    expect(failures).toEqual(["nota de precios: #827a72 sobre --paper da 3.98:1 (mínimo 4.5:1)"]);
+    expect(failures).toEqual(["nota de precios: #827a72 sobre --paper da 4.11:1 (mínimo 4.5:1)"]);
   });
 
   it("marcaría el badge con texto blanco sobre el coral claro", () => {

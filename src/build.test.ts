@@ -14,7 +14,7 @@ const configFile = join(root, "vite.config.ts");
 const isolatedEnvKeys = ["VITE_WHATSAPP_NUMBER", "VITE_SITE_URL", "NODE_ENV"];
 
 const CSP =
-  "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'";
+  "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'";
 
 const completeBusiness: BusinessInfo = {
   pickupArea: "Retiro en Parana, Entre Ríos.",

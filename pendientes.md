@@ -2,6 +2,47 @@
 
 Lo que queda después del pulido (`plan-pulido.md`). Nada de esto bloquea probar la tienda; lo de "Antes de publicar" sí bloquea `npm run build`.
 
+## Colores y tipografía (vista previa en la rama `vista-marca`)
+
+Las quejas de la primera revisión fueron sobre todo los colores y la tipografía. La dueña mandó su kit de marca, que no está en el repo:
+- el logo "studio ags" en 8 colores;
+- tres personajes dibujados con trazo de crayón sobre fondos plenos;
+- un patrón con el logo repetido.
+
+Colores del kit, medidos sobre los JPEG (son aproximados: pedir los códigos exactos):
+
+| Color | Aprox. | Como texto chico sobre fondo claro |
+|---|---|---|
+| Amarillo | `#F8D818` | No: solo fondo o ilustración |
+| Azul | `#3878B8` | Sí, justo (unos 4,6:1) |
+| Rosa | `#E8A0C8` | No: solo fondo o ilustración |
+| Verde | `#28A850` | Solo títulos grandes (unos 3:1) |
+| Naranja | `#E84820` | Solo títulos grandes (unos 3,9:1) |
+| Gris oscuro | `#303838` | Sí |
+| Negro | `#182018` | Sí |
+| Crema | `#F8F8F0` | Es fondo |
+
+Tipografías que mandó la dueña: Creato Display para el texto, y Hemis o Bristol para los títulos. El "ags" del logo está dibujado a mano, no es una fuente.
+
+Qué prueba la rama `vista-marca`:
+- **Paleta del kit:**
+  - azul para acentos y texto de color;
+  - amarillo en las franjas;
+  - rosa y verde en los stickers;
+  - naranja en los detalles.
+- **Logo y personajes:** el logo real en el encabezado y el pie, y los personajes en "Cómo comprar".
+- **Fuentes:** Creato en el texto y Hemis en los títulos. Bristol se prueba cambiando `--display` en `src/styles.css`.
+- **Fuentes propias:** se sirven desde el sitio, ya no desde Google Fonts. La CSP pasó a `font-src 'self'`.
+
+Falta antes de pasarla a `main`:
+- **Decisiones de la dueña:** que elija entre Hemis y Bristol y que confirme los colores.
+- **Licencias:** confirmar que Hemis y Bristol se pueden usar en una web. Creato tiene licencia OFL.
+- **Peso de las fuentes:** pasarlas de OTF a WOFF2. Hoy Creato y Hemis pesan unos 320 KB.
+- **Archivos originales:** pedir el logo y los personajes en SVG o PNG con fondo transparente. Los de la rama salen de los JPEG del kit.
+- **Favicon e imagen para compartir:** siguen con el estilo anterior.
+- **Signos que le faltan a Hemis:** no tiene ¿ ¡ « ni ·. Si un título los usa, esos signos salen en la fuente de respaldo.
+- **Nombres de los tokens:** quedaron los viejos, por ejemplo `--coral-dark` ahora es azul. Renombrarlos si se adopta.
+
 ## Antes de publicar (los responde la dueña)
 
 - Número de WhatsApp y URL del sitio en `.env` (ver `.env.example`).
@@ -35,4 +76,3 @@ Lo que queda después del pulido (`plan-pulido.md`). Nada de esto bloquea probar
 - Fichas con link propio por producto.
 - Un precio por combinación en los datos estructurados (hoy van mínimo y máximo).
 - Medir de dónde llegan los pedidos (por ejemplo `?ref=ig`).
-- Alojar las fuentes en el propio sitio.
