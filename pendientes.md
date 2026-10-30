@@ -31,11 +31,11 @@ Qué prueba la rama `vista-marca`:
   - rosa y verde en los stickers;
   - naranja en los detalles.
 - **Logo y personajes:** el logo real en el encabezado y el pie, y los personajes en "Cómo comprar".
-- **Fuentes:** Creato en el texto y Hemis en los títulos. Bristol se prueba cambiando `--display` en `src/styles.css`.
+- **Fuentes:** Creato en el texto, Hemis en los títulos y Bristol en los acentos (las palabras en azul de los títulos y los números de los pasos). Bristol no va en textos con "i" porque se confunde con dos puntos. Las dos se cambian con `--display` y `--display-accent` en `src/styles.css`.
 - **Fuentes propias:** se sirven desde el sitio, ya no desde Google Fonts. La CSP pasó a `font-src 'self'`.
 
 Falta antes de pasarla a `main`:
-- **Decisiones de la dueña:** que elija entre Hemis y Bristol y que confirme los colores.
+- **Decisiones de la dueña:** que confirme la mezcla de Hemis y Bristol, o elija una sola, y los colores.
 - **Licencias:** confirmar que Hemis y Bristol se pueden usar en una web. Creato tiene licencia OFL.
 - **Peso de las fuentes:** pasarlas de OTF a WOFF2. Hoy Creato y Hemis pesan unos 320 KB.
 - **Archivos originales:** pedir el logo y los personajes en SVG o PNG con fondo transparente. Los de la rama salen de los JPEG del kit.

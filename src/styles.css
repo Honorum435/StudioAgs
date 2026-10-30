@@ -106,8 +106,10 @@
   --shadow-bar: 0 -10px 30px rgb(54 40 28 / 9%);
   --backdrop: rgb(30 37 37 / 46%);
   --sans: "Creato Display", "Creato Display Fallback", sans-serif;
-  /* Para probar Bristol en los títulos: "Bristol", "Bristol Fallback", sans-serif. */
+  /* Títulos en Hemis; Bristol solo en los acentos (palabras en azul y números de los pasos),
+     porque su "i" se confunde con dos puntos. */
   --display: "Hemis", "Hemis Fallback", sans-serif;
+  --display-accent: "Bristol", "Bristol Fallback", sans-serif;
   /* Medidas de la página: un solo margen lateral y un solo ancho máximo. */
   --gutter: clamp(18px, 5vw, 36px);
   --page-max: 1280px;
@@ -424,6 +426,8 @@ p {
 
 .hero h1 span {
   color: var(--coral-dark);
+  font-family: var(--display-accent);
+  font-size: 0.9em;
   font-weight: 500;
 }
 
@@ -626,6 +630,8 @@ p {
 
 .section-heading h2 em {
   color: var(--coral-dark);
+  font-family: var(--display-accent);
+  font-size: 0.9em;
   font-weight: 500;
 }
 
@@ -1189,7 +1195,7 @@ p {
 
 .step-card > span {
   color: var(--coral-dark);
-  font-family: var(--display);
+  font-family: var(--display-accent);
   font-size: 19px;
   font-weight: 500;
 }
