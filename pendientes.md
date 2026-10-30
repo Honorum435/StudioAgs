@@ -43,6 +43,37 @@ Algunas descripciones ya están en su tienda de beacons.ai/studioags.
 - **Fotos de productos:** un álbum de Google Fotos que está en el chat. La descarga (`studio ags-1-001.zip`) llegó vacía: hay que bajarla de nuevo.
 - **Inspiración:** mupecuadernos.com.ar (gift cards y "Cuaderno emprendedor") y un link a una conversación de ChatGPT que todavía no vimos.
 
+### Fotos del álbum (`studio ags-1-001.zip`, en Descargas)
+
+Son 345 fotos (casi todas HEIC de iPhone) y 138 videos. Para la web hay que pasarlas a JPG; con ffmpeg funciona. Las que sirven, por producto:
+
+| Producto | Fotos |
+|---|---|
+| Minijuegos | IMG_0052, IMG_0149 a 0152, IMG_1136 a 1148 (en la playa), IMG_1258 (laberinto), IMG_0728 a 0736 (jugando) |
+| Calendario de heladera (rosa) | IMG_7966 a 7988, IMG_7287 a 7290 |
+| Calendario mensual grande | IMG_5603 a 5613 (verde y gris), IMG_6058, 6067, 6070 (rosa) |
+| Colores de los calendarios | IMG_3781, 3782, 5936, 5942 a 5945 (abanicos con todos los colores: sirven para la foto por opción) |
+| Calendario semanal | IMG_6386 a 6395 (rojo, con fibrones) |
+| Calendario de acrílico | IMG_0706, 0707 |
+| Calendario mini de imán | IMG_1946 a 1948 |
+| Notas con imán | IMG_9484 a 9489 (lila), IMG_1027, 1028 (verde, en la heladera) |
+| Marcos y separadores con imán | IMG_0700, 0701, IMG_9314 (cartel con precios de la feria) |
+| Pizarra con fotos | IMG_7688 a 7712, IMG_1269, IMG_1732 (pizarra negra) |
+| Bitácoras y cuadernos A5 | IMG_8570 a 8574, IMG_9315, 9317 |
+| Stickers | IMG_0198, 0199 (fotos), IMG_0702 a 0705 (en un termo), IMG_1858 a 1860 (logo studio ags) |
+| Remeras (DTF textil) | IMG_1768 a 1770, IMG_7225 a 7227 |
+| Vinilo de corte | IMG_1668 a 1680 (vidriera de La Verdu) |
+| Tarjetas personales | IMG_1741 |
+| Packaging y armado | IMG_5875 a 5911 (sello de la carita), IMG_5914 a 5941 (kraft), IMG_7009 a 7043 (regalos con moño y bolsas) |
+| Feria y taller (para "Sobre nosotros") | IMG_0204 a 0206, IMG_9323 a 9325, IMG_5599 a 5602, IMG_7341 a 7374 |
+
+Antes de publicar, preguntar:
+- **Marcas de clientes:** si se pueden mostrar las de La Verdu, Framar, Gabi, G&P y las otras que aparecen en stickers y vinilos.
+- **Personajes y logos ajenos:** las planchas de stickers con personajes, futbolistas o logos de otras marcas (IMG_9158 a 9160, IMG_9468 a 9472) es mejor no usarlas.
+- **Personas:** si las que aparecen con la cara están de acuerdo.
+
+El logo en negro de `34c632e3-…jpg` (1280 px) es más nítido que el del kit: sirve para rehacer la máscara del logo mientras llega el SVG.
+
 ## Colores y tipografía (vista previa en la rama `vista-marca`)
 
 Las quejas de la primera revisión fueron sobre todo los colores y la tipografía. La dueña mandó su kit de marca, que no está en el repo:
