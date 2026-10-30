@@ -8,7 +8,7 @@ import { WHATSAPP_NUMBER } from "./config";
 import { enableTouchActive, tilt } from "./motion";
 import { createOverlays } from "./overlays";
 import { renderPage } from "./templates";
-import { createOrderCode } from "./whatsapp";
+import { CUSTOM_ORDER_MESSAGE, buildWhatsAppLink, createOrderCode } from "./whatsapp";
 
 // Arranque: la cáscara llega prerenderizada en #app y no se vuelve a pintar; el cliente solo
 // conecta las islas (tarjetas y pedido) y al final saca la marca data-prerendered.
@@ -32,6 +32,13 @@ export const overlays = createOverlays();
 
 mountCatalogView({ root, store: orderStore, overlays });
 mountCartView({ root, store: orderStore, overlays, whatsappNumber: WHATSAPP_NUMBER });
+
+// Con número de WhatsApp, "Contanos tu idea" abre el chat en vez de Instagram.
+const customOrderLink = buildWhatsAppLink(WHATSAPP_NUMBER, CUSTOM_ORDER_MESSAGE);
+const customOrderButton = root.querySelector<HTMLAnchorElement>("[data-custom-order]");
+if (customOrderLink && customOrderButton) {
+  customOrderButton.href = customOrderLink.url;
+}
 
 enableTouchActive(document);
 const heroArt = root.querySelector<HTMLElement>(".hero-art");

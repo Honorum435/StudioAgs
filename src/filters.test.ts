@@ -20,7 +20,7 @@ describe("normalizeText", () => {
 });
 
 describe("filtro por intención", () => {
-  it("'Para tu marca' devuelve los productos que la incluyen, en el orden del catálogo", () => {
+  it("'Para tu emprendimiento' devuelve los productos que la incluyen, en el orden del catálogo", () => {
     expect(visible({ intent: "marca" })).toEqual(["calendarios", "vinilos", "tarjetas"]);
   });
 

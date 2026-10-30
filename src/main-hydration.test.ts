@@ -208,3 +208,23 @@ describe("hidratación completa", () => {
     back.mockRestore();
   });
 });
+
+describe("pedidos personalizados", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("sin número de WhatsApp, 'Contanos tu idea' sigue yendo a Instagram", async () => {
+    vi.stubEnv("VITE_WHATSAPP_NUMBER", "");
+    await hydrate();
+    expect($<HTMLAnchorElement>("[data-custom-order]").getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+  });
+
+  it("con número, abre el chat con el mensaje ya escrito", async () => {
+    vi.stubEnv("VITE_WHATSAPP_NUMBER", "5493435555555");
+    await hydrate();
+    const href = $<HTMLAnchorElement>("[data-custom-order]").getAttribute("href") ?? "";
+    expect(href.startsWith("https://wa.me/5493435555555?text=")).toBe(true);
+    expect(decodeURIComponent(href.split("text=")[1])).toBe("¡Hola! Tengo una idea para un pedido personalizado.");
+  });
+});

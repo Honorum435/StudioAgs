@@ -162,7 +162,7 @@ describe("catálogo", () => {
     }
     expect(intents.map((intent) => intent.label)).toEqual([
       "Para regalar",
-      "Para tu marca",
+      "Para tu emprendimiento",
       "Para decorar",
       "Para organizarte",
     ]);

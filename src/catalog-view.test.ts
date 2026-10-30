@@ -163,7 +163,7 @@ describe("precio en vivo", () => {
 });
 
 describe("filtros y búsqueda", () => {
-  it("'Para tu marca' muestra solo sus productos y queda presionado; 'Todo' vuelve a los 8", () => {
+  it("'Para tu emprendimiento' muestra solo sus productos y queda presionado; 'Todo' vuelve a los 8", () => {
     mount();
     chip("marca").click();
 

@@ -11,7 +11,7 @@ export interface Intent {
 
 export const intents: readonly Intent[] = [
   { id: "regalar", label: "Para regalar" },
-  { id: "marca", label: "Para tu marca" },
+  { id: "marca", label: "Para tu emprendimiento" },
   { id: "decorar", label: "Para decorar" },
   { id: "organizarte", label: "Para organizarte" },
 ];

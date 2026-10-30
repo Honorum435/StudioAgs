@@ -52,7 +52,7 @@ export const business: BusinessInfo = {
     "Envíos a todo el país por correo. El costo lo pagás vos y te lo pasamos antes de despachar.",
   ),
   paymentMethods: example(["Transferencia bancaria", "Efectivo al retirar"]),
-  instagramHandle: example("studioags"),
+  instagramHandle: "__studioags",
   responseTime: example("Respondemos de lunes a viernes de 10 a 18 h, casi siempre en el mismo día."),
   exchangePolicy: example(
     "Antes de imprimir te mandamos una muestra para que la apruebes. Como cada pedido es personalizado, no hacemos cambios por gusto; si llega con una falla de impresión, lo reponemos sin costo.",

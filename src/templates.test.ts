@@ -147,7 +147,18 @@ describe("página prerenderizada", () => {
     }
     expect(answers[3]).toBe(businessValue(business.exchangePolicy));
     expect(answers[4]).toContain(businessValue(business.responseTime));
-    expect(trust.querySelector("a")?.getAttribute("href")).toBe("https://www.instagram.com/studioags/");
+    expect(trust.querySelector("a")?.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+  });
+
+  it("ofrece pedidos personalizados entre el catálogo y el bloque de confianza", () => {
+    const block = doc.getElementById("pedidos-personalizados")!;
+    expect(text(block.querySelector("h2"))).toBe("¿Tenés una idea?");
+    const button = block.querySelector<HTMLAnchorElement>("[data-custom-order]")!;
+    expect(button.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+    expect(button.getAttribute("target")).toBe("_blank");
+    expect(accessibleName(button)).toBe("Contanos tu idea (se abre en otra pestaña)");
+    expect(doc.getElementById("catalogo")!.compareDocumentPosition(block)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(block.compareDocumentPosition(doc.getElementById("antes-de-pedir")!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
   it("aclara junto a los precios que el total final se confirma por WhatsApp", () => {
@@ -158,7 +169,7 @@ describe("página prerenderizada", () => {
 
   it("arma el encabezado, el aviso sin JavaScript, la ficha, el panel vacío, la barra y la región viva", () => {
     expect(doc.querySelectorAll(".site-header")).toHaveLength(1);
-    expect(page).toMatch(/<noscript>[\s\S]*JavaScript[\s\S]*https:\/\/www\.instagram\.com\/studioags\/[\s\S]*<\/noscript>/);
+    expect(page).toMatch(/<noscript>[\s\S]*JavaScript[\s\S]*https:\/\/www\.instagram\.com\/__studioags\/[\s\S]*<\/noscript>/);
     expect(page.indexOf("<noscript>")).toBeGreaterThan(page.indexOf("</header>"));
     expect(page.indexOf("<noscript>")).toBeLessThan(page.indexOf("<main>"));
     expect(doc.querySelector("dialog#ficha-dialog [data-action='close-ficha']")).not.toBeNull();
@@ -185,6 +196,7 @@ describe("página prerenderizada", () => {
       "hero",
       "value-strip",
       "catalog-section",
+      "custom-order",
       "trust-section",
       "how-section",
       "site-footer",

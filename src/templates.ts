@@ -442,7 +442,7 @@ export function hero(catalog: readonly CatalogProduct[]): string {
         <p class="eyebrow"><span class="eyebrow-mark" aria-hidden="true"></span> Papelería y objetos personalizados</p>
         <h1 id="hero-title">Pequeñas ideas,<br /><span>grandes recuerdos.</span></h1>
         <p class="hero-description">
-          Calendarios, fotos, tarjetas y láminas para regalar, decorar o darle identidad a tu marca.
+          Calendarios, fotos, tarjetas y láminas para regalar, decorar o darle identidad a tu emprendimiento.
           Elegís en el catálogo y lo terminamos de coordinar por WhatsApp.
         </p>
         <a class="primary-button" href="#catalogo">Ver el catálogo ${icon("arrow")}</a>
@@ -618,6 +618,21 @@ export function catalogSection(data: PageData): string {
     </section>`;
 }
 
+// Para lo que no está en el catálogo. El botón lleva a Instagram; con número de WhatsApp,
+// main.ts lo cambia por el chat con el mensaje ya escrito.
+export function customOrder(business: BusinessInfo): string {
+  const handle = businessValue(business.instagramHandle).replace(/^@/, "");
+  return `
+    <section class="custom-order" id="pedidos-personalizados" aria-labelledby="custom-order-title">
+      <div class="custom-order-copy">
+        <p class="eyebrow">Pedidos personalizados</p>
+        <h2 id="custom-order-title">¿Tenés una idea?</h2>
+        <p>Contanos qué imaginaste y lo armamos a tu medida: un regalo, la identidad de tu emprendimiento o lo que tengas en mente.</p>
+      </div>
+      <a class="primary-button custom-order-button" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer" data-custom-order>Contanos tu idea ${icon("arrow")}<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
+    </section>`;
+}
+
 function paymentList(methods: readonly string[]): string {
   return `<ul class="trust-inline-list">${methods.map((method) => `<li>${escapeHtml(method)}</li>`).join("")}</ul>`;
 }
@@ -777,6 +792,7 @@ export function renderPage(data: PageData): string {
     hero(data.catalog),
     valueStrip(),
     catalogSection(data),
+    customOrder(data.business),
     trustSection(data),
     howToBuy(),
     "</main>",

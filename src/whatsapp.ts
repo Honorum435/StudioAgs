@@ -11,6 +11,8 @@ export const ORDER_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 export const ORDER_CODE_LENGTH = 4;
 // Largo de link a partir del cual algunos navegadores y la app recortan el texto.
 export const WHATSAPP_URL_LIMIT = 2000;
+// Lo que ya viene escrito al tocar "Contanos tu idea" en los pedidos personalizados.
+export const CUSTOM_ORDER_MESSAGE = "¡Hola! Tengo una idea para un pedido personalizado.";
 
 export interface WhatsAppLink {
   url: string;

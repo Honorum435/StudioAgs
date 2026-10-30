@@ -2,6 +2,47 @@
 
 Lo que queda después del pulido (`plan-pulido.md`). Nada de esto bloquea probar la tienda; lo de "Antes de publicar" sí bloquea `npm run build`.
 
+## Pedidos de Aixa (chat del 30/10/2026)
+
+Lo que pidió después de ver el sitio con el kit de marca.
+
+**Estructura:**
+- **Inicio y catálogo separados:** una página de inicio y una pestaña aparte para el catálogo.
+- **Destacar la personalización:** que "Lo personalizamos con tu nombre, tu logo o tus fotos" resalte más.
+- **Ficha por producto:** al tocar un producto se abre su página, con galería, descripción, opciones y precio, como en Mupe.
+- **Foto por opción:** que la foto cambie al elegir una opción.
+- **Sobre nosotros:** una foto de Aixa con el negro y una biografía. Faltan la foto y el texto.
+- **Contacto:** una pestaña con el mail (elstudioags@gmail.com), el Instagram (@__studioags) y los WhatsApp de Aixa y del negro. Los números están en el chat; confirmar cuáles se publican.
+- **Pedidos personalizados:** un bloque "¿Tenés una idea? Contanos qué imaginaste y armamos algo personalizado" con un botón.
+
+**Diseño:**
+- **Fondo:** le falta color. Proponen franjas que alternen blanco y color, con rosa, como en Mupe.
+- **Colores:** que se usen todos los de la marca.
+- **Botones:** el destello al tocarlos va en rosa. Hoy es amarillo.
+- **Bristol:** usarla solo en mayúsculas, porque en minúscula no se entiende.
+- **Identidad:** la carita es el signo de la marca, como la flor con la "m" de Mupe.
+- **Filtros:** cambiar "Para tu marca" por "Para tu emprendimiento".
+
+**Productos para sumar (cada uno por separado, para que haya más):**
+- Minijuegos, que vienen con dos fibrones.
+- Archivo bajonero, que viene con un alfajor.
+- Imanes y marcos con imán.
+- Calendario mini de imán, calendarios imantados (vienen con fibrones) y calendarios de acrílico.
+- Notas con imán, que se puedan comprar sin un calendario.
+- Separadores.
+- Cuadros, con las medidas de las láminas (SA3, A3, A4, A5 y A6) o a medida. Faltan precios y medidas.
+- Agendas, como "próximamente".
+- DTF textil para remeras o cualquier tela.
+- Vinilo de corte para vidrieras y stickers.
+
+Algunas descripciones ya están en su tienda de beacons.ai/studioags.
+
+**Archivos que mandó:**
+- **Diseños en CorelDRAW (.cdr):** Identidad, Calendario imán mini, Calendario libreta (no está terminado), Calendario imán H y V mes, Calendario H semanal y Notas imán V. Ya están en Descargas. Traen vistas previas chicas (unos 256 px), que sirven para ver el diseño y sacar los colores pero no para la web. Para la web hay que pedirlos exportados a SVG o PNG con fondo transparente.
+- **Colores de los calendarios:** 12 capturas con las combinaciones de color de los calendarios (cada una con los 12 meses). Sirven para la foto por opción.
+- **Fotos de productos:** un álbum de Google Fotos que está en el chat. La descarga (`studio ags-1-001.zip`) llegó vacía: hay que bajarla de nuevo.
+- **Inspiración:** mupecuadernos.com.ar (gift cards y "Cuaderno emprendedor") y un link a una conversación de ChatGPT que todavía no vimos.
+
 ## Colores y tipografía (vista previa en la rama `vista-marca`)
 
 Las quejas de la primera revisión fueron sobre todo los colores y la tipografía. La dueña mandó su kit de marca, que no está en el repo:
@@ -9,18 +50,22 @@ Las quejas de la primera revisión fueron sobre todo los colores y la tipografí
 - tres personajes dibujados con trazo de crayón sobre fondos plenos;
 - un patrón con el logo repetido.
 
-Colores del kit, medidos sobre los JPEG (son aproximados: pedir los códigos exactos):
+Colores de la marca, tomados de las vistas previas de `Identidad.cdr` y de los calendarios (son exactos):
 
-| Color | Aprox. | Como texto chico sobre fondo claro |
+| Color | Código | Como texto chico sobre fondo claro |
 |---|---|---|
-| Amarillo | `#F8D818` | No: solo fondo o ilustración |
-| Azul | `#3878B8` | Sí, justo (unos 4,6:1) |
-| Rosa | `#E8A0C8` | No: solo fondo o ilustración |
-| Verde | `#28A850` | Solo títulos grandes (unos 3:1) |
-| Naranja | `#E84820` | Solo títulos grandes (unos 3,9:1) |
-| Gris oscuro | `#303838` | Sí |
-| Negro | `#182018` | Sí |
-| Crema | `#F8F8F0` | Es fondo |
+| Amarillo | `#FBD727` | No: solo fondo o ilustración |
+| Azul | `#3D77BC` | Sí, justo (unos 4,5:1) |
+| Rosa | `#ECA2C8` | No: solo fondo o ilustración |
+| Verde | `#2EAA54` | Solo títulos grandes (unos 3:1) |
+| Naranja | `#E94E26` | Solo títulos grandes (unos 3,8:1) |
+| Gris oscuro | `#363B39` | Sí |
+| Negro | `#1E231F` | Sí |
+| Crema | `#FBF9F2` | Es fondo |
+
+Los calendarios suman pasteles: celeste `#ABD7DF`, naranja claro `#F9A65E`, arena `#EEE096`, verde claro `#B5D780` y lila `#CDA3CB`.
+
+La hoja de identidad pide Hemis para títulos y acentos, y **Tablet Gothic Narrow** para subtítulos y textos. Aixa después eligió Creato para el texto. Si quieren Tablet Gothic Narrow, es una fuente paga: hacen falta los archivos y la licencia para web.
 
 Tipografías que mandó la dueña: Creato Display para el texto, y Hemis o Bristol para los títulos. El "ags" del logo está dibujado a mano, no es una fuente.
 

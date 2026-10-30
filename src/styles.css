@@ -93,12 +93,15 @@
   --line-strong: #d8d0bb;
   --rule: #b9b19c;
   --control-border: #8a8576;
-  --focus-ring: #3878b8;
-  --coral: #e84820;
+  --focus-ring: #3d77bc;
+  --coral: #e94e26;
   --coral-dark: #2a5f99;
-  --yellow: #f8d818;
+  --yellow: #fbd727;
   --yellow-soft: #fce77d;
-  --lavender: #e8a0c8;
+  --lavender: #eca2c8;
+  /* Rosas claros del kit: franjas y el destello de los botones al pasar y al tocar. */
+  --blush: #fde9f3;
+  --blush-deep: #fbd9e9;
   --green: #4cbb6c;
   --shadow-photo: 0 19px 54px rgb(54 40 28 / 13%);
   --shadow-card: 0 15px 35px rgb(60 46 32 / 9%);
@@ -106,8 +109,8 @@
   --shadow-bar: 0 -10px 30px rgb(54 40 28 / 9%);
   --backdrop: rgb(30 37 37 / 46%);
   --sans: "Creato Display", "Creato Display Fallback", sans-serif;
-  /* Títulos en Hemis; Bristol solo en los acentos (palabras en azul y números de los pasos),
-     porque su "i" se confunde con dos puntos. */
+  /* Títulos en Hemis; Bristol solo en los acentos (palabras en azul y números de los pasos) y en
+     mayúsculas: en minúscula su "i" se confunde con dos puntos. */
   --display: "Hemis", "Hemis Fallback", sans-serif;
   --display-accent: "Bristol", "Bristol Fallback", sans-serif;
   /* Medidas de la página: un solo margen lateral y un solo ancho máximo. */
@@ -427,8 +430,9 @@ p {
 .hero h1 span {
   color: var(--coral-dark);
   font-family: var(--display-accent);
-  font-size: 0.9em;
+  font-size: 0.8em;
   font-weight: 500;
+  text-transform: uppercase;
 }
 
 .hero-description {
@@ -577,21 +581,23 @@ p {
   font-size: 48px;
 }
 
-/* Franjas a todo el ancho: el fondo llega al borde y el texto se alinea con el contenedor. */
+/* Franjas a todo el ancho: el fondo llega al borde y el texto se alinea con el contenedor.
+   Alternan con el papel: rosa arriba, azul en los pedidos personalizados y amarillo al final. */
 .value-strip {
-  min-height: 80px;
+  min-height: 92px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px clamp(28px, 8vw, 130px);
+  gap: 16px clamp(24px, 4vw, 56px);
   margin: 0;
-  padding: 18px max(var(--gutter), (100% - var(--page-max)) / 2);
+  padding: 20px max(var(--gutter), (100% - var(--page-max)) / 2);
   list-style: none;
-  background: var(--sand);
+  background: var(--lavender);
   color: var(--ink-soft);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.5;
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
 .value-strip > li {
@@ -631,8 +637,9 @@ p {
 .section-heading h2 em {
   color: var(--coral-dark);
   font-family: var(--display-accent);
-  font-size: 0.9em;
+  font-size: 0.8em;
   font-weight: 500;
+  text-transform: uppercase;
 }
 
 .section-intro {
@@ -1079,6 +1086,53 @@ p {
   font-weight: 700;
   text-underline-offset: 4px;
   transition: background-color 160ms ease;
+}
+
+/* Pedidos personalizados: la franja azul entre el catálogo y el bloque de confianza. */
+.custom-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px 56px;
+  margin: 0 0 98px;
+  padding: 64px max(var(--gutter), (100% - var(--page-max)) / 2);
+  background: var(--coral-dark);
+  color: var(--white);
+}
+
+.custom-order-copy {
+  max-width: 640px;
+}
+
+.custom-order .eyebrow {
+  color: var(--yellow);
+}
+
+.custom-order h2 {
+  margin: 12px 0 14px;
+  font-family: var(--display-accent);
+  font-size: clamp(34px, 3.6vw, 48px);
+  font-weight: 500;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.custom-order-copy > p:last-child {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.custom-order .custom-order-button {
+  flex: 0 0 auto;
+  border-color: var(--yellow);
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.custom-order :focus-visible {
+  outline-color: var(--white);
 }
 
 /* Bloque de confianza: filas de dato y respuesta. */
@@ -2083,6 +2137,12 @@ textarea.field-input {
     background: var(--coral-dark);
   }
 
+  /* Sobre la franja azul el botón no puede ponerse azul: pasa a blanco. */
+  .custom-order .primary-button:not(:disabled):hover {
+    border-color: var(--white);
+    background: var(--white);
+  }
+
   .filter-chip:enabled:not(.is-active):hover {
     border-color: var(--ink);
     color: var(--ink);
@@ -2099,7 +2159,7 @@ textarea.field-input {
   .icon-button:enabled:hover,
   .quantity-controls button:enabled:not([aria-disabled="true"]):hover,
   .secondary-button:hover {
-    background: var(--sand);
+    background: var(--blush);
   }
 
   .add-button:enabled:hover {
@@ -2176,7 +2236,7 @@ textarea.field-input {
 /* :has() va en reglas sueltas: si un navegador no lo entiende, solo se pierde esa regla. */
 @media (hover: hover) and (pointer: fine) {
   .addon:has(input:enabled):hover {
-    background: var(--surface-soft);
+    background: var(--blush);
   }
 
   .search-field:has(input:enabled):hover {
@@ -2195,6 +2255,11 @@ textarea.field-input {
   border-color: var(--coral-dark);
   background: var(--coral-dark);
   transition-duration: var(--press-dur);
+}
+
+.custom-order .primary-button:not(:disabled):active {
+  border-color: var(--white);
+  background: var(--white);
 }
 
 .add-button:enabled:active {
@@ -2216,16 +2281,16 @@ textarea.field-input {
 .icon-button:enabled:active,
 .quantity-controls button:enabled:not([aria-disabled="true"]):active,
 .secondary-button:active {
-  background: var(--sand-deep);
+  background: var(--blush-deep);
   color: var(--ink);
 }
 
 .text-button:not(:disabled):active {
-  background: var(--sand);
+  background: var(--blush);
 }
 
 .addon:has(input:enabled):active {
-  background: var(--sand-deep);
+  background: var(--blush-deep);
 }
 
 /* El leve hundimiento al tocar. */
@@ -2424,11 +2489,19 @@ textarea.field-input {
     align-items: flex-start;
     flex-direction: column;
     gap: 12px;
-    padding-block: 19px;
+    padding-block: 22px;
+    font-size: 19px;
   }
 
   .catalog-section {
     padding: 72px 0 64px;
+  }
+
+  .custom-order {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 64px;
+    padding-block: 52px 56px;
   }
 
   .section-heading {
