@@ -83,7 +83,7 @@ Las quejas de la primera revisión fueron sobre todo los colores y la tipografí
 - tres personajes dibujados con trazo de crayón sobre fondos plenos;
 - un patrón con el logo repetido.
 
-Colores de la marca, tomados de las vistas previas de `Identidad.cdr` y de los calendarios (son exactos):
+Colores de la marca, confirmados con la hoja de `Identidad.cdr`. La web usa estos mismos, salvo el azul del texto chico, que va más oscuro (`#2A5F99`) para que se lea:
 
 | Color | Código | Como texto chico sobre fondo claro |
 |---|---|---|
@@ -95,6 +95,8 @@ Colores de la marca, tomados de las vistas previas de `Identidad.cdr` y de los c
 | Gris oscuro | `#363B39` | Sí |
 | Negro | `#1E231F` | Sí |
 | Crema | `#FBF9F2` | Es fondo |
+
+En la hoja, el amarillo figura como `#FFD812`, pero sus valores RGB (251, 215, 39) dan `#FBD727`, que es el que se ve en los diseños: la web usa ese. Conviene preguntarle a Aixa cuál vale.
 
 Los calendarios suman pasteles: celeste `#ABD7DF`, naranja claro `#F9A65E`, arena `#EEE096`, verde claro `#B5D780` y lila `#CDA3CB`.
 
