@@ -5,7 +5,7 @@ import { mountCartView } from "./cart-view";
 import { products } from "./catalog";
 import { mountCatalogView } from "./catalog-view";
 import { WHATSAPP_NUMBER } from "./config";
-import { enableTouchActive, tilt } from "./motion";
+import { compactOnScroll, enableTouchActive, tilt } from "./motion";
 import { createOverlays } from "./overlays";
 import { renderPage } from "./templates";
 import { CUSTOM_ORDER_MESSAGE, buildWhatsAppLink, createOrderCode } from "./whatsapp";
@@ -41,6 +41,10 @@ if (customOrderLink && customOrderButton) {
 }
 
 enableTouchActive(document);
+const header = root.querySelector<HTMLElement>(".site-header");
+if (header) {
+  compactOnScroll(header);
+}
 const heroArt = root.querySelector<HTMLElement>(".hero-art");
 if (heroArt) {
   tilt(heroArt);

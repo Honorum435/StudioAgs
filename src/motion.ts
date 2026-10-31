@@ -281,6 +281,15 @@ export function tilt(area: HTMLElement, selector = ".hero-photo"): () => void {
   };
 }
 
+// Encabezado fijo: apenas se baja se achica y suma sombra; arriba de todo vuelve a su alto.
+export function compactOnScroll(header: HTMLElement): () => void {
+  const win = windowOf(header);
+  const update = () => header.classList.toggle("is-scrolled", win.scrollY > 0);
+  win.addEventListener("scroll", update, { passive: true });
+  update();
+  return () => win.removeEventListener("scroll", update);
+}
+
 // Desplazamiento suave, o instantáneo con "reducir movimiento".
 export function scrollToTarget(target: Element | null | undefined, options: ScrollIntoViewOptions = {}): void {
   if (!target || typeof target.scrollIntoView !== "function") {

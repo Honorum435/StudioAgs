@@ -103,6 +103,13 @@
   --blush: #fde9f3;
   --blush-deep: #fbd9e9;
   --green: #4cbb6c;
+  /* Pasteles de los calendarios: fondo de las franjas con mucho texto, donde el verde y el
+     naranja de la marca no dejan leer la letra chica. */
+  --green-soft: #b5d780;
+  --orange-soft: #f9a65e;
+  --black: #1e231f;
+  --line-tint: rgb(54 59 57 / 20%);
+  --shadow-header: 0 10px 28px rgb(54 40 28 / 10%);
   --shadow-photo: 0 19px 54px rgb(54 40 28 / 13%);
   --shadow-card: 0 15px 35px rgb(60 46 32 / 9%);
   --shadow-drawer: -20px 0 60px rgb(35 26 20 / 12%);
@@ -116,6 +123,9 @@
   /* Medidas de la página: un solo margen lateral y un solo ancho máximo. */
   --gutter: clamp(18px, 5vw, 36px);
   --page-max: 1280px;
+  /* Encabezado fijo: su alto arriba de todo y achicado al bajar. */
+  --header-height: 86px;
+  --header-compact: 64px;
   --sticky-bar-space: calc(88px + env(safe-area-inset-bottom));
   /* Margen lateral del panel del pedido: su pie fijo lo usa para ocupar todo el ancho. */
   --cart-pad: 27px;
@@ -159,7 +169,7 @@
 }
 
 html {
-  scroll-padding-top: 96px;
+  scroll-padding-top: calc(var(--header-compact) + 24px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -262,27 +272,52 @@ button:disabled {
 }
 
 /* Contenedor de la página: todas las secciones comparten ancho y margen lateral. */
-.site-header,
 .noscript-note,
 .hero,
 .catalog-section,
-.trust-section,
 .breadcrumb,
 .product-page,
-.related-section,
-.process-section,
-.site-footer {
+.related-section {
   width: min(100% - 2 * var(--gutter), var(--page-max));
   margin-inline: auto;
 }
 
+/* Franjas a todo el ancho: el fondo llega al borde y el contenido se alinea con el contenedor.
+   Cada una lleva un color de la hoja de identidad: crema arriba, rosa, azul, verde claro,
+   amarillo, naranja claro y negro al pie. */
+.site-header,
+.value-strip,
+.custom-order,
+.trust-section,
+.how-section,
+.process-section,
+.site-footer {
+  padding-inline: max(var(--gutter), (100% - var(--page-max)) / 2);
+}
+
+/* Queda fijo arriba al bajar: se achica y el margen de abajo completa el alto que pierde, así el
+   contenido no salta. motion.ts le pone .is-scrolled. */
 .site-header {
-  height: 86px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: var(--header-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  transition:
+    height var(--lift-dur) var(--ease-out),
+    margin-bottom var(--lift-dur) var(--ease-out),
+    box-shadow var(--lift-dur) ease;
+}
+
+.site-header.is-scrolled {
+  height: var(--header-compact);
+  margin-bottom: calc(var(--header-height) - var(--header-compact));
+  box-shadow: var(--shadow-header);
 }
 
 /* El logo del kit es una máscara: el color sale del token y el texto queda para los lectores. */
@@ -292,6 +327,14 @@ button:disabled {
   aspect-ratio: 693 / 430;
   background-color: var(--coral-dark);
   mask: url("./logo-studioags.png") center / contain no-repeat;
+}
+
+.site-header .wordmark {
+  transition: width var(--lift-dur) var(--ease-out);
+}
+
+.site-header.is-scrolled .wordmark {
+  width: 68px;
 }
 
 .wordmark > span {
@@ -585,8 +628,6 @@ p {
   font-size: 48px;
 }
 
-/* Franjas a todo el ancho: el fondo llega al borde y el texto se alinea con el contenedor.
-   Alternan con el papel: rosa arriba, azul en los pedidos personalizados y amarillo al final. */
 .value-strip {
   min-height: 92px;
   display: flex;
@@ -594,7 +635,7 @@ p {
   justify-content: center;
   gap: 16px clamp(24px, 4vw, 56px);
   margin: 0;
-  padding: 20px max(var(--gutter), (100% - var(--page-max)) / 2);
+  padding-block: 20px;
   list-style: none;
   background: var(--lavender);
   color: var(--ink-soft);
@@ -1148,7 +1189,7 @@ p {
 
 .product-gallery {
   position: sticky;
-  top: 24px;
+  top: calc(var(--header-compact) + 24px);
   display: grid;
   gap: 12px;
 }
@@ -1254,9 +1295,20 @@ p {
   line-height: 1.1;
 }
 
-/* Así preparamos tu pedido: cuatro fotos del armado, después de los pasos. */
+/* Así preparamos tu pedido: cuatro fotos del armado, después de los pasos, en la franja naranja
+   claro. Sobre ella el gris y la volanta azul no llegan a 4,5:1: pasan a tinta. El acento azul
+   del título sí alcanza, porque es letra grande. */
 .process-section {
-  padding: 98px 0;
+  padding-block: 98px;
+  background: var(--orange-soft);
+}
+
+.process-section .eyebrow {
+  color: var(--ink);
+}
+
+.process-section .section-intro {
+  color: var(--ink-soft);
 }
 
 .process-grid {
@@ -1288,7 +1340,7 @@ p {
 
 .process-step p {
   margin: 0;
-  color: var(--muted);
+  color: var(--ink-soft);
   font-size: 15px;
   line-height: 1.6;
 }
@@ -1299,8 +1351,7 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 28px 56px;
-  margin: 0 0 98px;
-  padding: 64px max(var(--gutter), (100% - var(--page-max)) / 2);
+  padding-block: 64px;
   background: var(--coral-dark);
   color: var(--white);
 }
@@ -1340,9 +1391,19 @@ p {
   outline-color: var(--white);
 }
 
-/* Bloque de confianza: filas de dato y respuesta. */
+/* Bloque de confianza: filas de dato y respuesta en la franja verde claro. Como en la naranja,
+   la volanta, las respuestas y el enlace van en tinta. */
 .trust-section {
-  padding: 0 0 98px;
+  padding-block: 98px;
+  background: var(--green-soft);
+}
+
+.trust-section .eyebrow {
+  color: var(--ink);
+}
+
+.trust-section :focus-visible {
+  outline-color: var(--ink);
 }
 
 .trust-heading {
@@ -1351,7 +1412,7 @@ p {
 
 .trust-list {
   margin: 0;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--line-tint);
 }
 
 .trust-row {
@@ -1359,7 +1420,7 @@ p {
   flex-wrap: wrap;
   gap: 6px 40px;
   padding: 20px 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--line-tint);
 }
 
 .trust-row dt {
@@ -1374,7 +1435,7 @@ p {
   flex: 1 1 320px;
   max-width: 720px;
   margin: 0;
-  color: var(--muted);
+  color: var(--ink-soft);
   font-size: 15px;
   line-height: 1.7;
 }
@@ -1388,6 +1449,10 @@ p {
   text-underline-offset: 3px;
 }
 
+.trust-row a {
+  color: var(--ink);
+}
+
 .trust-inline-list {
   display: flex;
   flex-wrap: wrap;
@@ -1398,8 +1463,8 @@ p {
 }
 
 .how-section {
-  padding: 83px max(var(--gutter), (100% - var(--page-max)) / 2) 94px;
-  background: var(--sand-deep);
+  padding-block: 83px 94px;
+  background: var(--yellow);
 }
 
 .how-heading {
@@ -1474,23 +1539,28 @@ p {
   line-height: 1.65;
 }
 
+/* Pie en el negro de la marca, con el logo en amarillo. */
 .site-footer {
   min-height: 120px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  border-top: 1px solid var(--line);
+  background: var(--black);
+  color: var(--paper);
+}
+
+.site-footer :focus-visible {
+  outline-color: var(--yellow);
 }
 
 .footer-wordmark {
   width: 72px;
-  background-color: var(--ink);
+  background-color: var(--yellow);
 }
 
 .site-footer p {
   margin: 0;
-  color: var(--muted);
   font-family: var(--display);
   font-size: 21px;
   font-weight: 500;
@@ -1501,7 +1571,6 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: var(--ink-soft);
   font-size: 14px;
   font-weight: 600;
 }
@@ -2331,10 +2400,13 @@ textarea.field-input {
 
 @media (hover: hover) and (pointer: fine) {
   .main-nav a:hover,
-  .footer-link:hover,
   .cart-trigger:enabled:hover,
   .photo-help summary:hover {
     color: var(--coral-dark);
+  }
+
+  .footer-link:hover {
+    color: var(--yellow);
   }
 
   .primary-button:not(:disabled):hover {
@@ -2458,10 +2530,13 @@ textarea.field-input {
 }
 
 .main-nav a:active,
-.footer-link:active,
 .cart-trigger:enabled:active,
 .photo-help summary:active {
   color: var(--coral-dark);
+}
+
+.footer-link:active {
+  color: var(--yellow);
 }
 
 .primary-button:not(:disabled):active {
@@ -2601,10 +2676,6 @@ textarea.field-input {
 
 /* Celular y tablet chica. */
 @media (max-width: 767px) {
-  html {
-    scroll-padding-top: 74px;
-  }
-
   .product-page {
     grid-template-columns: minmax(0, 1fr);
     gap: 26px;
@@ -2640,12 +2711,12 @@ textarea.field-input {
     font-size: 16px;
   }
 
-  .site-header {
-    height: 72px;
-  }
-
   .wordmark {
     width: 72px;
+  }
+
+  .site-header.is-scrolled .wordmark {
+    width: 60px;
   }
 
   .main-nav {
@@ -2742,7 +2813,6 @@ textarea.field-input {
   .custom-order {
     align-items: flex-start;
     flex-direction: column;
-    margin-bottom: 64px;
     padding-block: 52px 56px;
   }
 
@@ -2789,7 +2859,7 @@ textarea.field-input {
   }
 
   .trust-section {
-    padding-bottom: 64px;
+    padding-block: 64px;
   }
 
   .trust-row {
@@ -2835,7 +2905,7 @@ textarea.field-input {
     min-height: 0;
     flex-wrap: wrap;
     gap: 4px 12px;
-    padding: 21px 0;
+    padding-block: 21px;
   }
 
   .site-footer p {
@@ -2862,6 +2932,8 @@ textarea.field-input {
 
   :root {
     --cart-pad: var(--gutter);
+    --header-height: 72px;
+    --header-compact: 60px;
   }
 
   .cart-dialog {

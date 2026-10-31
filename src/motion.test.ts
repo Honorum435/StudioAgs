@@ -5,7 +5,16 @@ import { mountCartView, type CartView } from "./cart-view";
 import { initialSelection, products } from "./catalog";
 import { ADDED_LABEL, mountCatalogView, type CatalogView } from "./catalog-view";
 import { formatPrice } from "./format";
-import { SWAP_DURATION, SWAP_HOLD, popNumber, scrollToTarget, slidingIndicator, swapText, tilt } from "./motion";
+import {
+  SWAP_DURATION,
+  SWAP_HOLD,
+  compactOnScroll,
+  popNumber,
+  scrollToTarget,
+  slidingIndicator,
+  swapText,
+  tilt,
+} from "./motion";
 import { createOverlays, type Overlays } from "./overlays";
 import { createMemoryStorage, mountShell, squash } from "./test-utils";
 
@@ -394,6 +403,41 @@ describe("inclinación de las polaroids", () => {
     expect(photo.classList.contains("is-hover")).toBe(false);
     expect(photo.style.getPropertyValue("--tilt-ry")).toBe("");
     stop();
+  });
+});
+
+describe("encabezado fijo", () => {
+  function scrollTo(y: number): void {
+    Object.defineProperty(window, "scrollY", { configurable: true, value: y });
+    window.dispatchEvent(new Event("scroll"));
+  }
+
+  afterEach(() => {
+    scrollTo(0);
+  });
+
+  it("se achica apenas se baja y vuelve a su alto arriba de todo", () => {
+    const header = $(".site-header");
+    const stop = compactOnScroll(header);
+    expect(header.classList.contains("is-scrolled")).toBe(false);
+
+    scrollTo(1);
+    expect(header.classList.contains("is-scrolled")).toBe(true);
+
+    scrollTo(0);
+    expect(header.classList.contains("is-scrolled")).toBe(false);
+    stop();
+  });
+
+  it("si la página ya arranca abajo, arranca achicado; al soltarlo deja de seguir el desplazamiento", () => {
+    const header = $(".site-header");
+    Object.defineProperty(window, "scrollY", { configurable: true, value: 400 });
+    const stop = compactOnScroll(header);
+    expect(header.classList.contains("is-scrolled")).toBe(true);
+
+    stop();
+    scrollTo(0);
+    expect(header.classList.contains("is-scrolled")).toBe(true);
   });
 });
 

@@ -259,22 +259,30 @@ const nonText = (name: string, foreground: string, background: string): Contrast
   min: 3,
 });
 
+// Letra de 24 px o más: WCAG pide 3:1.
+const largeText = nonText;
+
 // Cada unidad que sume una superficie o un estado nuevo agrega acá sus pares.
 const textPairs: ContrastPair[] = [
   text("texto general y del panel sobre papel", "--ink", "--paper"),
   text("títulos, campos y botón de sumar sobre la tarjeta", "--ink", "--surface"),
   text("títulos de los pasos", "--ink", "--surface-soft"),
-  text("título de Cómo comprar", "--ink", "--sand-deep"),
+  text("título de Cómo comprar", "--ink", "--yellow"),
   text("sticker lavanda", "--ink", "--lavender"),
   text("sticker verde", "--ink", "--green"),
   text("enlace para saltar al catálogo", "--ink", "--white"),
   text("franja de valores", "--ink-soft", "--lavender"),
   text("aviso sin JavaScript", "--ink-soft", "--sand"),
   text("enlace a Instagram del aviso sin JavaScript", "--coral-dark", "--sand"),
-  text("franja de confianza y medios de pago", "--ink-soft", "--paper"),
-  text("respuestas del bloque de confianza", "--muted", "--paper"),
+  text("franja de confianza", "--ink-soft", "--paper"),
+  text("título, volanta, filas y enlace de Antes de pedir", "--ink", "--green-soft"),
+  text("respuestas y medios de pago de Antes de pedir", "--ink-soft", "--green-soft"),
+  text("título, volanta y pasos de Así preparamos", "--ink", "--orange-soft"),
+  text("textos de Así preparamos", "--ink-soft", "--orange-soft"),
+  text("frase y enlace del pie", "--paper", "--black"),
+  text("enlace del pie al pasar y al tocar", "--yellow", "--black"),
   text("categoría sobre una foto oscura", "--ink-soft", "--surface-veil", "#000000"),
-  text("enlace del pie y cantidades del pedido", "--ink-soft", "--paper"),
+  text("cantidades del pedido", "--ink-soft", "--paper"),
   text("navegación, filtros y botón del pedido inactivo", "--ink-mid", "--paper"),
   text("leyendas de opciones y controles inactivos de la tarjeta", "--ink-mid", "--surface"),
   text("contador del pedido vacío y botón principal inactivo", "--ink-mid", "--sand-dark"),
@@ -284,7 +292,7 @@ const textPairs: ContrastPair[] = [
   text("epígrafe de la foto principal", "--muted", "--white"),
   text("volantas, acentos y enlaces coral sobre papel", "--coral-dark", "--paper"),
   text("precio de la tarjeta e instrucciones de fotos al pasar", "--coral-dark", "--surface"),
-  text("volanta de Cómo comprar", "--coral-dark", "--sand-deep"),
+  text("volanta de Cómo comprar", "--coral-dark", "--yellow"),
   text("números de los pasos", "--coral-dark", "--surface-soft"),
   text("botones oscuros, filtro activo y aviso", "--white", "--ink"),
   text("botón principal al pasar y número del contador", "--white", "--coral-dark"),
@@ -339,6 +347,12 @@ const nonTextPairs: ContrastPair[] = [
   nonText("anillo del contador cuando hay avisos", "--coral-dark", "--paper"),
   nonText("borde del aviso de restauración", "--coral-dark", "--sand"),
   nonText("indicador deslizante de la opción elegida sobre la tarjeta", "--ink", "--surface"),
+  nonText("anillo de foco sobre la franja verde", "--ink", "--green-soft"),
+  nonText("anillo de foco sobre el pie", "--yellow", "--black"),
+];
+
+const largeTextPairs: ContrastPair[] = [
+  largeText("acento azul del título de Así preparamos", "--coral-dark", "--orange-soft"),
 ];
 
 const stylesheet = readFileSync(new URL("./styles.css", import.meta.url), "utf8");
@@ -351,6 +365,10 @@ describe("guardia de contraste", () => {
   });
 
   it.each(nonTextPairs)("borde o forma: $name llega a 3:1", (pair) => {
+    expect(findContrastFailures([pair], tokens)).toEqual([]);
+  });
+
+  it.each(largeTextPairs)("letra grande: $name llega a 3:1", (pair) => {
     expect(findContrastFailures([pair], tokens)).toEqual([]);
   });
 

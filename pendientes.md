@@ -115,6 +115,20 @@ En la hoja, el amarillo figura como `#FFD812`, pero sus valores RGB (251, 215, 3
 
 Los calendarios suman pasteles: celeste `#ABD7DF`, naranja claro `#F9A65E`, arena `#EEE096`, verde claro `#B5D780` y lila `#CDA3CB`.
 
+**Un color por sección:**
+
+| Sección | Color |
+|---|---|
+| Encabezado, inicio y catálogo | Crema |
+| Franja de arriba | Rosa |
+| "¿Tenés una idea?" | Azul |
+| "Antes de pedir" | Verde claro |
+| "Cómo comprar" | Amarillo |
+| "Así preparamos tu pedido" | Naranja claro |
+| Pie | Negro, con el logo en amarillo |
+
+El verde y el naranja van en su versión pastel porque, en la versión plena, la letra chica no se lee. Sobre los pasteles, las volantas y los textos grises pasan a tinta. El encabezado queda fijo arriba al bajar y se achica un poco. Falta que Aixa diga si le gusta la combinación.
+
 La hoja de identidad pide Hemis para títulos y acentos, y **Tablet Gothic Narrow** para subtítulos y textos. Aixa después eligió Creato para el texto. Si quieren Tablet Gothic Narrow, es una fuente paga: hacen falta los archivos y la licencia para web.
 
 Tipografías que mandó la dueña: Creato Display para el texto, y Hemis o Bristol para los títulos. El "ags" del logo está dibujado a mano, no es una fuente.
