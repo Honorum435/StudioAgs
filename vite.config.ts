@@ -12,7 +12,11 @@ import {
   productHeadTags,
   renderDocument,
   renderProductDocument,
+  renderSitePageDocument,
+  sitePageHeadTags,
+  sitePages,
   type PendingFields,
+  type SitePageId,
 } from "./src/prerender";
 import { isValidWhatsAppNumber, normalizeSiteUrl } from "./src/validation";
 
@@ -99,16 +103,34 @@ function resolvePublishSettings(
   };
 }
 
-// Cada producto tiene su página en producto/<id>/. En el build es una entrada virtual en la raíz
-// (producto-<id>.html, con el mismo index.html de plantilla) que al final se mueve a su carpeta;
-// en desarrollo la sirve un middleware. El <base> hace que sus rutas relativas partan de la raíz.
-const PRODUCT_ENTRY_FILE = /^producto-([^/]+)\.html$/;
+// Cada producto tiene su página en producto/<id>/, y Productos, Nosotros y Contacto en <id>/. En
+// el build son entradas virtuales en la raíz (producto-<id>.html y pagina-<id>.html, con el mismo
+// index.html de plantilla) que al final se mueven a su carpeta; en desarrollo las sirve un
+// middleware. El <base> hace que sus rutas relativas partan de la raíz.
+const PAGE_ENTRY_FILE = /^(producto|pagina)-([^/]+)\.html$/;
 const PRODUCT_BASE = "../../";
+const SITE_PAGE_BASE = "../";
 
-function productIdFromPath(path: string, catalog: readonly CatalogProduct[]): string | null {
-  const match = /^\/producto-([^/]+)\.html$/.exec(path) ?? /^\/producto\/([^/]+)\/(?:index\.html)?$/.exec(path);
-  const id = match?.[1];
-  return id && catalog.some((product) => product.id === id) ? id : null;
+type InnerPage = { kind: "product"; id: string } | { kind: "site"; id: SitePageId };
+
+function isSitePageId(id: string): id is SitePageId {
+  return sitePages.some((page) => page.id === id);
+}
+
+function pageFromPath(path: string, catalog: readonly CatalogProduct[]): InnerPage | null {
+  const product = /^\/producto-([^/]+)\.html$/.exec(path) ?? /^\/producto\/([^/]+)\/(?:index\.html)?$/.exec(path);
+  if (product) {
+    const id = product[1];
+    return catalog.some((item) => item.id === id) ? { kind: "product", id } : null;
+  }
+  const site = /^\/pagina-([^/]+)\.html$/.exec(path) ?? /^\/([^/]+)\/(?:index\.html)?$/.exec(path);
+  const id = site?.[1];
+  return id && isSitePageId(id) ? { kind: "site", id } : null;
+}
+
+// Dónde queda cada entrada virtual al final del build.
+function pageOutputDir(kind: string, id: string): string {
+  return kind === "producto" ? `producto/${id}` : id;
 }
 
 export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
@@ -171,7 +193,10 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
         return;
       }
       root = resolve(userConfig.root ?? process.cwd());
-      const entries = catalog.map((product) => [`producto-${product.id}`, resolve(root, `producto-${product.id}.html`)]);
+      const entries = [
+        ...catalog.map((product) => `producto-${product.id}`),
+        ...sitePages.map((page) => `pagina-${page.id}`),
+      ].map((name) => [name, resolve(root, `${name}.html`)]);
       productEntries = new Set(entries.map(([, file]) => normalizePath(file)));
       return {
         build: { rollupOptions: { input: { index: resolve(root, "index.html"), ...Object.fromEntries(entries) } } },
@@ -186,8 +211,7 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         const path = (req.url ?? "").split("?")[0];
-        const match = /^\/producto\/([^/]+)\/?$/.exec(path);
-        if (!match || !catalog.some((product) => product.id === match[1])) {
+        if (!pageFromPath(path.endsWith("/") ? path : `${path}/`, catalog)) {
           next();
           return;
         }
@@ -208,19 +232,19 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
     },
   };
 
-  // Al final del build cada página de producto pasa a producto/<id>/index.html.
+  // Al final del build cada página pasa a su carpeta: producto/<id>/index.html o <id>/index.html.
   const productBundle: Plugin = {
     name: "studioags:product-bundle",
     apply: "build",
     enforce: "post",
     generateBundle(_outputOptions, bundle) {
       for (const [fileName, output] of Object.entries(bundle)) {
-        const match = PRODUCT_ENTRY_FILE.exec(fileName);
+        const match = PAGE_ENTRY_FILE.exec(fileName);
         if (!match || output.type !== "asset") {
           continue;
         }
         delete bundle[fileName];
-        this.emitFile({ type: "asset", fileName: `producto/${match[1]}/index.html`, source: output.source });
+        this.emitFile({ type: "asset", fileName: `${pageOutputDir(match[1], match[2])}/index.html`, source: output.source });
       }
     },
   };
@@ -232,14 +256,24 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
       order: "pre",
       handler(html, ctx) {
         const site = { ...options, siteUrl: settings.siteUrl };
-        const productId = productIdFromPath(ctx.path, catalog);
-        const head = productId ? productHeadTags(productId, site) : headTags(site);
+        const page = pageFromPath(ctx.path, catalog);
+        const head =
+          page?.kind === "product"
+            ? productHeadTags(page.id, site)
+            : page?.kind === "site"
+              ? sitePageHeadTags(page.id, site)
+              : headTags(site);
         const tags: HtmlTagDescriptor[] = head.map((tag) => ({ ...tag, injectTo: "head" }));
-        if (!productId) {
+        if (!page) {
           return { html: injectApp(html, renderDocument(options)), tags };
         }
-        tags.unshift({ tag: "base", attrs: { href: PRODUCT_BASE }, injectTo: "head-prepend" });
-        return { html: injectApp(html, renderProductDocument(productId, options)), tags };
+        const base = page.kind === "product" ? PRODUCT_BASE : SITE_PAGE_BASE;
+        tags.unshift({ tag: "base", attrs: { href: base }, injectTo: "head-prepend" });
+        const markup =
+          page.kind === "product"
+            ? renderProductDocument(page.id, options)
+            : renderSitePageDocument(page.id, options);
+        return { html: injectApp(html, markup), tags };
       },
     },
   };

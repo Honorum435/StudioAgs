@@ -14,6 +14,7 @@ import {
   initialResolved,
   renderPage,
   renderProductPage,
+  renderSitePage,
   stickyBarContent,
   type CartSummary,
 } from "./templates";
@@ -53,8 +54,16 @@ function accessibleName(element: Element): string {
   return squash(parts.join(""));
 }
 
-const page = renderPage({ business, catalog: products });
+const data = { business, catalog: products };
+// Casi todo pasa en Productos, la página del catálogo.
+const page = renderSitePage(data, "productos");
 const doc = parse(page);
+const home = renderPage(data);
+const homeDoc = parse(home);
+const about = renderSitePage(data, "nosotros");
+const aboutDoc = parse(about);
+const contact = renderSitePage(data, "contacto");
+const contactDoc = parse(contact);
 
 function card(id: string): Element {
   const element = doc.getElementById(`producto-${id}`);
@@ -115,7 +124,7 @@ describe("página prerenderizada", () => {
     expect(text(card("laminas").querySelector(".product-category"))).toBe("");
   });
 
-  it("pone la franja de confianza bajo el título del catálogo y el bloque completo debajo", () => {
+  it("pone la franja de confianza bajo el título del catálogo y el bloque completo en Contacto", () => {
     const catalog = doc.getElementById("catalogo")!;
     const strip = catalog.querySelector(".trust-strip")!;
     const items = [...strip.querySelectorAll("li")].map(text);
@@ -131,8 +140,8 @@ describe("página prerenderizada", () => {
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
 
-    const trust = doc.getElementById("antes-de-pedir")!;
-    expect(catalog.compareDocumentPosition(trust)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(doc.getElementById("antes-de-pedir")).toBeNull();
+    const trust = contactDoc.getElementById("antes-de-pedir")!;
     expect([...trust.querySelectorAll("dt")].map(text)).toEqual([
       "Plazos",
       "Envíos y retiro",
@@ -151,15 +160,20 @@ describe("página prerenderizada", () => {
     expect(trust.querySelector("a")?.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
   });
 
-  it("ofrece pedidos personalizados entre el catálogo y el bloque de confianza", () => {
-    const block = doc.getElementById("pedidos-personalizados")!;
-    expect(text(block.querySelector("h2"))).toBe("¿Tenés una idea?");
-    const button = block.querySelector<HTMLAnchorElement>("[data-custom-order]")!;
-    expect(button.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
-    expect(button.getAttribute("target")).toBe("_blank");
-    expect(accessibleName(button)).toBe("Contanos tu idea (se abre en otra pestaña)");
-    expect(doc.getElementById("catalogo")!.compareDocumentPosition(block)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
-    expect(block.compareDocumentPosition(doc.getElementById("antes-de-pedir")!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  it("ofrece pedidos personalizados en el inicio, Nosotros y Contacto, con el logo de fondo decorativo", () => {
+    for (const pageDoc of [homeDoc, aboutDoc, contactDoc]) {
+      const block = pageDoc.getElementById("pedidos-personalizados")!;
+      expect(text(block.querySelector("h2"))).toBe("¿Tenés una idea?");
+      const button = block.querySelector<HTMLAnchorElement>("[data-custom-order]")!;
+      expect(button.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+      expect(button.getAttribute("target")).toBe("_blank");
+      expect(accessibleName(button)).toBe("Contanos tu idea (se abre en otra pestaña)");
+      const watermark = block.querySelector(".watermark")!;
+      expect(watermark.getAttribute("aria-hidden")).toBe("true");
+      expect(watermark.children.length).toBeGreaterThan(0);
+      expect(text(watermark)).toBe("");
+    }
+    expect(doc.getElementById("pedidos-personalizados")).toBeNull();
   });
 
   it("aclara junto a los precios que el total final se confirma por WhatsApp", () => {
@@ -172,7 +186,7 @@ describe("página prerenderizada", () => {
     expect(doc.querySelectorAll(".site-header")).toHaveLength(1);
     expect(page).toMatch(/<noscript>[\s\S]*JavaScript[\s\S]*https:\/\/www\.instagram\.com\/__studioags\/[\s\S]*<\/noscript>/);
     expect(page.indexOf("<noscript>")).toBeGreaterThan(page.indexOf("</header>"));
-    expect(page.indexOf("<noscript>")).toBeLessThan(page.indexOf("<main>"));
+    expect(page.indexOf("<noscript>")).toBeLessThan(page.indexOf('<main id="contenido">'));
     expect(doc.querySelector("dialog#ficha-dialog [data-action='close-ficha']")).not.toBeNull();
 
     const cart = doc.querySelector("dialog#cart-dialog")!;
@@ -191,27 +205,133 @@ describe("página prerenderizada", () => {
     expect(accessibleName(trigger)).toBe("Mi pedido , vacío");
   });
 
-  it("mantiene el HTML en el orden en que se ve", () => {
-    const order = [
-      "site-header",
-      "hero",
-      "value-strip",
-      "catalog-section",
-      "custom-order",
-      "trust-section",
-      "how-section",
-      "process-section",
-      "site-footer",
-    ].map((name) => page.indexOf(`class="${name}"`));
-    expect(order.every((position) => position >= 0)).toBe(true);
-    expect([...order].sort((a, b) => a - b)).toEqual(order);
+  it("mantiene el HTML de cada página en el orden en que se ve", () => {
+    const pages: Array<[html: string, sections: string[]]> = [
+      [home, ["site-header", "hero", "value-strip", "intent-section", "best-section", "about-teaser", "custom-order", "site-footer"]],
+      [page, ["site-header", "catalog-section", "how-section", "site-footer"]],
+      [about, ["site-header", "about-intro", "process-section", "custom-order", "site-footer"]],
+      [contact, ["site-header", "contact-section", "trust-section", "custom-order", "site-footer"]],
+    ];
+    for (const [html, sections] of pages) {
+      const order = sections.map((name) => html.indexOf(`class="${name}"`));
+      expect(order.every((position) => position >= 0)).toBe(true);
+      expect([...order].sort((a, b) => a - b)).toEqual(order);
+    }
     expect(page.indexOf('class="filter-list"')).toBeLessThan(page.indexOf('class="search-field"'));
+  });
+
+  it("el menú lleva a Productos, Nosotros y Contacto y marca la página en la que estás", () => {
+    const links = (pageDoc: Document) => [...pageDoc.querySelectorAll<HTMLAnchorElement>(".main-nav a")];
+    expect(links(homeDoc).map((link) => [text(link), link.getAttribute("href")])).toEqual([
+      ["Productos", "productos/"],
+      ["Nosotros", "nosotros/"],
+      ["Contacto", "contacto/"],
+    ]);
+    expect(homeDoc.querySelector('.main-nav [aria-current="page"]')).toBeNull();
+    expect(text(doc.querySelector('.main-nav [aria-current="page"]'))).toBe("Productos");
+    expect(text(aboutDoc.querySelector('.main-nav [aria-current="page"]'))).toBe("Nosotros");
+    expect(text(contactDoc.querySelector('.main-nav [aria-current="page"]'))).toBe("Contacto");
+    expect(doc.querySelector(".site-header .wordmark")?.getAttribute("href")).toBe("./");
+
+    const footer = [...doc.querySelectorAll<HTMLAnchorElement>(".footer-nav a")];
+    expect(footer.map((link) => link.getAttribute("href"))).toEqual([
+      "productos/",
+      "nosotros/",
+      "contacto/",
+      "https://www.instagram.com/__studioags/",
+    ]);
+  });
+
+  it("cada página tiene un solo h1 y el salto lleva a su contenido", () => {
+    const cases: Array<[Document, string]> = [
+      [homeDoc, "#contenido"],
+      [doc, "productos/#contenido"],
+      [aboutDoc, "nosotros/#contenido"],
+      [contactDoc, "contacto/#contenido"],
+    ];
+    for (const [pageDoc, skip] of cases) {
+      expect(pageDoc.querySelectorAll("h1")).toHaveLength(1);
+      expect(pageDoc.querySelector(".skip-link")?.getAttribute("href")).toBe(skip);
+      expect(pageDoc.getElementById("contenido")?.tagName).toBe("MAIN");
+    }
+    expect(doc.querySelector("h1")?.id).toBe("catalog-title");
+  });
+});
+
+describe("inicio", () => {
+  it("no trae el catálogo: el botón del hero lleva a Productos", () => {
+    expect(homeDoc.querySelectorAll(".product-card")).toHaveLength(0);
+    expect(homeDoc.querySelector(".hero .primary-button")?.getAttribute("href")).toBe("productos/");
+  });
+
+  it("muestra un círculo por uso que abre Productos con ese filtro", () => {
+    const links = [...homeDoc.querySelectorAll<HTMLAnchorElement>(".intent-link")];
+    expect(links.map((link) => link.getAttribute("href"))).toEqual([
+      "productos/?uso=regalar",
+      "productos/?uso=marca",
+      "productos/?uso=decorar",
+      "productos/?uso=organizarte",
+    ]);
+    expect(links.map((link) => text(link.querySelector(".intent-label")))).toEqual([
+      "Para regalar",
+      "Para tu emprendimiento",
+      "Para decorar",
+      "Para organizarte",
+    ]);
+    for (const link of links) {
+      expect(text(link.querySelector(".intent-blurb"))).not.toBe("");
+      expect(link.querySelector(".intent-photo")?.getAttribute("aria-hidden")).toBe("true");
+      expect(link.querySelector("img")?.getAttribute("loading")).toBe("lazy");
+    }
+  });
+
+  it("los más vendidos son los elegidos, en su orden, con foto, nombre y precio", () => {
+    const featured = businessValue(business.featuredProducts);
+    const cards = [...homeDoc.querySelectorAll<HTMLAnchorElement>(".best-card")];
+    expect(cards.map((card) => card.getAttribute("href"))).toEqual(featured.map((id) => `producto/${id}/`));
+    expect(text(cards[0].querySelector(".best-name"))).toBe("Calendarios");
+    expect(text(cards[0].querySelector(".best-price"))).toBe(`Desde ${squash(formatPrice(21000))}`);
+    const flowers = cards[featured.indexOf("entre-flores")];
+    expect(text(flowers.querySelector(".best-price"))).not.toMatch(/^Desde/);
+    expect(cards.every((card) => card.querySelector("img")?.getAttribute("alt") !== "")).toBe(true);
+    expect(homeDoc.querySelector(".best-heading a")?.getAttribute("href")).toBe("productos/");
+  });
+
+  it("sin elegidos que existan, muestra los primeros cuatro del catálogo", () => {
+    const fallback = parse(
+      renderPage({ business: { ...business, featuredProducts: ["no-existe"] }, catalog: products }),
+    );
+    expect([...fallback.querySelectorAll(".best-card")].map((card) => card.getAttribute("href"))).toEqual(
+      products.slice(0, 4).map((item) => `producto/${item.id}/`),
+    );
+  });
+
+  it("el adelanto de Nosotros lleva a su página", () => {
+    expect(homeDoc.querySelector(".about-teaser a")?.getAttribute("href")).toBe("nosotros/");
+  });
+});
+
+describe("contacto", () => {
+  it("muestra cómo escribirnos, Instagram, dónde estamos y los horarios", () => {
+    const cards = [...contactDoc.querySelectorAll(".contact-card")];
+    expect(cards.map((card) => text(card.querySelector("h2")))).toEqual([
+      "Pedidos y consultas",
+      "Instagram",
+      "Dónde estamos",
+      "Horarios",
+    ]);
+    const chat = contactDoc.querySelector<HTMLAnchorElement>("[data-contact-chat]")!;
+    expect(chat.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+    expect(accessibleName(chat)).toBe("Escribinos (se abre en otra pestaña)");
+    expect(cards[1].querySelector("a")?.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+    expect(text(cards[2])).toContain(businessValue(business.pickupArea));
+    expect(text(cards[3])).toContain(businessValue(business.responseTime));
   });
 });
 
 describe("así preparamos tu pedido", () => {
   it("muestra los cuatro pasos con su foto cuadrada, texto alternativo y carga diferida", () => {
-    const section = doc.getElementById("asi-lo-preparamos")!;
+    const section = aboutDoc.getElementById("asi-lo-preparamos")!;
     expect(text(section.querySelector("h2"))).toBe("Así preparamos tu pedido.");
     const steps = [...section.querySelectorAll(".process-step")];
     expect(steps.map((step) => text(step.querySelector("h3")))).toEqual([
@@ -251,10 +371,10 @@ describe("página de un producto", () => {
   const productDoc = parse(renderProductPage({ business, catalog: products }, calendarios));
   const detail = productDoc.querySelector("article.product-page")!;
 
-  it("tiene un solo h1 con el nombre, el camino al catálogo y el salto al producto", () => {
+  it("tiene un solo h1 con el nombre, el camino a Productos y el salto al producto", () => {
     expect(productDoc.querySelectorAll("h1")).toHaveLength(1);
     expect(text(productDoc.querySelector("h1"))).toBe("Calendarios");
-    expect(productDoc.querySelector(".breadcrumb a")?.getAttribute("href")).toBe("#catalogo");
+    expect(productDoc.querySelector(".breadcrumb a")?.getAttribute("href")).toBe("productos/");
     expect(text(productDoc.querySelector('.breadcrumb [aria-current="page"]'))).toBe("Calendarios");
     const skip = productDoc.querySelector(".skip-link")!;
     expect(skip.getAttribute("href")).toBe("producto/calendarios/#producto-detalle");
@@ -298,7 +418,7 @@ describe("página de un producto", () => {
     ).toEqual(["calendarios", "fotos", "pizarra-orma"]);
   });
 
-  it("en el inicio la foto y el nombre de cada tarjeta llevan a su página", () => {
+  it("en Productos la foto y el nombre de cada tarjeta llevan a su página", () => {
     for (const item of products) {
       const element = card(item.id);
       const image = element.querySelector(".product-image-wrap")!;
@@ -307,7 +427,6 @@ describe("página de un producto", () => {
       expect(image.getAttribute("aria-hidden")).toBe("true");
       expect(element.querySelector("h3 a")?.getAttribute("href")).toBe(`producto/${item.id}/`);
     }
-    expect(doc.querySelector(".skip-link")?.getAttribute("href")).toBe("#catalogo");
   });
 });
 
@@ -325,7 +444,10 @@ describe("escape", () => {
   it("escapa un <script> en el nombre del producto", () => {
     const hostile = `<script>alert("x")</script>`;
     const catalog = products.map((item) => (item.id === "tarjetas" ? { ...item, name: hostile } : item));
-    const html = renderPage({ business, catalog });
+    const html = renderSitePage({ business, catalog }, "productos");
+    const homeHtml = renderPage({ business, catalog });
+    expect(homeHtml).not.toContain("<script>alert");
+    expect(homeHtml).toContain("&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;");
 
     expect(html).not.toContain("<script>alert");
     expect(html).toContain("&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;");
@@ -341,6 +463,9 @@ describe("sin estilos en línea", () => {
     const withAddOn = resolveSelection(vinyl, { material: "blanco", laca: "sin-laca" }, ["vinilos-maqueta"])!;
     const outputs = [
       page,
+      home,
+      about,
+      contact,
       cardPrice(withAddOn),
       addButtonContent(vinyl, withAddOn),
       cartCountContent(3),
@@ -444,12 +569,13 @@ describe("imágenes", () => {
   });
 
   it("solo la imagen principal del hero tiene prioridad alta", () => {
-    const priority = [...doc.querySelectorAll('[fetchpriority="high"]')];
+    expect(doc.querySelectorAll('[fetchpriority="high"]')).toHaveLength(0);
+    const priority = [...homeDoc.querySelectorAll('[fetchpriority="high"]')];
     expect(priority).toHaveLength(1);
     expect(priority[0].closest(".hero-photo-main")).not.toBeNull();
     expect(priority[0].getAttribute("srcset")).toContain("images/hero-bitacoras-800.webp 800w");
 
-    const small = doc.querySelector(".hero-photo-small img")!;
+    const small = homeDoc.querySelector(".hero-photo-small img")!;
     expect(small.getAttribute("srcset")).toContain("images/hero-fotos-434.webp 434w");
     expect(small.hasAttribute("sizes")).toBe(true);
   });

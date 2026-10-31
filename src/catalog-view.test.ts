@@ -25,6 +25,7 @@ beforeEach(() => {
 afterEach(() => {
   view?.destroy();
   overlays?.destroy();
+  window.history.replaceState(null, "", window.location.pathname);
   vi.useRealTimers();
   vi.restoreAllMocks();
   delete document.documentElement.dataset.layer;
@@ -175,6 +176,23 @@ describe("filtros y búsqueda", () => {
     chip("todo").click();
     expect(visibleIds()).toHaveLength(8);
     expect(emptyState().hidden).toBe(true);
+  });
+
+  it("llega con ?uso= desde los círculos del inicio y arranca con ese filtro", () => {
+    window.history.replaceState(null, "", "?uso=marca");
+    mount();
+
+    expect(visibleIds()).toEqual(["calendarios", "vinilos", "tarjetas"]);
+    expect(chip("marca").getAttribute("aria-pressed")).toBe("true");
+    expect(chip("todo").getAttribute("aria-pressed")).toBe("false");
+  });
+
+  it("un ?uso= que no existe deja todo el catálogo", () => {
+    window.history.replaceState(null, "", "?uso=cualquiera");
+    mount();
+
+    expect(visibleIds()).toHaveLength(8);
+    expect(chip("todo").getAttribute("aria-pressed")).toBe("true");
   });
 
   it("buscar no reemplaza las tarjetas y el buscador sigue enfocado", () => {

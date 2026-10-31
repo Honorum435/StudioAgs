@@ -75,7 +75,7 @@ describe("servidor de desarrollo", { timeout: 60_000 }, () => {
     expect(log).toMatch(/Falta VITE_SITE_URL/);
   });
 
-  it("sirve la página de cada producto en /producto/<id>/", async () => {
+  it("sirve la página de cada producto en /producto/<id>/ y Productos, Nosotros y Contacto en /<id>/", async () => {
     const envDir = join(workDir, "env");
     await mkdir(envDir);
     await writeFile(join(envDir, ".env"), "");
@@ -104,6 +104,17 @@ describe("servidor de desarrollo", { timeout: 60_000 }, () => {
       const withoutSlash = await fetch(`http://127.0.0.1:${port}/producto/calendarios`, { redirect: "manual" });
       expect(withoutSlash.status).toBe(301);
       expect(withoutSlash.headers.get("location")).toBe("/producto/calendarios/");
+
+      const catalog = await fetch(`http://127.0.0.1:${port}/productos/`);
+      expect(catalog.status).toBe(200);
+      const catalogHtml = await catalog.text();
+      expect(catalogHtml).toContain('<base href="../">');
+      expect(catalogHtml).toContain("<title>Productos — StudioAGS</title>");
+      expect(catalogHtml).toContain('<h1 id="catalog-title">');
+
+      const contact = await fetch(`http://127.0.0.1:${port}/contacto`, { redirect: "manual" });
+      expect(contact.status).toBe(301);
+      expect(contact.headers.get("location")).toBe("/contacto/");
     } finally {
       await new Promise((done) => http.close(done));
     }

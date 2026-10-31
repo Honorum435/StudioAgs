@@ -3,16 +3,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { STORAGE_KEY, createOrderStore, type OrderStore } from "./cart";
 import { initialSelection, products } from "./catalog";
 import type { Overlays } from "./overlays";
-import { injectApp, renderDocument, renderProductDocument } from "./prerender";
+import { injectApp, renderDocument, renderProductDocument, renderSitePageDocument } from "./prerender";
 import { nextPopState, squash } from "./test-utils";
 
 // Hidratación completa sobre el HTML que genera el prerender, con main.ts tal cual arranca.
 
 let overlays: Overlays | null = null;
 
+// Productos: la página con el catálogo, donde pasa casi todo.
 function loadPrerenderedPage(): void {
-  const html = injectApp('<div id="app"></div>', renderDocument());
-  document.body.innerHTML = html;
+  document.body.innerHTML = injectApp('<div id="app"></div>', renderSitePageDocument("productos"));
+}
+
+function loadHomePage(): void {
+  document.body.innerHTML = injectApp('<div id="app"></div>', renderDocument());
 }
 
 // Arma lo guardado como lo dejaría una visita anterior.
@@ -214,7 +218,7 @@ describe("página de un producto", () => {
     document.body.innerHTML = injectApp('<div id="app"></div>', renderProductDocument(id));
   }
 
-  it("el detalle cambia el precio con la opción y suma al mismo pedido que ve el inicio", async () => {
+  it("el detalle cambia el precio con la opción y suma al mismo pedido que ve Productos", async () => {
     loadProductPage("calendarios");
     await hydrate();
     const detail = $("article.product-page");
@@ -257,15 +261,33 @@ describe("pedidos personalizados", () => {
 
   it("sin número de WhatsApp, 'Contanos tu idea' sigue yendo a Instagram", async () => {
     vi.stubEnv("VITE_WHATSAPP_NUMBER", "");
+    loadHomePage();
     await hydrate();
     expect($<HTMLAnchorElement>("[data-custom-order]").getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
   });
 
   it("con número, abre el chat con el mensaje ya escrito", async () => {
     vi.stubEnv("VITE_WHATSAPP_NUMBER", "5493435555555");
+    loadHomePage();
     await hydrate();
     const href = $<HTMLAnchorElement>("[data-custom-order]").getAttribute("href") ?? "";
     expect(href.startsWith("https://wa.me/5493435555555?text=")).toBe(true);
     expect(decodeURIComponent(href.split("text=")[1])).toBe("¡Hola! Tengo una idea para un pedido personalizado.");
+  });
+
+  it("en Contacto, 'Escribinos' va a Instagram sin número y al chat con número", async () => {
+    vi.stubEnv("VITE_WHATSAPP_NUMBER", "");
+    document.body.innerHTML = injectApp('<div id="app"></div>', renderSitePageDocument("contacto"));
+    await hydrate();
+    expect($<HTMLAnchorElement>("[data-contact-chat]").getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+
+    overlays?.destroy();
+    overlays = null;
+    vi.stubEnv("VITE_WHATSAPP_NUMBER", "5493435555555");
+    document.body.innerHTML = injectApp('<div id="app"></div>', renderSitePageDocument("contacto"));
+    await hydrate();
+    const href = $<HTMLAnchorElement>("[data-contact-chat]").getAttribute("href") ?? "";
+    expect(href.startsWith("https://wa.me/5493435555555?text=")).toBe(true);
+    expect(decodeURIComponent(href.split("text=")[1])).toBe("¡Hola! Les quería hacer una consulta.");
   });
 });

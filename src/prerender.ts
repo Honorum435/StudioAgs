@@ -12,7 +12,18 @@ import {
   type CatalogProduct,
 } from "./catalog";
 import { escapeHtml } from "./format";
-import { instagramUrl, renderPage, renderProductPage, type PageData } from "./templates";
+import {
+  instagramUrl,
+  renderPage,
+  renderProductPage,
+  renderSitePage,
+  sitePagePath,
+  sitePages,
+  type PageData,
+  type SitePageId,
+} from "./templates";
+
+export { sitePages, type SitePageId };
 
 // Lo único que importa vite.config.ts del código de la tienda: documento, metadatos y pendientes.
 
@@ -72,6 +83,10 @@ function requireProduct(catalog: readonly CatalogProduct[], productId: string): 
 export function renderProductDocument(productId: string, options: ContentOptions = {}): string {
   const data = pageData(options);
   return renderProductPage(data, requireProduct(data.catalog, productId));
+}
+
+export function renderSitePageDocument(id: SitePageId, options: ContentOptions = {}): string {
+  return renderSitePage(pageData(options), id);
 }
 
 // Reemplaza el #app vacío de index.html por la cáscara prerenderizada.
@@ -210,6 +225,37 @@ export function headTags(options: SiteOptions): HeadTag[] {
     description: SITE_DESCRIPTION,
     url: absolute(options.siteUrl, "/"),
     structuredData: jsonLd(options),
+  });
+}
+
+const sitePageMeta: Record<SitePageId, { title: string; description: string }> = {
+  productos: {
+    title: `Productos — ${SITE_NAME}`,
+    description:
+      "Calendarios, fotos, tarjetas, vinilos y láminas personalizados, con el precio a la vista. Elegí las opciones y armá tu pedido por WhatsApp.",
+  },
+  nosotros: {
+    title: `Nosotros — ${SITE_NAME}`,
+    description:
+      "StudioAGS es un estudio de papelería y objetos personalizados de Paraná, Entre Ríos. Así trabajamos y así preparamos cada pedido.",
+  },
+  contacto: {
+    title: `Contacto — ${SITE_NAME}`,
+    description: "Escribinos para hacer un pedido o una consulta. Plazos, envíos, retiro en Paraná y formas de pago.",
+  },
+};
+
+// Productos lleva la lista del catálogo; Nosotros y Contacto, solo la tienda.
+export function sitePageHeadTags(id: SitePageId, options: SiteOptions): HeadTag[] {
+  const { business } = pageData(options);
+  const structuredData =
+    id === "productos"
+      ? jsonLd(options)
+      : serializeForScript({ "@context": "https://schema.org", "@graph": [storeNode(options, business)] });
+  return pageHeadTags(options, {
+    ...sitePageMeta[id],
+    url: absolute(options.siteUrl, sitePagePath(id)),
+    structuredData,
   });
 }
 

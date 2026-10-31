@@ -22,6 +22,8 @@ export interface BusinessInfo {
   responseTime: BusinessField<string>;
   exchangePolicy: BusinessField<string>;
   pricesUpdatedAt: BusinessField<CalendarDate>;
+  // Ids de los productos de "Los más vendidos" del inicio, en orden.
+  featuredProducts: BusinessField<readonly string[]>;
 }
 
 export function example<T>(value: T): ExampleValue<T> {
@@ -58,4 +60,5 @@ export const business: BusinessInfo = {
     "Antes de imprimir te mandamos una muestra para que la apruebes. Como cada pedido es personalizado, no hacemos cambios por gusto; si llega con una falla de impresión, lo reponemos sin costo.",
   ),
   pricesUpdatedAt: example({ year: 2026, month: 7, day: 14 }),
+  featuredProducts: example(["calendarios", "fotos", "entre-flores", "tarjetas"]),
 };

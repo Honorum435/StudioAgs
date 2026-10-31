@@ -8,7 +8,7 @@ import { WHATSAPP_NUMBER } from "./config";
 import { compactOnScroll, enableTouchActive, tilt } from "./motion";
 import { createOverlays } from "./overlays";
 import { renderPage } from "./templates";
-import { CUSTOM_ORDER_MESSAGE, buildWhatsAppLink, createOrderCode } from "./whatsapp";
+import { CONTACT_MESSAGE, CUSTOM_ORDER_MESSAGE, buildWhatsAppLink, createOrderCode } from "./whatsapp";
 
 // Arranque: la cáscara llega prerenderizada en #app y no se vuelve a pintar; el cliente solo
 // conecta las islas (tarjetas y pedido) y al final saca la marca data-prerendered.
@@ -33,11 +33,18 @@ export const overlays = createOverlays();
 mountCatalogView({ root, store: orderStore, overlays });
 mountCartView({ root, store: orderStore, overlays, whatsappNumber: WHATSAPP_NUMBER });
 
-// Con número de WhatsApp, "Contanos tu idea" abre el chat en vez de Instagram.
-const customOrderLink = buildWhatsAppLink(WHATSAPP_NUMBER, CUSTOM_ORDER_MESSAGE);
-const customOrderButton = root.querySelector<HTMLAnchorElement>("[data-custom-order]");
-if (customOrderLink && customOrderButton) {
-  customOrderButton.href = customOrderLink.url;
+// Con número de WhatsApp, "Contanos tu idea" y el "Escribinos" de Contacto abren el chat en vez de
+// Instagram.
+const chatButtons: Array<[selector: string, message: string]> = [
+  ["[data-custom-order]", CUSTOM_ORDER_MESSAGE],
+  ["[data-contact-chat]", CONTACT_MESSAGE],
+];
+for (const [selector, message] of chatButtons) {
+  const link = buildWhatsAppLink(WHATSAPP_NUMBER, message);
+  const button = root.querySelector<HTMLAnchorElement>(selector);
+  if (link && button) {
+    button.href = link.url;
+  }
 }
 
 enableTouchActive(document);

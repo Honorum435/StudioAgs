@@ -11,6 +11,7 @@ import {
   type AddOn,
   type CatalogProduct,
   type ImageSpec,
+  type IntentId,
   type ResolvedSelection,
 } from "./catalog";
 import { escapeHtml, formatLongDate, formatPrice } from "./format";
@@ -27,6 +28,19 @@ export interface PageData {
 
 export type CartSummary = Pick<OrderSummary, "lines" | "quantity" | "subtotal">;
 
+// Páginas fijas del sitio, además del inicio y de las de cada producto. Cada una vive en <id>/.
+export type SitePageId = "productos" | "nosotros" | "contacto";
+
+export const sitePages: ReadonlyArray<{ id: SitePageId; label: string }> = [
+  { id: "productos", label: "Productos" },
+  { id: "nosotros", label: "Nosotros" },
+  { id: "contacto", label: "Contacto" },
+];
+
+export function sitePagePath(id: SitePageId): string {
+  return `${id}/`;
+}
+
 // Anchos de la foto según el layout de styles.css (margen lateral de 5vw hasta 36 px):
 // una columna, dos en celular ancho, dos en tablet y tres desde 1024 px.
 export const CARD_IMAGE_SIZES =
@@ -40,6 +54,10 @@ export const GALLERY_SIZES = "(max-width: 767px) 92vw, (max-width: 1351px) 52vw,
 export const GALLERY_THUMB_SIZES = "72px";
 // Cuatro columnas desde 1024 px y dos en tablet y celular.
 export const PROCESS_PHOTO_SIZES = "(max-width: 1023px) calc(50vw - 40px), 300px";
+export const INTENT_PHOTO_SIZES = "(max-width: 767px) 132px, 168px";
+// Cuatro columnas desde 1024 px, dos en tablet y celular.
+export const BEST_PHOTO_SIZES = "(max-width: 1023px) calc(50vw - 40px), 300px";
+export const ABOUT_PHOTO_SIZES = "(max-width: 767px) 90vw, 520px";
 
 export const TOTAL_NOTE = "El total final se confirma por WhatsApp.";
 export const ORDER_UPDATED_NOTE = "Actualizamos tu pedido · revisalo";
@@ -399,19 +417,28 @@ export function stickyBarContent(
 
 // Secciones de la página, en el orden en que se ven.
 
-export function siteHeader(): string {
+// Las rutas son relativas a la raíz: en las páginas de adentro las resuelve su <base>.
+function pageLinks(current?: SitePageId): string {
+  return sitePages
+    .map(
+      (page) =>
+        `<a href="${sitePagePath(page.id)}"${page.id === current ? ' aria-current="page"' : ""}>${page.label}</a>`,
+    )
+    .join("\n        ");
+}
+
+export function siteHeader(current?: SitePageId): string {
   return `
     <header class="site-header">
-      <a class="wordmark" href="#" aria-label="StudioAGS, inicio">
+      <a class="wordmark" href="./" aria-label="StudioAGS, inicio">
         <span class="wordmark-small">studio</span>
         <span class="wordmark-large">ags<span class="wordmark-dot">.</span></span>
       </a>
       <nav class="main-nav" aria-label="Navegación principal">
-        <a href="#catalogo">Catálogo</a>
-        <a href="#como-comprar">Cómo comprar</a>
+        ${pageLinks(current)}
       </nav>
       <button class="cart-trigger" type="button" data-action="open-cart" disabled>
-        <span>Mi pedido</span>
+        <span class="cart-trigger-label">Mi pedido</span>
         ${icon("bag")}
         <span class="cart-count is-empty" data-cart-count>${cartCountContent(0)}</span>
         <span class="cart-trigger-note" data-cart-trigger-note hidden></span>
@@ -452,7 +479,7 @@ export function hero(catalog: readonly CatalogProduct[]): string {
           Calendarios, fotos, tarjetas y láminas para regalar, decorar o darle identidad a tu emprendimiento.
           Elegís en el catálogo y lo terminamos de coordinar por WhatsApp.
         </p>
-        <a class="primary-button" href="#catalogo">Ver el catálogo ${icon("arrow")}</a>
+        <a class="primary-button" href="${sitePagePath("productos")}">Ver productos ${icon("arrow")}</a>
         <div class="hero-caption">
           <span class="caption-rule" aria-hidden="true"></span>
           <span>Impresiones · papelería · detalles a tu manera</span>
@@ -478,6 +505,139 @@ export function valueStrip(): string {
     <ul class="value-strip" aria-label="Lo que ofrece StudioAGS">
       ${items.map((item) => `<li><span class="eyebrow-mark" aria-hidden="true"></span><span>${item}</span></li>`).join("")}
     </ul>`;
+}
+
+// Inicio: un círculo por uso, con la foto de un producto de ese uso. Abre Productos ya filtrado.
+const intentShowcase: Record<IntentId, { blurb: string; photo: string }> = {
+  regalar: { blurb: "Detalles con nombre propio", photo: "bitacoras" },
+  marca: { blurb: "Tarjetas y vinilos con tu logo", photo: "vinilos" },
+  decorar: { blurb: "Láminas, flores y vinilos", photo: "laminas" },
+  organizarte: { blurb: "Calendarios, pizarras y bitácoras", photo: "pizarra-orma" },
+};
+
+export function intentCircles({ catalog }: PageData): string {
+  const items = intents
+    .map((intent) => {
+      const { blurb, photo } = intentShowcase[intent.id];
+      const product = catalog.find((item) => item.id === photo);
+      const image = product
+        ? responsiveImage(product.images.card, { alt: "", sizes: INTENT_PHOTO_SIZES, loading: "lazy" })
+        : "";
+      return `
+        <li>
+          <a class="intent-link intent-${attr(intent.id)}" href="${sitePagePath("productos")}?uso=${attr(intent.id)}">
+            <span class="intent-photo" aria-hidden="true">${image}</span>
+            <span class="intent-label">${escapeHtml(intent.label)}</span>
+            <span class="intent-blurb">${escapeHtml(blurb)}</span>
+          </a>
+        </li>`;
+    })
+    .join("");
+  return `
+    <section class="intent-section" aria-labelledby="intent-title">
+      <div class="intent-heading">
+        <p class="eyebrow">Para cada ocasión</p>
+        <h2 id="intent-title">Encontrá lo que buscás</h2>
+      </div>
+      <ul class="intent-list">${items}
+      </ul>
+    </section>`;
+}
+
+function priceLabel(product: CatalogProduct): string {
+  const prices = product.combinations.map((combination) => combination.price);
+  const low = Math.min(...prices);
+  return low === Math.max(...prices) ? formatPrice(low) : `Desde ${formatPrice(low)}`;
+}
+
+// Los que eligió la dueña, en su orden; si ninguno existe, los primeros del catálogo.
+export function bestSellers({ business, catalog }: PageData): string {
+  const picked = businessValue(business.featuredProducts).flatMap((id) => {
+    const product = catalog.find((item) => item.id === id);
+    return product ? [product] : [];
+  });
+  const featured = (picked.length > 0 ? picked : catalog).slice(0, 4);
+  const cards = featured
+    .map(
+      (product) => `
+        <li>
+          <a class="best-card" href="${attr(productPath(product))}">
+            <span class="best-photo">${responsiveImage(product.images.card, { alt: product.imageAlt, sizes: BEST_PHOTO_SIZES, loading: "lazy" })}</span>
+            <span class="best-name">${escapeHtml(product.name)}</span>
+            <span class="best-price">${priceLabel(product)}</span>
+          </a>
+        </li>`,
+    )
+    .join("");
+  return `
+    <section class="best-section" aria-labelledby="best-title">
+      <div class="best-heading">
+        <h2 id="best-title">Los más vendidos</h2>
+        <a class="text-link" href="${sitePagePath("productos")}">Ver todos ${icon("arrow")}</a>
+      </div>
+      <ul class="best-grid">${cards}
+      </ul>
+    </section>`;
+}
+
+const stampPhoto: ImageSpec = { base: "foto-proceso-1", widths: [600, 1200], width: 1200, height: 1200 };
+const STAMP_ALT = "Sello con la carita de StudioAGS junto a la almohadilla y dos tarjetas recién selladas";
+
+export function aboutTeaser(): string {
+  return `
+    <section class="about-teaser" aria-labelledby="about-teaser-title">
+      ${responsiveImage(stampPhoto, { className: "about-photo", alt: STAMP_ALT, sizes: ABOUT_PHOTO_SIZES, loading: "lazy" })}
+      <div class="about-copy">
+        <p class="eyebrow">Nosotros</p>
+        <h2 id="about-teaser-title">Hecho a mano en Paraná</h2>
+        <p>Somos un estudio de papelería personalizada. Cada pedido lo diseñamos con vos, lo imprimimos con cuidado y lo empaquetamos a mano, como si fuera para alguien nuestro.</p>
+        <a class="primary-button" href="${sitePagePath("nosotros")}">Conocenos ${icon("arrow")}</a>
+      </div>
+    </section>`;
+}
+
+// Textos de Nosotros: los propone la página y falta que la dueña los apruebe (pendientes.md).
+export function aboutIntro(): string {
+  return `
+    <section class="about-intro" aria-labelledby="about-title">
+      <div class="about-copy">
+        <p class="eyebrow">Nosotros</p>
+        <h1 id="about-title">Para que lo lindo se quede</h1>
+        <p class="about-lead">StudioAGS es un estudio de papelería y objetos personalizados de Paraná, Entre Ríos. Hacemos calendarios, fotos, tarjetas, láminas y vinilos para que los momentos lindos no se queden guardados en el celular.</p>
+        <p>Nos gusta que cada cosa tenga algo tuyo: un nombre, una fecha, tu logo o esa foto que te encanta. Por eso trabajamos pedido por pedido: te mandamos una muestra antes de imprimir y seguimos hasta que te guste.</p>
+        <p>Después viene la parte que más disfrutamos: lo preparamos a mano, lo sellamos con nuestra carita y lo envolvemos para que llegue listo para regalar o para quedártelo.</p>
+      </div>
+      ${responsiveImage(stampPhoto, { className: "about-photo", alt: STAMP_ALT, sizes: ABOUT_PHOTO_SIZES, highPriority: true })}
+    </section>`;
+}
+
+// Con número de WhatsApp, main.ts cambia el botón de Instagram por el chat con un saludo escrito.
+export function contactSection(business: BusinessInfo): string {
+  const handle = businessValue(business.instagramHandle).replace(/^@/, "");
+  const cards: Array<{ title: string; body: string }> = [
+    {
+      title: "Pedidos y consultas",
+      body: `<p>Escribinos para preguntar por un producto, pedir un presupuesto o contarnos una idea.</p>
+          <a class="primary-button contact-button" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer" data-contact-chat>Escribinos ${icon("arrow")}<span class="visually-hidden"> (se abre en otra pestaña)</span></a>`,
+    },
+    {
+      title: "Instagram",
+      body: `<p>Ahí vamos subiendo los trabajos que hacemos. Buscanos como ${instagramLink(business)}.</p>`,
+    },
+    { title: "Dónde estamos", body: `<p>${escapeHtml(businessValue(business.pickupArea))}</p>` },
+    { title: "Horarios", body: `<p>${escapeHtml(businessValue(business.responseTime))}</p>` },
+  ];
+  return `
+    <section class="contact-section" aria-labelledby="contact-title">
+      <div class="contact-heading">
+        <p class="eyebrow">Contacto</p>
+        <h1 id="contact-title">Hablemos</h1>
+        <p class="section-intro">Para hacer un pedido, preguntar algo o contarnos lo que imaginaste: te respondemos por chat.</p>
+      </div>
+      <ul class="contact-grid">
+        ${cards.map((card) => `<li class="contact-card"><h2>${card.title}</h2>${card.body}</li>`).join("")}
+      </ul>
+    </section>`;
 }
 
 export function trustStrip({ business, catalog }: PageData): string {
@@ -644,7 +804,7 @@ export function productPage(product: CatalogProduct): string {
   return `
     <nav class="breadcrumb" aria-label="Estás en">
       <ol>
-        <li><a href="#catalogo">Catálogo</a></li>
+        <li><a href="${sitePagePath("productos")}">Productos</a></li>
         <li><span aria-current="page">${escapeHtml(product.name)}</span></li>
       </ol>
     </nav>
@@ -684,13 +844,14 @@ export function relatedProducts({ catalog }: PageData, product: CatalogProduct):
     </section>`;
 }
 
-export function catalogSection(data: PageData): string {
+// En Productos el título es el de la página.
+export function catalogSection(data: PageData, heading: "h1" | "h2" = "h2"): string {
   return `
     <section class="catalog-section" id="catalogo" aria-labelledby="catalog-title">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">El catálogo</p>
-          <h2 id="catalog-title">Encontrá algo <em>hecho para vos.</em></h2>
+          <p class="eyebrow">Productos</p>
+          <${heading} id="catalog-title">Encontrá algo <em>hecho para vos.</em></${heading}>
         </div>
         <p class="section-intro">Elegí las opciones de cada producto y sumalo a tu pedido. Cuando esté listo, lo mandás por WhatsApp.</p>
       </div>
@@ -712,12 +873,16 @@ export function catalogSection(data: PageData): string {
     </section>`;
 }
 
+// Logos de la marca de agua: alcanzan para cubrir la franja girada en una pantalla ancha.
+const WATERMARK_TILES = 48;
+
 // Para lo que no está en el catálogo. El botón lleva a Instagram; con número de WhatsApp,
 // main.ts lo cambia por el chat con el mensaje ya escrito.
 export function customOrder(business: BusinessInfo): string {
   const handle = businessValue(business.instagramHandle).replace(/^@/, "");
   return `
     <section class="custom-order" id="pedidos-personalizados" aria-labelledby="custom-order-title">
+      <div class="watermark" aria-hidden="true">${"<span></span>".repeat(WATERMARK_TILES)}</div>
       <div class="custom-order-copy">
         <p class="eyebrow">Pedidos personalizados</p>
         <h2 id="custom-order-title">¿Tenés una idea?</h2>
@@ -846,14 +1011,21 @@ export function processSection(): string {
     </section>`;
 }
 
-export function siteFooter(): string {
+export function siteFooter(business: BusinessInfo): string {
+  const handle = businessValue(business.instagramHandle).replace(/^@/, "");
+  const links = [
+    ...sitePages.map((page) => `<a class="footer-link" href="${sitePagePath(page.id)}">${page.label}</a>`),
+    `<a class="footer-link" href="${attr(instagramUrl(handle))}">Instagram</a>`,
+  ];
   return `
     <footer class="site-footer">
-      <a class="wordmark footer-wordmark" href="#" aria-label="StudioAGS, inicio">
+      <a class="wordmark footer-wordmark" href="./" aria-label="StudioAGS, inicio">
         <span class="wordmark-small">studio</span><span class="wordmark-large">ags<span class="wordmark-dot">.</span></span>
       </a>
       <p>Para que lo lindo se quede.</p>
-      <a href="#catalogo" class="footer-link">Volver al catálogo ${icon("arrow")}</a>
+      <nav class="footer-nav" aria-label="Páginas">
+        ${links.join("\n        ")}
+      </nav>
     </footer>`;
 }
 
@@ -933,17 +1105,16 @@ function skipLink(href: string, label: string): string {
   return `<a class="skip-link" href="${attr(href)}">${escapeHtml(label)}</a>`;
 }
 
-export function renderProductPage(data: PageData, product: CatalogProduct): string {
+// Lo que comparten todas las páginas alrededor de su contenido: el pedido sigue en cada una.
+function pageShell(data: PageData, skip: string, sections: readonly string[], current?: SitePageId): string {
   return [
-    skipLink(`${productPath(product)}#producto-detalle`, "Ir al producto"),
-    siteHeader(),
+    skip,
+    siteHeader(current),
     noscriptNote(data.business),
-    "<main>",
-    productPage(product),
-    howToBuy(),
-    relatedProducts(data, product),
+    '<main id="contenido">',
+    ...sections,
     "</main>",
-    siteFooter(),
+    siteFooter(data.business),
     fichaDialog(),
     cartDialog(),
     stickyBar(),
@@ -951,24 +1122,31 @@ export function renderProductPage(data: PageData, product: CatalogProduct): stri
   ].join("\n");
 }
 
+export function renderProductPage(data: PageData, product: CatalogProduct): string {
+  return pageShell(data, skipLink(`${productPath(product)}#producto-detalle`, "Ir al producto"), [
+    productPage(product),
+    howToBuy(),
+    relatedProducts(data, product),
+  ]);
+}
+
+const sitePageSections: Record<SitePageId, (data: PageData) => string[]> = {
+  productos: (data) => [catalogSection(data, "h1"), howToBuy()],
+  nosotros: (data) => [aboutIntro(), processSection(), customOrder(data.business)],
+  contacto: (data) => [contactSection(data.business), trustSection(data), customOrder(data.business)],
+};
+
+export function renderSitePage(data: PageData, id: SitePageId): string {
+  return pageShell(data, skipLink(`${sitePagePath(id)}#contenido`, "Ir al contenido"), sitePageSections[id](data), id);
+}
+
 export function renderPage(data: PageData): string {
-  return [
-    skipLink("#catalogo", "Ir al catálogo"),
-    siteHeader(),
-    noscriptNote(data.business),
-    "<main>",
+  return pageShell(data, skipLink("#contenido", "Ir al contenido"), [
     hero(data.catalog),
     valueStrip(),
-    catalogSection(data),
+    intentCircles(data),
+    bestSellers(data),
+    aboutTeaser(),
     customOrder(data.business),
-    trustSection(data),
-    howToBuy(),
-    processSection(),
-    "</main>",
-    siteFooter(),
-    fichaDialog(),
-    cartDialog(),
-    stickyBar(),
-    announcer(),
-  ].join("\n");
+  ]);
 }

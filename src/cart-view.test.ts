@@ -717,4 +717,15 @@ describe("panel y barra fija", () => {
     expect(dialog().open).toBe(false);
     expect(document.activeElement).toBe(document.getElementById("catalog-title"));
   });
+
+  it("fuera de Productos, 'Ver el catálogo' cierra el panel y va a esa página", async () => {
+    root = mountShell("inicio");
+    mount();
+    openPanel();
+    const assign = vi.spyOn(window.location, "assign").mockImplementation(() => undefined);
+    $<HTMLButtonElement>('[data-cart-content] [data-action="browse-products"]').click();
+
+    await vi.waitFor(() => expect(assign).toHaveBeenCalledWith(new URL("productos/", document.baseURI).href));
+    expect(dialog().open).toBe(false);
+  });
 });

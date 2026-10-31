@@ -24,6 +24,7 @@ const completeBusiness: BusinessInfo = {
   responseTime: "Respondemos en el día.",
   exchangePolicy: "Te mandamos una muestra antes de imprimir.",
   pricesUpdatedAt: { year: 2026, month: 7, day: 14 },
+  featuredProducts: ["calendarios", "tarjetas"],
 };
 
 const completeCatalog: CatalogProduct[] = products.map((product) => ({
@@ -190,7 +191,7 @@ describe("build", { timeout: 60_000 }, () => {
     expect(warnings).toEqual([]);
   });
 
-  it("deja el catálogo dentro de #app, con metadatos de URL absoluta y la CSP", async () => {
+  it("deja el inicio dentro de #app, con metadatos de URL absoluta y la CSP", async () => {
     const { html } = await runBuild({
       env: { VITE_WHATSAPP_NUMBER: "5491123456789", VITE_SITE_URL: "https://studioags.com.ar" },
       business: completeBusiness,
@@ -202,13 +203,8 @@ describe("build", { timeout: 60_000 }, () => {
     const appStart = html.indexOf('<div id="app" data-prerendered>');
     expect(appStart).toBeGreaterThan(-1);
     const app = html.slice(appStart, html.indexOf("</body>"));
-    expect(app.match(/<article class="product-card"/g)).toHaveLength(8);
-    for (const product of completeCatalog) {
-      expect(app).toContain(
-        `<h3 id="producto-${product.id}-titulo"><a class="product-link" href="producto/${product.id}/">${product.name}</a></h3>`,
-      );
-    }
-    expect(app).toContain("Precios actualizados al 14 de julio de 2026");
+    expect(app.match(/<a class="best-card" href="producto\/[^/]+\/">/g)).toHaveLength(2);
+    expect(app).toContain('href="productos/?uso=regalar"');
 
     const head = html.slice(0, html.indexOf("</head>"));
     expect(head).toContain('<link rel="canonical" href="https://studioags.com.ar/">');
@@ -222,6 +218,43 @@ describe("build", { timeout: 60_000 }, () => {
     expect(ld).not.toBeNull();
     const data = JSON.parse(ld![1]) as { "@graph": Array<{ "@type": string; numberOfItems?: number }> };
     expect(data["@graph"].find((node) => node["@type"] === "ItemList")?.numberOfItems).toBe(8);
+  });
+
+  it("arma Productos, Nosotros y Contacto en <id>/, con <base>, sus metadatos y los mismos archivos", async () => {
+    const { html } = await runBuild({
+      env: { VITE_WHATSAPP_NUMBER: "5491123456789", VITE_SITE_URL: "https://studioags.com.ar" },
+      business: completeBusiness,
+      catalog: completeCatalog,
+    });
+    const homeScript = /<script type="module"[^>]* src="([^"]+)"/.exec(html)?.[1];
+    expect(existsSync(join(outDir(), "pagina-productos.html"))).toBe(false);
+
+    for (const [id, title] of [
+      ["productos", "Productos"],
+      ["nosotros", "Nosotros"],
+      ["contacto", "Contacto"],
+    ]) {
+      const page = await readFile(join(outDir(), id, "index.html"), "utf8");
+      const head = page.slice(0, page.indexOf("</head>"));
+      expect(head.indexOf('<base href="../">')).toBeGreaterThan(-1);
+      expect(head.indexOf('<base href="../">')).toBeLessThan(head.indexOf('<link rel="icon"'));
+      expect(head).toMatch(/<meta http-equiv="Content-Security-Policy" content="[^"]+">/);
+      expect(head).toContain(`<title>${title} — StudioAGS</title>`);
+      expect(head).toContain(`<link rel="canonical" href="https://studioags.com.ar/${id}/">`);
+      expect(page.match(/<div id="app"/g)).toHaveLength(1);
+      expect(page).toContain(`<a href="${id}/" aria-current="page">${title}</a>`);
+      expect(/<script type="module"[^>]* src="([^"]+)"/.exec(page)?.[1]).toBe(homeScript);
+    }
+
+    const catalog = await readFile(join(outDir(), "productos", "index.html"), "utf8");
+    expect(catalog.match(/<article class="product-card"/g)).toHaveLength(8);
+    for (const product of completeCatalog) {
+      expect(catalog).toContain(
+        `<h3 id="producto-${product.id}-titulo"><a class="product-link" href="producto/${product.id}/">${product.name}</a></h3>`,
+      );
+    }
+    expect(catalog).toContain("Precios actualizados al 14 de julio de 2026");
+    expect(catalog).toContain('<h1 id="catalog-title">');
   });
 
   it("arma una página por producto en producto/<id>/, con <base>, sus metadatos y los mismos archivos", async () => {

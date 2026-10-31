@@ -12,7 +12,9 @@ import {
   productJsonLd,
   renderDocument,
   renderProductDocument,
+  renderSitePageDocument,
   serializeForScript,
+  sitePageHeadTags,
   type HeadTag,
 } from "./prerender";
 
@@ -26,6 +28,7 @@ const completeBusiness: BusinessInfo = {
   responseTime: "Respondemos en el día.",
   exchangePolicy: "Te mandamos una muestra antes de imprimir.",
   pricesUpdatedAt: { year: 2026, month: 7, day: 14 },
+  featuredProducts: ["calendarios", "tarjetas"],
 };
 
 const completeCatalog: CatalogProduct[] = products.map((product) => ({
@@ -76,7 +79,7 @@ describe("página de un producto", () => {
     expect((item.offers as Record<string, unknown>)["@type"]).toBe("AggregateOffer");
   });
 
-  it("la lista del inicio apunta a la página de cada producto", () => {
+  it("la lista de Productos apunta a la página de cada producto", () => {
     const { items } = graph(jsonLd({ siteUrl, business: completeBusiness }));
     expect(items.map((item) => (item as unknown as { url: string }).url)).toEqual(
       products.map((item) => `${siteUrl}/producto/${item.id}/`),
@@ -170,17 +173,48 @@ describe("headTags", () => {
   });
 });
 
+describe("Productos, Nosotros y Contacto", () => {
+  it("cada una tiene su título, su descripción y su canonical en <id>/", () => {
+    const cases = [
+      ["productos", "Productos — StudioAGS"],
+      ["nosotros", "Nosotros — StudioAGS"],
+      ["contacto", "Contacto — StudioAGS"],
+    ] as const;
+    for (const [id, title] of cases) {
+      const tags = sitePageHeadTags(id, { siteUrl, business: completeBusiness });
+      expect(tags.find((tag) => tag.tag === "title")?.children).toBe(title);
+      expect(find(tags, "name", "description")?.attrs?.content).not.toBe("");
+      expect(find(tags, "rel", "canonical")?.attrs?.href).toBe(`${siteUrl}/${id}/`);
+      expect(find(tags, "property", "og:url")?.attrs?.content).toBe(`${siteUrl}/${id}/`);
+    }
+  });
+
+  it("Productos lleva la lista del catálogo; Nosotros y Contacto, solo la tienda", () => {
+    const types = (id: "productos" | "nosotros" | "contacto") => {
+      const script = sitePageHeadTags(id, { siteUrl, business: completeBusiness }).find((tag) => tag.tag === "script");
+      const data = JSON.parse(script!.children!) as { "@graph": Array<{ "@type": string }> };
+      return data["@graph"].map((node) => node["@type"]);
+    };
+    expect(types("productos")).toEqual(["Store", "ItemList"]);
+    expect(types("nosotros")).toEqual(["Store"]);
+    expect(types("contacto")).toEqual(["Store"]);
+  });
+});
+
 describe("renderDocument e injectApp", () => {
-  it("renderiza los 8 productos con los datos reales por defecto", () => {
-    const html = renderDocument();
-    expect(html.match(/<article class="product-card"/g)).toHaveLength(8);
-    expect(html).toContain("Precios actualizados al 14 de julio de 2026");
+  it("el inicio trae los más vendidos y Productos los 8 productos, con los datos reales por defecto", () => {
+    const home = renderDocument();
+    expect(home.match(/<article class="product-card"/g)).toBeNull();
+    expect(home.match(/<a class="best-card"/g)).toHaveLength(4);
+    const catalog = renderSitePageDocument("productos");
+    expect(catalog.match(/<article class="product-card"/g)).toHaveLength(8);
+    expect(catalog).toContain("Precios actualizados al 14 de julio de 2026");
   });
 
   it("usa el catálogo y los datos que recibe", () => {
-    const html = renderDocument({ business: completeBusiness, catalog: completeCatalog.slice(0, 2) });
-    expect(html.match(/<article class="product-card"/g)).toHaveLength(2);
-    expect(html).toContain(completeBusiness.shipping as string);
+    const options = { business: completeBusiness, catalog: completeCatalog.slice(0, 2) };
+    expect(renderSitePageDocument("productos", options).match(/<article class="product-card"/g)).toHaveLength(2);
+    expect(renderSitePageDocument("contacto", options)).toContain(completeBusiness.shipping as string);
   });
 
   it("reemplaza el #app vacío por la cáscara marcada como prerenderizada", () => {

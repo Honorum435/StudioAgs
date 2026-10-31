@@ -419,8 +419,11 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   if (searchInput) {
     searchInput.disabled = false;
   }
-  if (filters.query.trim() !== "") {
-    applyFilters(filters);
+  // Los círculos del inicio llegan con productos/?uso=<id>: el catálogo arranca con ese filtro.
+  const requested = new URLSearchParams(win.location.search).get("uso") ?? "";
+  const intent = chips.length > 0 && isIntentFilter(requested) ? requested : ALL_INTENTS;
+  if (intent !== ALL_INTENTS || filters.query.trim() !== "") {
+    applyFilters({ ...filters, intent });
   }
 
   return {

@@ -13,6 +13,8 @@ export const ORDER_CODE_LENGTH = 4;
 export const WHATSAPP_URL_LIMIT = 2000;
 // Lo que ya viene escrito al tocar "Contanos tu idea" en los pedidos personalizados.
 export const CUSTOM_ORDER_MESSAGE = "¡Hola! Tengo una idea para un pedido personalizado.";
+// Lo que ya viene escrito al tocar "Escribinos" en Contacto.
+export const CONTACT_MESSAGE = "¡Hola! Les quería hacer una consulta.";
 
 export interface WhatsAppLink {
   url: string;

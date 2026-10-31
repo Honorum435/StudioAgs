@@ -30,6 +30,7 @@ import {
   manualCopyContent,
   restoreNotice,
   sentQuestion,
+  sitePagePath,
   stickyBarSummary,
   type CheckoutStage,
   type StickyBarMessage,
@@ -608,12 +609,15 @@ export function mountCartView(options: CartViewOptions): CartView {
     // Primero se cierra (y vuelve el historial); recién después se desplaza la página.
     await overlays.close(ORDER_LAYER);
     const heading = doc.getElementById("catalog-title");
-    if (heading) {
-      if (!heading.hasAttribute("tabindex")) {
-        heading.tabIndex = -1;
-      }
-      heading.focus({ preventScroll: true });
+    // Fuera de Productos el catálogo está en otra página: se va ahí.
+    if (!heading) {
+      win.location.assign(new URL(sitePagePath("productos"), doc.baseURI).href);
+      return;
     }
+    if (!heading.hasAttribute("tabindex")) {
+      heading.tabIndex = -1;
+    }
+    heading.focus({ preventScroll: true });
     scrollToTarget(doc.getElementById("catalogo"), { block: "start" });
   }
 

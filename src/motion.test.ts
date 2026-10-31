@@ -354,6 +354,11 @@ describe("indicador deslizante de las opciones", () => {
 });
 
 describe("inclinación de las polaroids", () => {
+  // Las polaroids están en el inicio.
+  beforeEach(() => {
+    root = mountShell("inicio");
+  });
+
   function heroArt(): { area: HTMLElement; photo: HTMLElement } {
     const area = $(".hero-art");
     const photo = area.querySelector<HTMLElement>(".hero-photo-main")!;

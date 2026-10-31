@@ -9,6 +9,7 @@ const complete: BusinessInfo = {
   responseTime: "Respondemos en el día.",
   exchangePolicy: "Te mandamos una muestra antes de imprimir.",
   pricesUpdatedAt: { year: 2026, month: 7, day: 14 },
+  featuredProducts: ["calendarios", "tarjetas"],
 };
 
 describe("listPendingFields", () => {
