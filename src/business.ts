@@ -60,5 +60,5 @@ export const business: BusinessInfo = {
     "Antes de imprimir te mandamos una muestra para que la apruebes. Como cada pedido es personalizado, no hacemos cambios por gusto; si llega con una falla de impresión, lo reponemos sin costo.",
   ),
   pricesUpdatedAt: example({ year: 2026, month: 7, day: 14 }),
-  featuredProducts: example(["calendarios", "fotos", "entre-flores", "tarjetas"]),
+  featuredProducts: example(["calendarios", "fotos", "bitacoras", "laminas"]),
 };

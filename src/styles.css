@@ -1,5 +1,5 @@
 /* Fuentes de la marca, alojadas en el sitio. Creato Display tiene licencia OFL
-   (creato-display-licencia.txt); falta confirmar la de Hemis y Bristol antes de publicar. */
+   (creato-display-licencia.txt); falta confirmar la de Bristol antes de publicar. */
 @font-face {
   font-family: "Creato Display";
   src: url("./creato-display-regular.otf") format("opentype");
@@ -21,14 +21,7 @@
   font-display: swap;
 }
 
-/* Hemis y Bristol tienen un solo peso: el rango evita que el navegador invente una negrita. */
-@font-face {
-  font-family: "Hemis";
-  src: url("./hemis.otf") format("opentype");
-  font-weight: 100 900;
-  font-display: swap;
-}
-
+/* Bristol tiene un solo peso: el rango evita que el navegador invente una negrita. */
 @font-face {
   font-family: "Bristol";
   src: url("./bristol.otf") format("opentype");
@@ -43,15 +36,6 @@
   size-adjust: 97.24%;
   ascent-override: 97.7%;
   descent-override: 24.48%;
-  line-gap-override: 0%;
-}
-
-@font-face {
-  font-family: "Hemis Fallback";
-  src: local("Arial");
-  size-adjust: 95.89%;
-  ascent-override: 85.1%;
-  descent-override: 35.25%;
   line-gap-override: 0%;
 }
 
@@ -110,6 +94,8 @@
   --orange-soft: #f9a65e;
   --black: #1e231f;
   --line-tint: rgb(54 59 57 / 20%);
+  /* Logo repetido en blanco sobre la franja azul: hasta el 14 % el texto blanco sigue en 4,5:1. */
+  --watermark: rgb(255 255 255 / 14%);
   --shadow-header: 0 10px 28px rgb(54 40 28 / 10%);
   --shadow-photo: 0 19px 54px rgb(54 40 28 / 13%);
   --shadow-card: 0 15px 35px rgb(60 46 32 / 9%);
@@ -117,16 +103,17 @@
   --shadow-bar: 0 -10px 30px rgb(54 40 28 / 9%);
   --backdrop: rgb(30 37 37 / 46%);
   --sans: "Creato Display", "Creato Display Fallback", sans-serif;
-  /* Títulos en Hemis; Bristol solo en los acentos (palabras en azul y números de los pasos) y en
-     mayúsculas: en minúscula su "i" se confunde con dos puntos. */
-  --display: "Hemis", "Hemis Fallback", sans-serif;
-  --display-accent: "Bristol", "Bristol Fallback", sans-serif;
+  /* Todos los títulos en Bristol y siempre en mayúsculas: en minúscula su "i" se confunde con
+     dos puntos. */
+  --display: "Bristol", "Bristol Fallback", sans-serif;
   /* Medidas de la página: un solo margen lateral y un solo ancho máximo. */
   --gutter: clamp(18px, 5vw, 36px);
   --page-max: 1280px;
   /* Encabezado fijo: su alto arriba de todo y achicado al bajar. */
   --header-height: 86px;
   --header-compact: 64px;
+  /* Alto de las olas que reemplazan el borde recto entre franjas. */
+  --wave-height: 34px;
   --sticky-bar-space: calc(88px + env(safe-area-inset-bottom));
   /* Margen lateral del panel del pedido: su pie fijo lo usa para ocupar todo el ancho. */
   --cart-pad: 27px;
@@ -282,18 +269,60 @@ button:disabled {
 }
 
 /* Franjas a todo el ancho: el fondo llega al borde y el contenido se alinea con el contenedor.
-   Cada una lleva un color de la hoja de identidad: encabezado crema, inicio celeste, rosa, el
-   catálogo en rosa clarito, azul, verde claro, amarillo, naranja claro y negro al pie. */
+   Cada una lleva un color de la hoja de identidad: encabezado crema, inicio celeste, rosa, los
+   más vendidos y el catálogo en rosa clarito, Nosotros en naranja claro, verde claro, amarillo y
+   negro al pie. La azul de los pedidos personalizados es una tarjeta redondeada. */
 .site-header,
 .hero,
-.catalog-section,
 .value-strip,
-.custom-order,
+.intent-section,
+.best-section,
+.about-teaser,
+.about-intro,
+.contact-section,
+.catalog-section,
 .trust-section,
 .how-section,
 .process-section,
 .site-footer {
   padding-inline: max(var(--gutter), (100% - var(--page-max)) / 2);
+}
+
+/* Olas: la franja que sigue sube sobre el relleno de abajo de la anterior con un borde curvo de
+   su mismo color, así no todo es un rectángulo. */
+.value-strip,
+.best-section,
+.about-teaser,
+.how-section,
+.process-section,
+.trust-section,
+.site-footer {
+  position: relative;
+}
+
+.value-strip::before,
+.best-section::before,
+.about-teaser::before,
+.how-section::before,
+.process-section::before,
+.trust-section::before,
+.site-footer::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: calc(100% - 1px);
+  left: 0;
+  height: var(--wave-height);
+  background: inherit;
+  mask: url("./ola.svg") center bottom / 100% 100% no-repeat;
+  pointer-events: none;
+}
+
+/* La ola del medio va al revés, para que no se vean todas iguales. */
+.about-teaser::before,
+.trust-section::before {
+  transform: scaleX(-1);
 }
 
 /* Queda fijo arriba al bajar: se achica y el margen de abajo completa el alto que pierde, así el
@@ -331,6 +360,7 @@ button:disabled {
 }
 
 .site-header .wordmark {
+  flex: 0 0 auto;
   transition: width var(--lift-dur) var(--ease-out);
 }
 
@@ -355,6 +385,14 @@ button:disabled {
   min-height: 44px;
   display: inline-flex;
   align-items: center;
+}
+
+/* La página en la que estás: en azul y subrayada. */
+.main-nav a[aria-current="page"] {
+  color: var(--coral-dark);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 
 .main-nav a,
@@ -477,6 +515,7 @@ p {
   max-width: 640px;
   margin: 22px 0 17px;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: clamp(45px, 5.4vw, 78px);
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -485,10 +524,6 @@ p {
 
 .hero h1 span {
   color: var(--coral-dark);
-  font-family: var(--display-accent);
-  font-size: 0.8em;
-  font-weight: 500;
-  text-transform: uppercase;
 }
 
 .hero-description {
@@ -582,9 +617,11 @@ p {
   left: 12px;
   color: var(--muted);
   font-family: var(--display);
-  font-size: 21px;
+  text-transform: uppercase;
+  font-size: 16px;
   font-weight: 500;
   text-align: center;
+  white-space: nowrap;
 }
 
 .hero-photo-small {
@@ -608,6 +645,7 @@ p {
   padding: 0 10px;
   border-radius: 50%;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 19px;
   font-weight: 500;
   line-height: 1.16;
@@ -649,6 +687,7 @@ p {
   background: var(--lavender);
   color: var(--ink-soft);
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 19px;
   font-weight: 500;
   line-height: 1.3;
@@ -672,6 +711,11 @@ p {
   scroll-margin-top: 30px;
 }
 
+/* En Productos el catálogo abre la página: arranca más cerca del encabezado. */
+main > .catalog-section:first-child {
+  padding-top: 64px;
+}
+
 .section-heading {
   display: flex;
   align-items: end;
@@ -680,23 +724,26 @@ p {
   margin-bottom: 32px;
 }
 
+.section-heading h1,
 .section-heading h2,
 .trust-heading h2,
-.how-heading h2 {
+.how-heading h2,
+.intent-heading h2,
+.best-heading h2,
+.about-copy :is(h1, h2),
+.contact-heading h1 {
   margin: 13px 0 0;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: clamp(36px, 4.1vw, 56px);
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.08;
 }
 
-.section-heading h2 em {
+.section-heading :is(h1, h2) em {
   color: var(--coral-dark);
-  font-family: var(--display-accent);
-  font-size: 0.8em;
-  font-weight: 500;
-  text-transform: uppercase;
+  font-style: normal;
 }
 
 .section-intro {
@@ -902,6 +949,7 @@ p {
   min-width: 0;
   margin: 0;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -1267,6 +1315,7 @@ p {
 .product-page-info h1 {
   margin: 10px 0 12px;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: clamp(40px, 4.4vw, 60px);
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -1302,6 +1351,7 @@ p {
 .related-section h2 {
   margin: 0 0 28px;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: clamp(32px, 3.4vw, 46px);
   font-weight: 600;
   line-height: 1.1;
@@ -1345,6 +1395,7 @@ p {
 .process-step h3 {
   margin: 18px 0 6px;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 23px;
   font-weight: 600;
   line-height: 1.15;
@@ -1357,15 +1408,47 @@ p {
   line-height: 1.6;
 }
 
-/* Pedidos personalizados: la franja azul entre el catálogo y el bloque de confianza. */
+/* Pedidos personalizados: tarjeta azul con bordes redondeados, separada de los costados, y el
+   logo repetido en blanco suave de fondo. */
 .custom-order {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 28px 56px;
-  padding-block: 64px;
+  width: min(100% - 2 * var(--gutter), var(--page-max));
+  margin: 88px auto;
+  padding: 64px clamp(28px, 5vw, 72px);
+  border-radius: 40px;
   background: var(--coral-dark);
   color: var(--white);
+}
+
+/* Grilla girada más grande que la tarjeta: los bordes nunca quedan vacíos. Las columnas pares
+   bajan medio logo y el dibujo queda en zigzag. */
+.watermark {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  grid-template-columns: repeat(10, 110px);
+  gap: 30px 40px;
+  translate: -50% -50%;
+  rotate: -12deg;
+  pointer-events: none;
+}
+
+.watermark span {
+  aspect-ratio: 693 / 430;
+  background-color: var(--watermark);
+  mask: url("./logo-studioags.png") center / contain no-repeat;
+}
+
+.watermark span:nth-child(even) {
+  translate: 0 50%;
 }
 
 .custom-order-copy {
@@ -1373,12 +1456,12 @@ p {
 }
 
 .custom-order .eyebrow {
-  color: var(--yellow);
+  color: var(--white);
 }
 
 .custom-order h2 {
   margin: 12px 0 14px;
-  font-family: var(--display-accent);
+  font-family: var(--display);
   font-size: clamp(34px, 3.6vw, 48px);
   font-weight: 500;
   line-height: 1.1;
@@ -1401,6 +1484,301 @@ p {
 
 .custom-order :focus-visible {
   outline-color: var(--white);
+}
+
+/* Inicio: un círculo de color por uso, con la foto de un producto adentro. */
+.intent-section {
+  padding-block: 92px 96px;
+  text-align: center;
+}
+
+.intent-heading h2 {
+  margin-bottom: 0;
+}
+
+.intent-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px;
+  margin: 44px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.intent-link {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.intent-photo {
+  width: 168px;
+  aspect-ratio: 1;
+  margin-bottom: 14px;
+  padding: 12px;
+  border-radius: 50%;
+  transition: transform var(--lift-dur) var(--ease-out);
+}
+
+.intent-photo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.intent-regalar .intent-photo {
+  background: var(--lavender);
+}
+
+.intent-marca .intent-photo {
+  background: var(--blue-soft);
+}
+
+.intent-decorar .intent-photo {
+  background: var(--green-soft);
+}
+
+.intent-organizarte .intent-photo {
+  background: var(--yellow);
+}
+
+.intent-label {
+  font-family: var(--display);
+  text-transform: uppercase;
+  font-size: 21px;
+  line-height: 1.15;
+}
+
+.intent-blurb {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Los más vendidos: tarjetas blancas simples sobre el rosa clarito, como el catálogo. */
+.best-section {
+  padding-block: 92px 98px;
+  background: var(--blush);
+}
+
+.best-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.best-heading h2 {
+  margin: 0;
+}
+
+.text-link {
+  min-height: 44px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 9px;
+  color: var(--coral-dark);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.text-link svg {
+  width: 17px;
+  height: 17px;
+}
+
+.best-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.best-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 12px 18px;
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--lift-dur) var(--ease-out);
+}
+
+.best-photo {
+  overflow: hidden;
+  aspect-ratio: 1;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: var(--photo-bg);
+}
+
+.best-photo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.best-name {
+  padding-inline: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.best-price {
+  padding-inline: 4px;
+  color: var(--ink-mid);
+  font-size: 14px;
+}
+
+/* Adelanto de Nosotros en el inicio y presentación de su página: la foto lleva forma de arco. */
+.about-teaser,
+.about-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 40px clamp(32px, 6vw, 88px);
+}
+
+.about-teaser {
+  padding-block: 96px;
+  background: var(--orange-soft);
+}
+
+.about-intro {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  padding-block: 72px 110px;
+}
+
+.about-photo {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  aspect-ratio: 1;
+  display: block;
+  justify-self: center;
+  object-fit: cover;
+  border-radius: 999px 999px 28px 28px;
+  background: var(--photo-bg);
+}
+
+.about-copy :is(h1, h2) {
+  margin-bottom: 18px;
+}
+
+.about-copy p:not(.eyebrow) {
+  max-width: 560px;
+  color: var(--ink-soft);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.about-copy p.about-lead {
+  color: var(--ink);
+  font-size: 18px;
+}
+
+.about-teaser .eyebrow {
+  color: var(--ink);
+}
+
+.about-teaser :focus-visible {
+  outline-color: var(--ink);
+}
+
+.about-copy .primary-button {
+  margin-top: 8px;
+}
+
+/* Contacto: cuatro tarjetas de colores claros con cómo escribirnos y dónde estamos. */
+.contact-section {
+  padding-block: 72px 110px;
+}
+
+.contact-heading {
+  max-width: 620px;
+  margin-bottom: 36px;
+}
+
+.contact-heading h1 {
+  margin-bottom: 14px;
+}
+
+.contact-heading .section-intro {
+  max-width: 520px;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 28px 26px 30px;
+  border-radius: 28px;
+}
+
+.contact-card:nth-child(1) {
+  background: var(--blush-deep);
+}
+
+.contact-card:nth-child(2) {
+  background: var(--blue-soft);
+}
+
+.contact-card:nth-child(3) {
+  background: var(--green-soft);
+}
+
+.contact-card:nth-child(4) {
+  background: var(--yellow-soft);
+}
+
+.contact-card h2 {
+  margin: 0;
+  font-family: var(--display);
+  text-transform: uppercase;
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.contact-card p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.contact-card a:not(.primary-button) {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.contact-card :focus-visible {
+  outline-color: var(--ink);
+}
+
+.contact-button {
+  margin-top: auto;
 }
 
 /* Bloque de confianza: filas de dato y respuesta en la franja verde claro. Como en la naranja,
@@ -1438,6 +1816,7 @@ p {
 .trust-row dt {
   flex: 0 0 200px;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 20px;
   font-weight: 600;
   line-height: 1.3;
@@ -1531,7 +1910,8 @@ p {
 
 .step-card > span {
   color: var(--coral-dark);
-  font-family: var(--display-accent);
+  font-family: var(--display);
+  text-transform: uppercase;
   font-size: 19px;
   font-weight: 500;
 }
@@ -1539,6 +1919,7 @@ p {
 .step-card h3 {
   margin: 26px 0 8px;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 25px;
   font-weight: 600;
 }
@@ -1574,8 +1955,15 @@ p {
 .site-footer p {
   margin: 0;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 21px;
   font-weight: 500;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 26px;
 }
 
 .footer-link {
@@ -1648,6 +2036,7 @@ p {
   min-width: 0;
   margin: 0;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -1750,6 +2139,7 @@ p {
 .cart-header h2 {
   margin: 6px 0 0;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 34px;
   font-weight: 500;
   letter-spacing: -0.015em;
@@ -1816,6 +2206,7 @@ p {
 .cart-empty h3 {
   margin-bottom: 8px;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 25px;
 }
 
@@ -1858,6 +2249,7 @@ p {
 
 .cart-item-name {
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 18px;
   font-weight: 600;
 }
@@ -1976,6 +2368,7 @@ p {
 .cart-section-title {
   margin: 0 0 16px;
   font-family: var(--display);
+  text-transform: uppercase;
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -2492,6 +2885,14 @@ textarea.field-input {
     transform: scale(1.035);
   }
 
+  .best-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .intent-link:hover .intent-photo {
+    transform: translateY(-4px) rotate(-4deg);
+  }
+
   /* Polaroids del hero: se inclinan hacia el mouse sobre su giro propio, con un reflejo. Con
      "reducir movimiento" queda solo el giro de .hero-photo. */
   .hero-photo {
@@ -2677,8 +3078,14 @@ textarea.field-input {
   }
 
   .product-grid,
-  .process-grid {
+  .process-grid,
+  .best-grid,
+  .contact-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .intent-photo {
+    width: 140px;
   }
 
   .trust-row dt {
@@ -2738,6 +3145,70 @@ textarea.field-input {
   .cart-trigger {
     gap: 6px;
     padding: 0;
+  }
+
+  .intent-section,
+  .best-section,
+  .about-teaser {
+    padding-block: 64px 72px;
+  }
+
+  .intent-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 30px 14px;
+    margin-top: 32px;
+  }
+
+  .intent-photo {
+    width: 132px;
+  }
+
+  .intent-label {
+    font-size: 18px;
+  }
+
+  .best-heading {
+    margin-bottom: 22px;
+  }
+
+  .best-grid {
+    gap: 14px;
+  }
+
+  .about-teaser,
+  .about-intro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .about-intro {
+    padding-block: 48px 72px;
+  }
+
+  .about-intro .about-photo {
+    grid-row: 1;
+    max-width: 340px;
+  }
+
+  .about-teaser .about-photo {
+    max-width: 340px;
+  }
+
+  .contact-section {
+    padding-block: 48px 72px;
+  }
+
+  .contact-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .contact-card {
+    padding: 22px 22px 24px;
+  }
+
+  .custom-order {
+    margin-block: 56px;
+    border-radius: 28px;
   }
 
   .cart-trigger svg {
@@ -2822,10 +3293,14 @@ textarea.field-input {
     padding-block: 72px 64px;
   }
 
+  main > .catalog-section:first-child {
+    padding-top: 44px;
+  }
+
   .custom-order {
     align-items: flex-start;
     flex-direction: column;
-    padding-block: 52px 56px;
+    padding-block: 48px 52px;
   }
 
   .section-heading {
@@ -2835,8 +3310,8 @@ textarea.field-input {
     margin-bottom: 22px;
   }
 
-  .section-heading h2 {
-    font-size: 42px;
+  .section-heading :is(h1, h2) {
+    font-size: 40px;
   }
 
   .section-intro {
@@ -2926,6 +3401,11 @@ textarea.field-input {
     font-size: 14px;
   }
 
+  .footer-nav {
+    order: 4;
+    gap: 0 20px;
+  }
+
   .ficha-dialog {
     width: 100%;
     height: 100vh;
@@ -2990,8 +3470,27 @@ textarea.field-input {
 
 /* Celular: una columna. */
 @media (max-width: 559px) {
-  .main-nav a:last-child {
-    display: none;
+  .site-header {
+    gap: 10px;
+  }
+
+  .main-nav {
+    gap: 14px;
+    font-size: 13px;
+  }
+
+  .cart-trigger-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .best-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .search-field {
@@ -3001,6 +3500,27 @@ textarea.field-input {
   .product-grid {
     grid-template-columns: 1fr;
     gap: 15px;
+  }
+}
+
+/* Celulares angostos (320 px): el logo y el menú se achican para que entren los tres enlaces. */
+@media (max-width: 374px) {
+  .site-header {
+    gap: 8px;
+  }
+
+  .site-header .wordmark,
+  .site-header.is-scrolled .wordmark {
+    width: 50px;
+  }
+
+  .main-nav {
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .cart-trigger {
+    gap: 4px;
   }
 }
 

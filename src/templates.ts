@@ -509,10 +509,10 @@ export function valueStrip(): string {
 
 // Inicio: un círculo por uso, con la foto de un producto de ese uso. Abre Productos ya filtrado.
 const intentShowcase: Record<IntentId, { blurb: string; photo: string }> = {
-  regalar: { blurb: "Detalles con nombre propio", photo: "bitacoras" },
-  marca: { blurb: "Tarjetas y vinilos con tu logo", photo: "vinilos" },
-  decorar: { blurb: "Láminas, flores y vinilos", photo: "laminas" },
-  organizarte: { blurb: "Calendarios, pizarras y bitácoras", photo: "pizarra-orma" },
+  regalar: { blurb: "Detalles con nombre propio", photo: "entre-flores" },
+  marca: { blurb: "Tarjetas y vinilos con tu logo", photo: "tarjetas" },
+  decorar: { blurb: "Láminas, flores y vinilos", photo: "pizarra-orma" },
+  organizarte: { blurb: "Calendarios, pizarras y bitácoras", photo: "calendarios" },
 };
 
 export function intentCircles({ catalog }: PageData): string {
@@ -582,6 +582,8 @@ export function bestSellers({ business, catalog }: PageData): string {
 
 const stampPhoto: ImageSpec = { base: "foto-proceso-1", widths: [600, 1200], width: 1200, height: 1200 };
 const STAMP_ALT = "Sello con la carita de StudioAGS junto a la almohadilla y dos tarjetas recién selladas";
+const boardPhoto: ImageSpec = { base: "foto-pizarra-orma-1", widths: [600, 1200], width: 1200, height: 1200 };
+const BOARD_ALT = "Pizarra negra con imanes de colores que dicen ags studio, fotos, notas y fibrones";
 
 export function aboutTeaser(): string {
   return `
@@ -607,7 +609,7 @@ export function aboutIntro(): string {
         <p>Nos gusta que cada cosa tenga algo tuyo: un nombre, una fecha, tu logo o esa foto que te encanta. Por eso trabajamos pedido por pedido: te mandamos una muestra antes de imprimir y seguimos hasta que te guste.</p>
         <p>Después viene la parte que más disfrutamos: lo preparamos a mano, lo sellamos con nuestra carita y lo envolvemos para que llegue listo para regalar o para quedártelo.</p>
       </div>
-      ${responsiveImage(stampPhoto, { className: "about-photo", alt: STAMP_ALT, sizes: ABOUT_PHOTO_SIZES, highPriority: true })}
+      ${responsiveImage(boardPhoto, { className: "about-photo", alt: BOARD_ALT, sizes: ABOUT_PHOTO_SIZES, highPriority: true })}
     </section>`;
 }
 

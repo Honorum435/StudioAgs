@@ -332,7 +332,16 @@ const textPairs: ContrastPair[] = [
   text("opciones sin elegir junto al indicador deslizante", "--ink", "--surface"),
   text("etiqueta ¡Sumado! del botón de sumar", "--ink", "--surface"),
   text("texto de la franja de pedidos personalizados", "--white", "--coral-dark"),
-  text("volanta de pedidos personalizados", "--yellow", "--coral-dark"),
+  text("volanta y texto de pedidos personalizados sobre la marca de agua", "--white", "--watermark", "--coral-dark"),
+  text("enlace Ver todos de los más vendidos", "--coral-dark", "--blush"),
+  text("nombre del uso bajo su círculo", "--ink", "--paper"),
+  text("adelanto de Nosotros", "--ink-soft", "--orange-soft"),
+  text("tarjeta de pedidos y consultas en Contacto", "--ink-soft", "--blush-deep"),
+  text("título y enlace de la tarjeta rosa de Contacto", "--ink", "--blush-deep"),
+  text("tarjeta de Instagram en Contacto", "--ink", "--blue-soft"),
+  text("tarjeta de horarios en Contacto", "--ink-soft", "--yellow-soft"),
+  text("título de la tarjeta amarilla de Contacto", "--ink", "--yellow-soft"),
+  text("página actual del menú", "--coral-dark", "--paper"),
   text("botón de pedidos personalizados", "--ink", "--yellow"),
   text("botón de pedidos personalizados al pasar y al tocar", "--ink", "--white"),
 ];
@@ -358,6 +367,9 @@ const nonTextPairs: ContrastPair[] = [
   nonText("anillo de foco sobre el catálogo", "--focus-ring", "--blush"),
   nonText("anillo de foco sobre la franja verde", "--ink", "--green-soft"),
   nonText("anillo de foco sobre el pie", "--yellow", "--black"),
+  nonText("anillo de foco sobre el adelanto de Nosotros", "--ink", "--orange-soft"),
+  nonText("anillo de foco sobre las tarjetas de Contacto", "--ink", "--blush-deep"),
+  nonText("anillo de foco sobre la tarjeta amarilla de Contacto", "--ink", "--yellow-soft"),
 ];
 
 const largeTextPairs: ContrastPair[] = [
