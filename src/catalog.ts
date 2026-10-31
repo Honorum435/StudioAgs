@@ -200,7 +200,7 @@ function pendingLeadTime(): BusinessField<LeadTime> {
 
 const photoQuality =
   "Que sean las originales de la cámara o del celular: las capturas de pantalla y las fotos bajadas de redes salen pixeladas.";
-const photoSending =
+export const photoSending =
   "Mandalas por WhatsApp como documento (no como foto), así no pierden calidad, apenas nos mandes el pedido.";
 
 const cardQuantity: OptionGroup = {

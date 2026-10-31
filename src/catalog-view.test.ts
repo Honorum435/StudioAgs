@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createOrderStore, type OrderStore } from "./cart";
+import { products } from "./catalog";
 import { FICHA_LAYER, RESULT_COUNT_DELAY, mountCatalogView, type CatalogView } from "./catalog-view";
 import { formatPrice } from "./format";
 import { LAYER_STATE_KEY, createOverlays, type Overlays } from "./overlays";
@@ -185,6 +186,44 @@ describe("filtros y búsqueda", () => {
     expect(visibleIds()).toEqual(["calendarios", "vinilos", "tarjetas"]);
     expect(chip("marca").getAttribute("aria-pressed")).toBe("true");
     expect(chip("todo").getAttribute("aria-pressed")).toBe("false");
+  });
+
+  it("llega con ?q= desde el buscador del encabezado y arranca con esa búsqueda", () => {
+    window.history.replaceState(null, "", "?q=laminas");
+    mount();
+
+    expect(root.querySelector<HTMLInputElement>("[data-search]")!.value).toBe("laminas");
+    expect(visibleIds()).toEqual(["laminas"]);
+  });
+
+  it("ordena las tarjetas por precio y por nombre, y vuelve al orden del catálogo", () => {
+    mount();
+    const select = root.querySelector<HTMLSelectElement>("[data-sort]")!;
+    expect(select.disabled).toBe(false);
+    const order = () =>
+      Array.from(root.querySelectorAll<HTMLElement>(".product-grid > .product-card")).map((card) => card.dataset.productId!);
+    const lowest = (id: string) => Math.min(...products.find((item) => item.id === id)!.combinations.map((c) => c.price));
+    const original = order();
+
+    const choose = (value: string) => {
+      select.value = value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    };
+    choose("menor-precio");
+    const ascending = order().map(lowest);
+    expect([...ascending].sort((a, b) => a - b)).toEqual(ascending);
+    expect(root.querySelector(".product-grid")!.lastElementChild?.hasAttribute("data-empty-state")).toBe(true);
+
+    choose("mayor-precio");
+    const descending = order().map(lowest);
+    expect([...descending].sort((a, b) => b - a)).toEqual(descending);
+
+    choose("nombre");
+    const names = order().map((id) => products.find((item) => item.id === id)!.name);
+    expect([...names].sort((a, b) => a.localeCompare(b, "es"))).toEqual(names);
+
+    choose("destacados");
+    expect(order()).toEqual(original);
   });
 
   it("un ?uso= que no existe deja todo el catálogo", () => {

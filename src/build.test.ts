@@ -233,6 +233,7 @@ describe("build", { timeout: 60_000 }, () => {
     for (const [id, title] of [
       ["productos", "Productos"],
       ["nosotros", "Nosotros"],
+      ["preguntas-frecuentes", "Preguntas frecuentes"],
       ["contacto", "Contacto"],
     ]) {
       const page = await readFile(join(outDir(), id, "index.html"), "utf8");

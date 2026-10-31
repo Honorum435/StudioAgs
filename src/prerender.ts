@@ -239,6 +239,11 @@ const sitePageMeta: Record<SitePageId, { title: string; description: string }> =
     description:
       "StudioAGS es un estudio de papelería y objetos personalizados de Paraná, Entre Ríos. Así trabajamos y así preparamos cada pedido.",
   },
+  "preguntas-frecuentes": {
+    title: `Preguntas frecuentes — ${SITE_NAME}`,
+    description:
+      "Cómo comprar, cuánto tarda tu pedido, envíos, retiro en Paraná, formas de pago y cómo mandar tus fotos.",
+  },
   contacto: {
     title: `Contacto — ${SITE_NAME}`,
     description: "Escribinos para hacer un pedido o una consulta. Plazos, envíos, retiro en Paraná y formas de pago.",

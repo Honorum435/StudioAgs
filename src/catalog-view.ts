@@ -4,7 +4,16 @@ import { announceTo, delegateActions, rememberHtml, setHtml, windowOf, type Acti
 import { ALL_INTENTS, isIntentFilter, visibleProductIds, type FilterState } from "./filters";
 import { popNumber, slidingIndicator, swapText, type SlidingIndicator } from "./motion";
 import type { Overlays } from "./overlays";
-import { FICHA_SIZES, addButtonContent, cardPrice, fichaContent, fichaTitle, resultCount } from "./templates";
+import {
+  FICHA_SIZES,
+  addButtonContent,
+  cardPrice,
+  fichaContent,
+  fichaTitle,
+  resultCount,
+  sortOptions,
+  type SortId,
+} from "./templates";
 
 // Islas de las tarjetas, filtros, búsqueda y ficha. Se engancha al HTML prerenderizado sin
 // volver a pintarlo: solo actualiza precio y botón de cada tarjeta y muestra u oculta tarjetas.
@@ -43,6 +52,25 @@ interface OpenFicha {
   image: HTMLImageElement;
   ready: boolean;
   zoomed: boolean;
+}
+
+function lowestPrice(product: CatalogProduct): number {
+  return Math.min(...product.combinations.map((combination) => combination.price));
+}
+
+function isSortId(value: string): value is SortId {
+  return sortOptions.some((option) => option.id === value);
+}
+
+// Orden de las tarjetas: "destacados" es el del catálogo; los empates quedan en ese orden.
+export function sortProducts(catalog: readonly CatalogProduct[], sort: SortId): CatalogProduct[] {
+  const compare: Record<SortId, (a: CatalogProduct, b: CatalogProduct) => number> = {
+    destacados: () => 0,
+    "menor-precio": (a, b) => lowestPrice(a) - lowestPrice(b),
+    "mayor-precio": (a, b) => lowestPrice(b) - lowestPrice(a),
+    nombre: (a, b) => a.name.localeCompare(b.name, "es"),
+  };
+  return [...catalog].sort(compare[sort]);
 }
 
 // Lee la opción marcada de cada grupo (la primera si no hay) y los adicionales marcados.
@@ -87,6 +115,7 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   const grid = root.querySelector<HTMLElement>(".product-grid");
   const emptyState = root.querySelector<HTMLElement>("[data-empty-state]");
   const searchAllButton = root.querySelector<HTMLButtonElement>('[data-action="search-all"]');
+  const sortSelect = root.querySelector<HTMLSelectElement>("[data-sort]");
   const resultCountElement = root.querySelector<HTMLElement>("[data-result-count]");
   const announcer = root.querySelector<HTMLElement>("[data-announcer]");
   const fichaDialog = root.querySelector<HTMLDialogElement>("dialog#ficha-dialog");
@@ -205,6 +234,21 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
       }
     });
     scheduleCount([...cards.values()].filter((island) => !island.card.hidden).length);
+  }
+
+  // Reacomoda las tarjetas de la grilla; el aviso de búsqueda vacía queda al final.
+  function applySort(sort: SortId): void {
+    if (!grid) {
+      return;
+    }
+    const anchor = emptyState?.parentElement === grid ? emptyState : null;
+    for (const product of sortProducts(catalog, sort)) {
+      const island = cards.get(product.id);
+      if (island && island.card.parentElement === grid) {
+        grid.insertBefore(island.card, anchor);
+      }
+    }
+    announce(`Productos ordenados por ${sortOptions.find((option) => option.id === sort)?.label.toLocaleLowerCase("es")}.`);
   }
 
   function zoomWidth(fitWidth: number, product: CatalogProduct): number {
@@ -359,6 +403,10 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
 
   function onChange(event: Event): void {
     const target = event.target;
+    if (sortSelect && target === sortSelect) {
+      applySort(isSortId(sortSelect.value) ? sortSelect.value : "destacados");
+      return;
+    }
     if (!(target instanceof HTMLInputElement)) {
       return;
     }
@@ -419,9 +467,22 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   if (searchInput) {
     searchInput.disabled = false;
   }
-  // Los círculos del inicio llegan con productos/?uso=<id>: el catálogo arranca con ese filtro.
-  const requested = new URLSearchParams(win.location.search).get("uso") ?? "";
+  if (sortSelect) {
+    sortSelect.disabled = false;
+    if (sortSelect.value !== "destacados" && isSortId(sortSelect.value)) {
+      applySort(sortSelect.value);
+    }
+  }
+  // Los círculos del inicio llegan con productos/?uso=<id> y el buscador del encabezado con
+  // productos/?q=<texto>: el catálogo arranca con ese filtro y esa búsqueda.
+  const params = new URLSearchParams(win.location.search);
+  const requested = params.get("uso") ?? "";
   const intent = chips.length > 0 && isIntentFilter(requested) ? requested : ALL_INTENTS;
+  const query = params.get("q")?.trim() ?? "";
+  if (searchInput && query) {
+    searchInput.value = query;
+    filters = { ...filters, query };
+  }
   if (intent !== ALL_INTENTS || filters.query.trim() !== "") {
     applyFilters({ ...filters, intent });
   }

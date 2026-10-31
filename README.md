@@ -52,11 +52,11 @@ Todo está en `src/catalog.ts`: nombre, descripción, opciones con su precio, ad
 El sitio tiene estas páginas, y todas se arman solas al hacer el build:
 
 - **Inicio** (`/`): los círculos por uso, que abren Productos ya filtrado (`productos/?uso=regalar`); los más vendidos, que se eligen en `featuredProducts` de `src/business.ts`; y un adelanto de Nosotros.
-- **Productos** (`productos/`): el catálogo con los filtros y la búsqueda.
-- **Nosotros** (`nosotros/`) y **Contacto** (`contacto/`): sus textos están en `src/templates.ts` y los datos de contacto en `src/business.ts`.
+- **Productos** (`productos/`): el catálogo con los filtros, la búsqueda y el orden. El buscador del encabezado lleva acá con el texto (`productos/?q=tarjetas`).
+- **Nosotros** (`nosotros/`), **Preguntas frecuentes** (`preguntas-frecuentes/`) y **Contacto** (`contacto/`): sus textos están en `src/templates.ts` y los datos de contacto en `src/business.ts`. Las respuestas de Preguntas frecuentes salen de los mismos datos que "Antes de pedir".
 - **Cada producto** (`producto/<id>/`, por ejemplo `producto/calendarios/`): una galería de fotos, las mismas opciones y el mismo pedido. Para sumar texto a una página, agregá párrafos en `details`; para sumar fotos, ver `fotos-album.py` más abajo.
 
-El pedido es el mismo en todas las páginas.
+El pedido es el mismo en todas las páginas. Todas tienen además los avisos que corren arriba, la tira de fotos de Instagram y el botón flotante "Escribinos", que abre WhatsApp cuando está el número.
 
 ## Bueno saber
 
@@ -81,6 +81,14 @@ python fotos-album.py "RUTA/AL/ALBUM_DESCOMPRIMIDO"
 ```
 
 Qué fotos usa cada producto se elige al principio del script. Cada foto sale cuadrada a 1200 y 600 px; después se declara en `gallery` del producto en `src/catalog.ts`.
+
+El fondo de caritas y las caritas de la franja de beneficios salen de la hoja de identidad del kit (`Identidad.jpg`). Hace falta Pillow:
+
+```sh
+python caritas.py "RUTA/A/Identidad.jpg" "CARPETA_PARA_LAS_CARAS"
+```
+
+Escribe las baldosas del fondo y las caritas en `src/`; la carpeta (opcional) recibe las siete caras en PNG con fondo transparente. El color y la opacidad del fondo están en el script y en `--faces-ink` y `--faces-light` de `src/styles.css`: si cambian, hay que cambiarlos en los dos lados.
 
 ## Antes de publicar
 

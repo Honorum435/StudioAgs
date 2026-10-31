@@ -5,6 +5,7 @@ import { mountCartView } from "./cart-view";
 import { products } from "./catalog";
 import { mountCatalogView } from "./catalog-view";
 import { WHATSAPP_NUMBER } from "./config";
+import { mountHeader } from "./header";
 import { compactOnScroll, cursorTrail, enableTouchActive, tilt } from "./motion";
 import { createOverlays } from "./overlays";
 import { renderPage } from "./templates";
@@ -33,18 +34,19 @@ export const overlays = createOverlays();
 mountCatalogView({ root, store: orderStore, overlays });
 mountCartView({ root, store: orderStore, overlays, whatsappNumber: WHATSAPP_NUMBER });
 
-// Con número de WhatsApp, "Contanos tu idea" y el "Escribinos" de Contacto abren el chat en vez de
-// Instagram.
+// Con número de WhatsApp, "Contanos tu idea", el "Escribinos" de Contacto y el botón flotante
+// abren el chat en vez de Instagram.
 const chatButtons: Array<[selector: string, message: string]> = [
   ["[data-custom-order]", CUSTOM_ORDER_MESSAGE],
   ["[data-contact-chat]", CONTACT_MESSAGE],
 ];
 for (const [selector, message] of chatButtons) {
   const link = buildWhatsAppLink(WHATSAPP_NUMBER, message);
-  const button = root.querySelector<HTMLAnchorElement>(selector);
-  if (link && button) {
-    button.href = link.url;
-  }
+  root.querySelectorAll<HTMLAnchorElement>(selector).forEach((button) => {
+    if (link) {
+      button.href = link.url;
+    }
+  });
 }
 
 enableTouchActive(document);
@@ -52,6 +54,7 @@ cursorTrail(document);
 const header = root.querySelector<HTMLElement>(".site-header");
 if (header) {
   compactOnScroll(header);
+  mountHeader(header);
 }
 const heroArt = root.querySelector<HTMLElement>(".hero-art");
 if (heroArt) {

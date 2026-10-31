@@ -286,8 +286,13 @@ describe("pedidos personalizados", () => {
     vi.stubEnv("VITE_WHATSAPP_NUMBER", "5493435555555");
     document.body.innerHTML = injectApp('<div id="app"></div>', renderSitePageDocument("contacto"));
     await hydrate();
-    const href = $<HTMLAnchorElement>("[data-contact-chat]").getAttribute("href") ?? "";
-    expect(href.startsWith("https://wa.me/5493435555555?text=")).toBe(true);
-    expect(decodeURIComponent(href.split("text=")[1])).toBe("¡Hola! Les quería hacer una consulta.");
+    // El de la tarjeta y el botón flotante.
+    const buttons = [...document.querySelectorAll<HTMLAnchorElement>("[data-contact-chat]")];
+    expect(buttons).toHaveLength(2);
+    for (const button of buttons) {
+      const href = button.getAttribute("href") ?? "";
+      expect(href.startsWith("https://wa.me/5493435555555?text=")).toBe(true);
+      expect(decodeURIComponent(href.split("text=")[1])).toBe("¡Hola! Les quería hacer una consulta.");
+    }
   });
 });

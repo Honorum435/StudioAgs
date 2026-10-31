@@ -5,8 +5,9 @@ Uso:
 
 Identidad.jpg es la hoja del kit de marca (CMYK, con su perfil de color). Guarda en src/ las
 dos baldosas del fondo: carita-fondo.webp (azul suave, para los fondos claros) y
-carita-fondo-clara.webp (blanca, para las franjas de color). Si se indica una carpeta, guarda
-ahí también las siete caras recortadas en PNG con fondo transparente. Necesita Pillow.
+carita-fondo-clara.webp (blanca, para las franjas de color), y las caritas de la franja de
+beneficios del inicio (carita-<número>.webp). Si se indica una carpeta, guarda ahí también las
+siete caras recortadas en PNG con fondo transparente. Necesita Pillow.
 
 Los colores y la opacidad del dibujo son los de --faces-ink y --faces-light en src/styles.css,
 con los que tokens.test.ts prueba el contraste: si cambian acá, cambiarlos también allá.
@@ -37,6 +38,10 @@ BALDOSAS = [
     ("carita-fondo.webp", (61, 119, 188), 0.15),
     ("carita-fondo-clara.webp", (255, 255, 255), 0.45),
 ]
+# Caritas de la franja de beneficios (números de CAJAS, desde 1), en un cuadrado al doble de los
+# 46 px con que se ven.
+ICONOS = (1, 3, 4, 5, 6)
+LADO_ICONO = 92
 LADO = 440  # baldosa al doble de su tamaño en pantalla (220 px), para pantallas nítidas
 ANCHO_CARA = 150  # 75 px en pantalla
 SATURACION_TRAZO = 40
@@ -80,6 +85,15 @@ def baldosa(cara: Image.Image, color: tuple[int, int, int], opacidad: float) -> 
     return salida
 
 
+def icono(cara: Image.Image) -> Image.Image:
+    """La cara entera, centrada en un cuadrado transparente."""
+    escala = LADO_ICONO / max(cara.size)
+    chica = cara.resize((round(cara.width * escala), round(cara.height * escala)), Image.LANCZOS)
+    salida = Image.new("RGBA", (LADO_ICONO, LADO_ICONO), (0, 0, 0, 0))
+    salida.alpha_composite(chica, ((LADO_ICONO - chica.width) // 2, (LADO_ICONO - chica.height) // 2))
+    return salida
+
+
 def main() -> None:
     if len(sys.argv) not in (2, 3):
         sys.exit(__doc__)
@@ -90,6 +104,9 @@ def main() -> None:
     for nombre, color, opacidad in BALDOSAS:
         baldosa(caras[CARA_DEL_FONDO], color, opacidad).save(src / nombre, "WEBP", lossless=True, method=6)
         print(src / nombre)
+    for numero in ICONOS:
+        icono(caras[numero - 1]).save(src / f"carita-{numero}.webp", "WEBP", lossless=True, method=6)
+        print(src / f"carita-{numero}.webp")
 
     if len(sys.argv) == 3:
         carpeta = Path(sys.argv[2])

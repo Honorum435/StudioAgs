@@ -7,6 +7,8 @@ import { formatPrice } from "./format";
 import {
   CARD_IMAGE_SIZES,
   TOTAL_NOTE,
+  announcements,
+  sortOptions,
   addButtonContent,
   cardPrice,
   cartContent,
@@ -64,6 +66,8 @@ const about = renderSitePage(data, "nosotros");
 const aboutDoc = parse(about);
 const contact = renderSitePage(data, "contacto");
 const contactDoc = parse(contact);
+const faq = renderSitePage(data, "preguntas-frecuentes");
+const faqDoc = parse(faq);
 
 function card(id: string): Element {
   const element = doc.getElementById(`producto-${id}`);
@@ -207,10 +211,27 @@ describe("página prerenderizada", () => {
 
   it("mantiene el HTML de cada página en el orden en que se ve", () => {
     const pages: Array<[html: string, sections: string[]]> = [
-      [home, ["site-header", "hero", "value-strip", "intent-section", "best-section", "about-teaser", "custom-order", "site-footer"]],
-      [page, ["site-header", "catalog-section", "how-section", "site-footer"]],
-      [about, ["site-header", "about-intro", "process-section", "custom-order", "site-footer"]],
-      [contact, ["site-header", "contact-section", "trust-section", "custom-order", "site-footer"]],
+      [
+        home,
+        [
+          "announce-bar",
+          "site-header",
+          "hero",
+          "value-strip",
+          "intent-section",
+          "best-section",
+          "banner banner-brand",
+          "banner banner-featured",
+          "about-teaser",
+          "custom-order",
+          "instagram-strip",
+          "site-footer",
+        ],
+      ],
+      [page, ["announce-bar", "site-header", "catalog-section", "how-section", "instagram-strip", "site-footer"]],
+      [about, ["site-header", "about-intro", "process-section", "custom-order", "instagram-strip", "site-footer"]],
+      [faq, ["site-header", "faq-section", "custom-order", "instagram-strip", "site-footer"]],
+      [contact, ["site-header", "contact-section", "trust-section", "custom-order", "instagram-strip", "site-footer"]],
     ];
     for (const [html, sections] of pages) {
       const order = sections.map((name) => html.indexOf(`class="${name}"`));
@@ -220,26 +241,79 @@ describe("página prerenderizada", () => {
     expect(page.indexOf('class="filter-list"')).toBeLessThan(page.indexOf('class="search-field"'));
   });
 
-  it("el menú lleva a Productos, Nosotros y Contacto y marca la página en la que estás", () => {
+  it("el menú lleva a Productos, Nosotros, Preguntas frecuentes y Contacto y marca la página en la que estás", () => {
     const links = (pageDoc: Document) => [...pageDoc.querySelectorAll<HTMLAnchorElement>(".main-nav a")];
     expect(links(homeDoc).map((link) => [text(link), link.getAttribute("href")])).toEqual([
       ["Productos", "productos/"],
       ["Nosotros", "nosotros/"],
+      ["Preguntas frecuentes", "preguntas-frecuentes/"],
       ["Contacto", "contacto/"],
     ]);
     expect(homeDoc.querySelector('.main-nav [aria-current="page"]')).toBeNull();
     expect(text(doc.querySelector('.main-nav [aria-current="page"]'))).toBe("Productos");
     expect(text(aboutDoc.querySelector('.main-nav [aria-current="page"]'))).toBe("Nosotros");
+    expect(text(faqDoc.querySelector('.main-nav [aria-current="page"]'))).toBe("Preguntas frecuentes");
     expect(text(contactDoc.querySelector('.main-nav [aria-current="page"]'))).toBe("Contacto");
     expect(doc.querySelector(".site-header .wordmark")?.getAttribute("href")).toBe("./");
 
+    // Sin JavaScript el menú del celu no se despliega: las páginas también están en el pie.
     const footer = [...doc.querySelectorAll<HTMLAnchorElement>(".footer-nav a")];
     expect(footer.map((link) => link.getAttribute("href"))).toEqual([
       "productos/",
       "nosotros/",
+      "preguntas-frecuentes/",
       "contacto/",
-      "https://www.instagram.com/__studioags/",
     ]);
+    expect(doc.querySelector(".footer-social a")?.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+    expect(doc.querySelector(".footer-info a")?.getAttribute("href")).toBe(`mailto:${businessValue(business.email)}`);
+  });
+
+  it("el botón del menú controla el panel y el buscador lleva a Productos con el texto", () => {
+    const toggle = doc.querySelector(".menu-toggle")!;
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(accessibleName(toggle)).toBe("Menú");
+    const menu = doc.getElementById(toggle.getAttribute("aria-controls")!)!;
+    expect(menu.querySelector(".main-nav")).not.toBeNull();
+
+    const search = menu.querySelector("form[role='search']")!;
+    expect(search.getAttribute("action")).toBe("productos/");
+    const input = search.querySelector<HTMLInputElement>("input[type='search']")!;
+    expect(input.name).toBe("q");
+    expect(text(search.querySelector("label"))).toBe("Buscar productos");
+  });
+
+  it("arriba de todo corren los avisos, con la copia de la vuelta oculta a los lectores", () => {
+    const lists = doc.querySelectorAll(".announce-bar .announce-list");
+    expect(lists).toHaveLength(2);
+    expect(lists[0].hasAttribute("aria-hidden")).toBe(false);
+    expect(lists[1].getAttribute("aria-hidden")).toBe("true");
+    expect([...lists[0].querySelectorAll("li")].map(text)).toEqual(announcements);
+    expect(page.indexOf('class="announce-bar"')).toBeLessThan(page.indexOf('class="site-header"'));
+  });
+
+  it("todas las páginas tienen la tira de Instagram y el botón flotante para escribir", () => {
+    for (const pageDoc of [homeDoc, doc, aboutDoc, faqDoc, contactDoc]) {
+      const grid = pageDoc.querySelector<HTMLAnchorElement>(".instagram-strip a.instagram-grid")!;
+      expect(grid.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+      expect(grid.getAttribute("target")).toBe("_blank");
+      const photos = [...grid.querySelectorAll("img")];
+      expect(photos).toHaveLength(6);
+      expect(photos.every((photo) => photo.getAttribute("alt") === "" && photo.getAttribute("loading") === "lazy")).toBe(true);
+      expect(accessibleName(grid)).toContain("Instagram");
+
+      const chat = pageDoc.querySelector<HTMLAnchorElement>("a.chat-float")!;
+      expect(chat.hasAttribute("data-contact-chat")).toBe(true);
+      expect(chat.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+      expect(accessibleName(chat)).toBe("Escribinos (se abre en otra pestaña)");
+    }
+  });
+
+  it("el catálogo se puede ordenar: el selector llega deshabilitado y en Destacados", () => {
+    const select = doc.querySelector<HTMLSelectElement>(".catalog-meta select[data-sort]")!;
+    expect(select.disabled).toBe(true);
+    expect([...select.options].map((option) => option.value)).toEqual(sortOptions.map((option) => option.id));
+    expect(select.value).toBe("destacados");
+    expect(text(select.closest("label")!.querySelector("span"))).toBe("Ordenar por");
   });
 
   it("cada página tiene un solo h1 y el salto lleva a su contenido", () => {
@@ -248,6 +322,7 @@ describe("página prerenderizada", () => {
       [doc, "productos/#contenido"],
       [aboutDoc, "nosotros/#contenido"],
       [contactDoc, "contacto/#contenido"],
+      [faqDoc, "preguntas-frecuentes/#contenido"],
     ];
     for (const [pageDoc, skip] of cases) {
       expect(pageDoc.querySelectorAll("h1")).toHaveLength(1);
@@ -308,8 +383,39 @@ describe("inicio", () => {
     );
   });
 
+  it("muestra los beneficios, cada uno con una carita decorativa", () => {
+    const items = [...homeDoc.querySelectorAll(".value-strip > li")];
+    expect(items).toHaveLength(5);
+    for (const item of items) {
+      expect(item.querySelector(".value-face")?.getAttribute("aria-hidden")).toBe("true");
+    }
+    expect(text(items[0])).toBe("Hecho a mano en Paraná");
+  });
+
+  it("los banners llevan a los productos para tu marca y a los calendarios", () => {
+    expect(homeDoc.querySelector(".banner-brand a")?.getAttribute("href")).toBe("productos/?uso=marca");
+    expect(homeDoc.querySelector(".banner-featured a")?.getAttribute("href")).toBe("producto/calendarios/");
+    expect(homeDoc.querySelector(".banner-featured img")?.getAttribute("alt")).not.toBe("");
+  });
+
   it("el adelanto de Nosotros lleva a su página", () => {
     expect(homeDoc.querySelector(".about-teaser a")?.getAttribute("href")).toBe("nosotros/");
+  });
+});
+
+describe("preguntas frecuentes", () => {
+  it("cada pregunta se despliega, cerrada al llegar, con respuestas de los datos del negocio", () => {
+    const items = [...faqDoc.querySelectorAll("details.faq-item")];
+    expect(items.length).toBeGreaterThanOrEqual(8);
+    expect(items.every((item) => !item.hasAttribute("open"))).toBe(true);
+    const answers = new Map(items.map((item) => [text(item.querySelector("summary")), text(item.querySelector(".faq-answer"))]));
+    expect(answers.get("¿Hacen envíos?")).toBe(businessValue(business.shipping));
+    expect(answers.get("¿Puedo retirarlo?")).toBe(businessValue(business.pickupArea));
+    expect(answers.get("¿Hacen cambios?")).toBe(businessValue(business.exchangePolicy));
+    for (const method of businessValue(business.paymentMethods)) {
+      expect(answers.get("¿Cómo pago?")).toContain(method);
+    }
+    expect(faqDoc.querySelector(".faq-heading a[href^='mailto:']")).not.toBeNull();
   });
 });
 

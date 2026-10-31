@@ -6,6 +6,7 @@ import {
   initialSelection,
   intents,
   lineName,
+  photoSending,
   productPath,
   resolveSelection,
   type AddOn,
@@ -29,11 +30,12 @@ export interface PageData {
 export type CartSummary = Pick<OrderSummary, "lines" | "quantity" | "subtotal">;
 
 // Páginas fijas del sitio, además del inicio y de las de cada producto. Cada una vive en <id>/.
-export type SitePageId = "productos" | "nosotros" | "contacto";
+export type SitePageId = "productos" | "nosotros" | "preguntas-frecuentes" | "contacto";
 
 export const sitePages: ReadonlyArray<{ id: SitePageId; label: string }> = [
   { id: "productos", label: "Productos" },
   { id: "nosotros", label: "Nosotros" },
+  { id: "preguntas-frecuentes", label: "Preguntas frecuentes" },
   { id: "contacto", label: "Contacto" },
 ];
 
@@ -58,16 +60,24 @@ export const INTENT_PHOTO_SIZES = "(max-width: 767px) 132px, 168px";
 // Cuatro columnas desde 1024 px, dos en tablet y celular.
 export const BEST_PHOTO_SIZES = "(max-width: 1023px) calc(50vw - 40px), 300px";
 export const ABOUT_PHOTO_SIZES = "(max-width: 767px) 90vw, 520px";
+// Banners del inicio: la foto va al costado desde 768 px y arriba en celular.
+export const BANNER_PHOTO_SIZES = "(max-width: 767px) 90vw, 420px";
+// Seis fotos en fila desde 768 px y tres por fila en celular.
+export const INSTAGRAM_PHOTO_SIZES = "(max-width: 767px) 33vw, 17vw";
+export const FAQ_PHOTO_SIZES = "(max-width: 1023px) 90vw, 440px";
 
 export const TOTAL_NOTE = "El total final se confirma por WhatsApp.";
 export const ORDER_UPDATED_NOTE = "Actualizamos tu pedido · revisalo";
 export const ORDER_CHANGED_NOTE = "Cambiaste el pedido: volvé a tocar Continuar.";
 
-type IconName = "bag" | "close" | "search" | "arrow" | "plus" | "minus";
+type IconName = "bag" | "close" | "search" | "arrow" | "plus" | "minus" | "menu" | "chat" | "instagram";
 
 const iconPaths: Record<IconName, string> = {
   bag: '<path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
   close: '<path d="m6 6 12 12M18 6 6 18"/>',
+  menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+  chat: '<path d="M20 11.5a7.5 7.5 0 0 1-11.2 6.5L4 19.5l1.5-4.6A7.5 7.5 0 1 1 20 11.5Z"/>',
+  instagram: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.2 6.8h.01"/>',
   search: '<circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
@@ -427,16 +437,50 @@ function pageLinks(current?: SitePageId): string {
     .join("\n        ");
 }
 
+// Avisos que corren arriba de todo. La segunda copia completa la vuelta y no se lee.
+export const announcements = [
+  "Productos personalizados",
+  "Retiro en Paraná",
+  "Envíos a todo el país",
+  "Te mandamos una muestra antes de imprimir",
+  "Armás el pedido acá y lo cerramos por WhatsApp",
+];
+
+export function announcementBar(): string {
+  const list = (hidden: boolean) =>
+    `<ul class="announce-list"${hidden ? ' aria-hidden="true"' : ""}>${announcements.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+  return `
+    <div class="announce-bar" role="region" aria-label="Avisos">
+      <div class="announce-track">${list(false)}${list(true)}</div>
+    </div>`;
+}
+
+// En la compu: el buscador, el logo al medio y el pedido, con el menú abajo. En el celu el menú
+// y el buscador se despliegan con el botón (header.ts); sin JavaScript, los enlaces están en el pie.
+// El buscador lleva a productos/?q=: header.ts arma la dirección, porque la CSP no deja enviar
+// formularios.
 export function siteHeader(current?: SitePageId): string {
   return `
     <header class="site-header">
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal" data-menu-toggle>
+        ${icon("menu")}<span class="visually-hidden">Menú</span>
+      </button>
       <a class="wordmark" href="./" aria-label="StudioAGS, inicio">
         <span class="wordmark-small">studio</span>
         <span class="wordmark-large">ags<span class="wordmark-dot">.</span></span>
       </a>
-      <nav class="main-nav" aria-label="Navegación principal">
-        ${pageLinks(current)}
-      </nav>
+      <div class="header-menu" id="menu-principal">
+        <form class="header-search" role="search" action="${sitePagePath("productos")}" data-header-search>
+          <label>
+            ${icon("search")}
+            <span class="visually-hidden">Buscar productos</span>
+            <input type="search" name="q" placeholder="¿Qué estás buscando?" autocomplete="off" />
+          </label>
+        </form>
+        <nav class="main-nav" aria-label="Navegación principal">
+          ${pageLinks(current)}
+        </nav>
+      </div>
       <button class="cart-trigger" type="button" data-action="open-cart" disabled>
         <span class="cart-trigger-label">Mi pedido</span>
         ${icon("bag")}
@@ -495,16 +539,80 @@ export function hero(catalog: readonly CatalogProduct[]): string {
     </section>`;
 }
 
+// Cada beneficio con una carita del kit (las recorta caritas.py; styles.css pone cada una).
+const values: Array<{ face: number; text: string }> = [
+  { face: 1, text: "Hecho a mano en Paraná" },
+  { face: 3, text: "Con tu nombre, tu logo o tus fotos" },
+  { face: 4, text: "Te mandamos una muestra antes de imprimir" },
+  { face: 5, text: "Precios a la vista en cada producto" },
+  { face: 6, text: "Armás el pedido acá y lo cerramos por WhatsApp" },
+];
+
 export function valueStrip(): string {
-  const items = [
-    "Lo personalizamos con tu nombre, tu logo o tus fotos",
-    "Precios a la vista en cada producto",
-    "Armás el pedido acá y lo cerramos por WhatsApp",
-  ];
   return `
     <ul class="value-strip" aria-label="Lo que ofrece StudioAGS">
-      ${items.map((item) => `<li><span class="eyebrow-mark" aria-hidden="true"></span><span>${item}</span></li>`).join("")}
+      ${values.map(({ face, text }) => `<li><span class="value-face value-face-${face}" aria-hidden="true"></span><span>${escapeHtml(text)}</span></li>`).join("")}
     </ul>`;
+}
+
+// Como el banner de mayoristas de la tienda de ejemplo, para quien compra para su marca.
+export function brandBanner({ catalog }: PageData): string {
+  const product = catalog.find((item) => item.id === "tarjetas");
+  const photo = product
+    ? responsiveImage(product.images.card, { className: "banner-photo", alt: product.imageAlt, sizes: BANNER_PHOTO_SIZES, loading: "lazy" })
+    : "";
+  return `
+    <section class="banner banner-brand" aria-labelledby="brand-banner-title">
+      ${photo}
+      <div class="banner-copy">
+        <p class="eyebrow">Para emprendedores</p>
+        <h2 id="brand-banner-title">¿Tenés un emprendimiento?</h2>
+        <p>Tarjetas personales, vinilos y calendarios con tu logo, para que tu marca se vea en cada pedido.</p>
+        <a class="primary-button" href="${sitePagePath("productos")}?uso=marca">Ver productos para tu marca ${icon("arrow")}</a>
+      </div>
+    </section>`;
+}
+
+// Producto destacado de la temporada, con una foto real del álbum.
+const calendarPhoto: ImageSpec = { base: "foto-calendarios-1", widths: [600, 1200], width: 1200, height: 1200 };
+
+export function featuredBanner({ catalog }: PageData): string {
+  const product = catalog.find((item) => item.id === "calendarios");
+  if (!product) {
+    return "";
+  }
+  return `
+    <section class="banner banner-featured" aria-labelledby="featured-banner-title">
+      <div class="banner-copy">
+        <p class="eyebrow">Destacado</p>
+        <h2 id="featured-banner-title">Organizá tu año</h2>
+        <p>Calendarios clásicos, semanales, de acrílico o con imán, con tus colores, tu logo o tu diseño.</p>
+        <a class="primary-button" href="${attr(productPath(product))}">Quiero verlos ${icon("arrow")}</a>
+      </div>
+      ${responsiveImage(calendarPhoto, { className: "banner-photo", alt: "Calendarios de todos los colores, uno encima del otro", sizes: BANNER_PHOTO_SIZES, loading: "lazy" })}
+    </section>`;
+}
+
+// Fotos del álbum, cuadradas como las de Instagram. Todo el bloque es un solo enlace al perfil.
+const instagramPhotos: ImageSpec[] = [
+  "foto-calendarios-2",
+  "foto-pizarra-orma-1",
+  "foto-proceso-2",
+  "foto-bitacoras-1",
+  "foto-calendarios-3",
+  "foto-proceso-4",
+].map((base) => ({ base, widths: [600, 1200], width: 1200, height: 1200 }));
+
+export function instagramStrip(business: BusinessInfo): string {
+  const handle = businessValue(business.instagramHandle).replace(/^@/, "");
+  return `
+    <section class="instagram-strip" aria-labelledby="instagram-title">
+      <h2 id="instagram-title">${icon("instagram")} @${escapeHtml(handle)}</h2>
+      <a class="instagram-grid" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer">
+        <span class="visually-hidden">Ver nuestros trabajos en Instagram (se abre en otra pestaña)</span>
+        ${instagramPhotos.map((photo) => responsiveImage(photo, { alt: "", sizes: INSTAGRAM_PHOTO_SIZES, loading: "lazy" })).join("")}
+      </a>
+    </section>`;
 }
 
 // Inicio: un círculo por uso, con la foto de un producto de ese uso. Abre Productos ya filtrado.
@@ -848,6 +956,26 @@ export function relatedProducts({ catalog }: PageData, product: CatalogProduct):
 }
 
 // En Productos el título es el de la página.
+// Órdenes del catálogo: catalog-view.ts reacomoda las tarjetas.
+export const sortOptions = [
+  { id: "destacados", label: "Destacados" },
+  { id: "menor-precio", label: "Menor precio" },
+  { id: "mayor-precio", label: "Mayor precio" },
+  { id: "nombre", label: "Nombre, de la A a la Z" },
+] as const;
+
+export type SortId = (typeof sortOptions)[number]["id"];
+
+function sortField(): string {
+  return `
+        <label class="sort-field">
+          <span>Ordenar por</span>
+          <select data-sort disabled>
+            ${sortOptions.map((option) => `<option value="${option.id}">${option.label}</option>`).join("")}
+          </select>
+        </label>`;
+}
+
 export function catalogSection(data: PageData, heading: "h1" | "h2" = "h2"): string {
   return `
     <section class="catalog-section" id="catalogo" aria-labelledby="catalog-title">
@@ -862,7 +990,8 @@ export function catalogSection(data: PageData, heading: "h1" | "h2" = "h2"): str
       ${catalogToolbar()}
       <div class="catalog-meta">
         <span data-result-count role="status">${resultCount(data.catalog.length)}</span>
-        <span>Precios en pesos argentinos</span>
+        <span class="catalog-currency">Precios en pesos argentinos</span>
+        ${sortField()}
       </div>
       <div class="product-grid" id="product-grid">
         ${data.catalog.map(productCard).join("")}
@@ -1014,22 +1143,97 @@ export function processSection(): string {
     </section>`;
 }
 
-export function siteFooter(business: BusinessInfo): string {
-  const handle = businessValue(business.instagramHandle).replace(/^@/, "");
-  const links = [
-    ...sitePages.map((page) => `<a class="footer-link" href="${sitePagePath(page.id)}">${page.label}</a>`),
-    `<a class="footer-link" href="${attr(instagramUrl(handle))}">Instagram</a>`,
+const faqPhoto: ImageSpec = { base: "foto-calendarios-4", widths: [600, 1200], width: 1200, height: 1200 };
+
+// Preguntas frecuentes: las respuestas salen de los mismos datos que "Antes de pedir".
+export function faqSection({ business, catalog }: PageData): string {
+  const range = leadTimeRange(catalog);
+  const email = businessValue(business.email);
+  const questions: Array<[string, string]> = [
+    [
+      "¿Cómo compro?",
+      "Elegí las opciones de cada producto y sumalo a tu pedido. Cuando esté listo, completá tu nombre y cómo lo querés recibir: se abre WhatsApp con el pedido escrito y solo tocás Enviar.",
+    ],
+    [
+      "¿Cuánto tarda mi pedido?",
+      [
+        range ? `Cada producto muestra su plazo de producción: ${escapeHtml(range)}, según cuál elijas.` : "",
+        "Si lo necesitás para una fecha, ponela en el pedido y te decimos si llegamos.",
+      ].join(" "),
+    ],
+    [
+      "¿Veo el diseño antes de que lo impriman?",
+      "Sí. Te confirmamos el total y el plazo, y te mandamos una muestra. Imprimimos cuando la aprobás.",
+    ],
+    ["¿Hacen envíos?", escapeHtml(businessValue(business.shipping))],
+    ["¿Puedo retirarlo?", escapeHtml(businessValue(business.pickupArea))],
+    [
+      "¿Cómo pago?",
+      `${paymentList(businessValue(business.paymentMethods))} En la página no se paga nada: el pago se coordina por WhatsApp.`,
+    ],
+    ["¿Cómo les mando mis fotos?", escapeHtml(photoSending)],
+    ["¿Hacen cambios?", escapeHtml(businessValue(business.exchangePolicy))],
+    [
+      "¿Hacen pedidos para emprendimientos?",
+      "Sí: tarjetas personales, vinilos y calendarios con tu logo. Si buscás algo que no está en el catálogo, contanos tu idea y lo armamos a tu medida.",
+    ],
+    ["¿Cuándo responden?", escapeHtml(businessValue(business.responseTime))],
   ];
   return `
+    <section class="faq-section" aria-labelledby="faq-title">
+      <div class="faq-heading">
+        <p class="eyebrow">Ayuda</p>
+        <h1 id="faq-title">Preguntas frecuentes</h1>
+        <p class="section-intro">Juntamos acá lo que más nos preguntan. Si te queda alguna duda, escribinos por Instagram a ${instagramLink(business)} o por mail a <a href="mailto:${attr(email)}">${escapeHtml(email)}</a>.</p>
+      </div>
+      <div class="faq-body">
+        <div class="faq-list">
+          ${questions
+            .map(
+              ([question, answer]) =>
+                `<details class="faq-item"><summary>${question}</summary><div class="faq-answer">${answer.trim()}</div></details>`,
+            )
+            .join("\n          ")}
+        </div>
+        ${responsiveImage(faqPhoto, { className: "faq-photo", alt: "Calendario de acrílico transparente con el mes de septiembre", sizes: FAQ_PHOTO_SIZES, loading: "lazy" })}
+      </div>
+    </section>`;
+}
+
+// Como el pie de la tienda de ejemplo: dónde estamos, el logo y las redes, con las páginas abajo.
+export function siteFooter(business: BusinessInfo): string {
+  const handle = businessValue(business.instagramHandle).replace(/^@/, "");
+  const email = businessValue(business.email);
+  const links = sitePages.map((page) => `<a class="footer-link" href="${sitePagePath(page.id)}">${page.label}</a>`);
+  return `
     <footer class="site-footer">
+      <div class="footer-col footer-info">
+        <p class="footer-title">StudioAGS</p>
+        <p>Paraná, Entre Ríos</p>
+        <a class="footer-link" href="mailto:${attr(email)}">${escapeHtml(email)}</a>
+      </div>
       <a class="wordmark footer-wordmark" href="./" aria-label="StudioAGS, inicio">
         <span class="wordmark-small">studio</span><span class="wordmark-large">ags<span class="wordmark-dot">.</span></span>
       </a>
-      <p>Para que lo lindo se quede.</p>
+      <div class="footer-col footer-social">
+        <p class="footer-title">Seguinos</p>
+        <a class="footer-link" href="${attr(instagramUrl(handle))}">${icon("instagram")} Instagram</a>
+      </div>
       <nav class="footer-nav" aria-label="Páginas">
         ${links.join("\n        ")}
       </nav>
+      <p class="footer-tagline">Para que lo lindo se quede.</p>
     </footer>`;
+}
+
+// Botón flotante para escribir, como el de WhatsApp de la tienda de ejemplo. Lleva a Instagram;
+// con número de WhatsApp, main.ts lo cambia por el chat con un saludo escrito.
+export function chatButton(business: BusinessInfo): string {
+  const handle = businessValue(business.instagramHandle).replace(/^@/, "");
+  return `
+    <a class="chat-float" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer" data-contact-chat>
+      ${icon("chat")}<span class="chat-float-label">Escribinos</span><span class="visually-hidden"> (se abre en otra pestaña)</span>
+    </a>`;
 }
 
 export function fichaTitle(product: CatalogProduct): string {
@@ -1112,15 +1316,18 @@ function skipLink(href: string, label: string): string {
 function pageShell(data: PageData, skip: string, sections: readonly string[], current?: SitePageId): string {
   return [
     skip,
+    announcementBar(),
     siteHeader(current),
     noscriptNote(data.business),
     '<main id="contenido">',
     ...sections,
     "</main>",
+    instagramStrip(data.business),
     siteFooter(data.business),
     fichaDialog(),
     cartDialog(),
     stickyBar(),
+    chatButton(data.business),
     announcer(),
   ].join("\n");
 }
@@ -1136,6 +1343,7 @@ export function renderProductPage(data: PageData, product: CatalogProduct): stri
 const sitePageSections: Record<SitePageId, (data: PageData) => string[]> = {
   productos: (data) => [catalogSection(data, "h1"), howToBuy()],
   nosotros: (data) => [aboutIntro(), processSection(), customOrder(data.business)],
+  "preguntas-frecuentes": (data) => [faqSection(data), customOrder(data.business)],
   contacto: (data) => [contactSection(data.business), trustSection(data), customOrder(data.business)],
 };
 
@@ -1149,6 +1357,8 @@ export function renderPage(data: PageData): string {
     valueStrip(),
     intentCircles(data),
     bestSellers(data),
+    brandBanner(data),
+    featuredBanner(data),
     aboutTeaser(),
     customOrder(data.business),
   ]);

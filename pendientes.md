@@ -72,8 +72,79 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 **Falta que Aixa:**
 - **Más vendidos:** diga cuáles son. Hoy son de ejemplo: Calendarios, Fotos para guardar, Bitácoras y Láminas (`featuredProducts` en `src/business.ts`).
 - **Textos de Nosotros y del adelanto:** los apruebe o los cambie. Son provisorios y no dicen nada que no sepamos.
-- **Formas y marca de agua:** diga si le gustan. Si manda su propio fondo (o las caritas en PNG transparente), reemplaza al logo repetido.
+- **Formas y marca de agua:** diga si le gustan. Si manda su propio fondo, reemplaza al logo repetido. Las caritas ya están recortadas del kit (ver abajo).
 - **Usos:** confirme las líneas cortas de cada círculo y las fotos elegidas (Entre Flores, Tarjetas, Pizarra OrMa y Calendarios). Para no mostrar la marca de un cliente, no se usó la foto de Vinilos.
+
+## Fondo de caritas, cursor y estructura como Mupe (31/10/2026)
+
+**Lo que pidió el primo:**
+- recortar las caras del kit y repetir una de fondo en toda la página;
+- un cursor animado como el de mupecuadernos.com.ar;
+- analizar esa tienda página por página y hacer la nuestra muy parecida.
+
+**Qué tiene Mupe:**
+- **Arriba:** una barra de avisos que corre y el encabezado en dos filas (buscador, logo al medio, cuenta y carrito; abajo, el menú con submenús). En el celu, menú hamburguesa.
+- **Inicio:**
+  - el banner grande;
+  - cinco íconos de beneficios;
+  - "Hola hola" con la foto de la dueña;
+  - novedades;
+  - cuatro categorías en foto;
+  - un banner para mayoristas y otro de agendas;
+  - personalizados;
+  - el feed de Instagram;
+  - el pie rosa con la dirección, el logo y las redes.
+- **Tienda:** un aviso de plazos arriba, "Mostrando N resultados", "Ordenar por", la grilla con etiquetas de descuento y sin stock, y la paginación.
+- **Producto:**
+  - la galería, el camino y las estrellas;
+  - la lista de lo que trae, el precio con cuotas y con transferencia, y el recuadro "Importante" de plazos;
+  - las opciones (tipo de hoja, subir archivo, nombre en la tapa, color y letra) y el calculador de envío;
+  - las reseñas y los "Top elegidos".
+- **Páginas:**
+  - Nosotras, con su historia y fotos de la familia;
+  - Preguntas frecuentes, desplegables con una foto;
+  - Contacto, con un formulario, el local y un mapa;
+  - Mayoristas, con un registro;
+  - gift cards.
+- **Además:** el botón flotante de WhatsApp, el cartel de suscripción con cupón, "Un regalo para vos", el cambio ARS/USD y el cursor animado.
+
+**Qué quedó en StudioAGS:**
+- **Fondo de caritas:**
+  - las siete caras recortadas de `Identidad.jpg` con `caritas.py`;
+  - la azul de pelito parado se repite de fondo en toda la página: en azul suave sobre el crema y el rosa clarito, en blanco sobre las franjas de color;
+  - el encabezado, la tarjeta azul, las tarjetas y el pie quedan lisos;
+  - la prueba de contraste mide el texto sobre las caritas.
+- **Cursor:**
+  - un círculo azul que sigue al mouse con un poco de demora y un punto en la punta;
+  - sobre botones y enlaces el círculo se achica y el punto crece, como en Mupe;
+  - solo con mouse y sin "reducir movimiento".
+- **Barra de avisos:** corre arriba de todo con datos que ya están en la página: personalizados, retiro en Paraná, envíos a todo el país, muestra antes de imprimir y pedido por WhatsApp.
+- **Encabezado:**
+  - en la compu, el buscador, el logo al medio y "Mi pedido", con el menú abajo;
+  - en el celu, menú hamburguesa con el buscador y las páginas;
+  - el buscador lleva a `productos/?q=...`.
+- **Inicio:**
+  - la franja rosa con cinco beneficios, cada uno con una carita;
+  - un banner "¿Tenés un emprendimiento?" que abre Productos filtrado;
+  - un banner destacado de Calendarios.
+- **Todas las páginas:** la tira de fotos de Instagram (seis fotos del álbum, que llevan al perfil), el pie en tres columnas y el botón flotante "Escribinos". Ese botón va a Instagram, y a WhatsApp cuando esté el número.
+- **Productos:** "Ordenar por" (destacados, menor y mayor precio, nombre).
+- **Preguntas frecuentes** (`preguntas-frecuentes/`): diez preguntas desplegables con las respuestas de los mismos datos que "Antes de pedir", y una foto.
+
+**Lo que no se copió, y por qué:**
+- **Suscripción con cupón y "Un regalo para vos":** hace falta un servicio de mails, y el cupón lo decide Aixa.
+- **Cuentas, registro de mayoristas y gift cards:** necesitan un servidor.
+- **Cuotas, precio con transferencia, descuentos y envío gratis desde un monto:** son decisiones de precios de Aixa. No se inventan.
+- **Reseñas y estrellas:** solo con reseñas reales.
+- **Cambio ARS/USD, calculador de envío y mapa:** no hay envíos al exterior ni local a la calle.
+- **Submenús por categoría:** con ocho productos no hacen falta; los usos ya filtran.
+- **Textos y fotos de Mupe:** solo se tomó la estructura. Los textos y fotos son de StudioAGS.
+
+**Falta que Aixa:**
+- **Avisos de arriba y Preguntas frecuentes:** los revise. Salen de los datos que todavía son de ejemplo (envíos, retiro, pagos, cambios y horarios).
+- **Banners:** apruebe los textos y las fotos. El de emprendimientos usa la foto de Tarjetas; el destacado, la de calendarios de colores.
+- **Fotos de Instagram:** apruebe las seis, o diga cuáles prefiere.
+- **Caritas:** diga si le gusta el fondo y cuál cara va en cada beneficio.
 
 ### Ideas de la conversación con ChatGPT
 
