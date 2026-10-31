@@ -105,6 +105,7 @@
   --green: #4cbb6c;
   /* Pasteles de los calendarios: fondo de las franjas con mucho texto, donde el verde y el
      naranja de la marca no dejan leer la letra chica. */
+  --blue-soft: #abd7df;
   --green-soft: #b5d780;
   --orange-soft: #f9a65e;
   --black: #1e231f;
@@ -273,8 +274,6 @@ button:disabled {
 
 /* Contenedor de la página: todas las secciones comparten ancho y margen lateral. */
 .noscript-note,
-.hero,
-.catalog-section,
 .breadcrumb,
 .product-page,
 .related-section {
@@ -283,9 +282,11 @@ button:disabled {
 }
 
 /* Franjas a todo el ancho: el fondo llega al borde y el contenido se alinea con el contenedor.
-   Cada una lleva un color de la hoja de identidad: crema arriba, rosa, azul, verde claro,
-   amarillo, naranja claro y negro al pie. */
+   Cada una lleva un color de la hoja de identidad: encabezado crema, inicio celeste, rosa, el
+   catálogo en rosa clarito, azul, verde claro, amarillo, naranja claro y negro al pie. */
 .site-header,
+.hero,
+.catalog-section,
 .value-strip,
 .custom-order,
 .trust-section,
@@ -419,13 +420,20 @@ button:disabled {
   line-height: 1.6;
 }
 
+/* Inicio en celeste. Como en las otras franjas pastel, la volanta y los textos grises pasan a
+   tinta; el acento azul del título alcanza porque es letra grande. */
 .hero {
   position: relative;
   min-height: 558px;
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   align-items: center;
-  padding: 42px 0 55px;
+  padding-block: 42px 55px;
+  background: var(--blue-soft);
+}
+
+.hero :focus-visible {
+  outline-color: var(--ink);
 }
 
 .hero-copy {
@@ -447,6 +455,7 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 9px;
+  color: var(--ink);
 }
 
 .eyebrow-mark {
@@ -485,7 +494,7 @@ p {
 .hero-description {
   max-width: 440px;
   margin-bottom: 26px;
-  color: var(--muted);
+  color: var(--ink-soft);
   font-size: 15px;
   line-height: 1.75;
 }
@@ -523,7 +532,7 @@ p {
   align-items: center;
   gap: 12px;
   margin-top: 37px;
-  color: var(--muted);
+  color: var(--ink-soft);
   font-size: 14px;
   letter-spacing: 0.025em;
 }
@@ -532,7 +541,7 @@ p {
   flex: 0 0 auto;
   width: 32px;
   height: 1px;
-  background: var(--rule);
+  background: var(--ink-soft);
 }
 
 .hero-art {
@@ -655,8 +664,11 @@ p {
   flex: 0 0 auto;
 }
 
+/* Catálogo en rosa clarito: las tarjetas blancas se despegan del fondo y todos los textos y
+   bordes de la barra de filtros siguen llegando a su contraste. */
 .catalog-section {
-  padding: 108px 0 98px;
+  padding-block: 108px 98px;
+  background: var(--blush);
   scroll-margin-top: 30px;
 }
 
@@ -702,8 +714,8 @@ p {
   gap: 8px 28px;
   margin: 0 0 30px;
   padding: 14px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line-tint);
+  border-bottom: 1px solid var(--line-tint);
   list-style: none;
   color: var(--ink-soft);
   font-size: 14px;
@@ -2574,7 +2586,7 @@ textarea.field-input {
 }
 
 .text-button:not(:disabled):active {
-  background: var(--blush);
+  background: var(--blush-deep);
 }
 
 .addon:has(input:enabled):active {
@@ -2736,7 +2748,7 @@ textarea.field-input {
   .hero {
     min-height: unset;
     grid-template-columns: 1fr;
-    padding: 57px 0 37px;
+    padding-block: 57px 37px;
   }
 
   .hero-copy {
@@ -2807,7 +2819,7 @@ textarea.field-input {
   }
 
   .catalog-section {
-    padding: 72px 0 64px;
+    padding-block: 72px 64px;
   }
 
   .custom-order {

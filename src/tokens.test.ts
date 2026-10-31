@@ -274,7 +274,13 @@ const textPairs: ContrastPair[] = [
   text("franja de valores", "--ink-soft", "--lavender"),
   text("aviso sin JavaScript", "--ink-soft", "--sand"),
   text("enlace a Instagram del aviso sin JavaScript", "--coral-dark", "--sand"),
-  text("franja de confianza", "--ink-soft", "--paper"),
+  text("título y volanta del inicio", "--ink", "--blue-soft"),
+  text("descripción y epígrafe del inicio", "--ink-soft", "--blue-soft"),
+  text("título del catálogo", "--ink", "--blush"),
+  text("volanta, acento y botones de texto del catálogo", "--coral-dark", "--blush"),
+  text("introducción, conteo, nota de precios y búsqueda vacía del catálogo", "--muted", "--blush"),
+  text("filtros del catálogo", "--ink-mid", "--blush"),
+  text("franja de confianza del catálogo", "--ink-soft", "--blush"),
   text("título, volanta, filas y enlace de Antes de pedir", "--ink", "--green-soft"),
   text("respuestas y medios de pago de Antes de pedir", "--ink-soft", "--green-soft"),
   text("título, volanta y pasos de Así preparamos", "--ink", "--orange-soft"),
@@ -306,7 +312,7 @@ const textPairs: ContrastPair[] = [
   text("precio del adicional al tocar", "--muted", "--blush-deep"),
   text("adicional al pasar", "--ink", "--blush"),
   text("precio del adicional al pasar", "--muted", "--blush"),
-  text("botón de texto al tocar", "--coral-dark", "--blush"),
+  text("botón de texto al tocar", "--coral-dark", "--blush-deep"),
   text("aviso de restauración del pedido", "--ink-soft", "--sand"),
   text("título del aviso de restauración", "--ink", "--sand"),
   text("Entendido del aviso de restauración", "--coral-dark", "--sand"),
@@ -347,11 +353,15 @@ const nonTextPairs: ContrastPair[] = [
   nonText("anillo del contador cuando hay avisos", "--coral-dark", "--paper"),
   nonText("borde del aviso de restauración", "--coral-dark", "--sand"),
   nonText("indicador deslizante de la opción elegida sobre la tarjeta", "--ink", "--surface"),
+  nonText("anillo de foco y borde del botón sobre el inicio", "--ink", "--blue-soft"),
+  nonText("borde de los filtros y del buscador sobre el catálogo", "--control-border", "--blush"),
+  nonText("anillo de foco sobre el catálogo", "--focus-ring", "--blush"),
   nonText("anillo de foco sobre la franja verde", "--ink", "--green-soft"),
   nonText("anillo de foco sobre el pie", "--yellow", "--black"),
 ];
 
 const largeTextPairs: ContrastPair[] = [
+  largeText("acento azul del título del inicio", "--coral-dark", "--blue-soft"),
   largeText("acento azul del título de Así preparamos", "--coral-dark", "--orange-soft"),
 ];
 

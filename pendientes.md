@@ -119,8 +119,10 @@ Los calendarios suman pasteles: celeste `#ABD7DF`, naranja claro `#F9A65E`, aren
 
 | Sección | Color |
 |---|---|
-| Encabezado, inicio y catálogo | Crema |
+| Encabezado | Crema |
+| Inicio | Celeste |
 | Franja de arriba | Rosa |
+| Catálogo | Rosa clarito, con las tarjetas en blanco |
 | "¿Tenés una idea?" | Azul |
 | "Antes de pedir" | Verde claro |
 | "Cómo comprar" | Amarillo |
