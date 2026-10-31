@@ -19,6 +19,7 @@ export interface BusinessInfo {
   shipping: BusinessField<string>;
   paymentMethods: BusinessField<readonly string[]>;
   instagramHandle: BusinessField<string>;
+  email: BusinessField<string>;
   responseTime: BusinessField<string>;
   exchangePolicy: BusinessField<string>;
   pricesUpdatedAt: BusinessField<CalendarDate>;
@@ -55,6 +56,8 @@ export const business: BusinessInfo = {
   ),
   paymentMethods: example(["Transferencia bancaria", "Efectivo al retirar"]),
   instagramHandle: "__studioags",
+  // Lo pidió la dueña para Contacto (chat del 30/10/2026).
+  email: "elstudioags@gmail.com",
   responseTime: example("Respondemos de lunes a viernes de 10 a 18 h, casi siempre en el mismo día."),
   exchangePolicy: example(
     "Antes de imprimir te mandamos una muestra para que la apruebes. Como cada pedido es personalizado, no hacemos cambios por gusto; si llega con una falla de impresión, lo reponemos sin costo.",

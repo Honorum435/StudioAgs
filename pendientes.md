@@ -7,14 +7,14 @@ Lo que queda después del pulido (`plan-pulido.md`). Nada de esto bloquea probar
 Lo que pidió después de ver el sitio con el kit de marca.
 
 **Estructura:**
-- **Inicio y catálogo separados:** una página de inicio y una pestaña aparte para el catálogo.
+- **Inicio y catálogo separados:** una página de inicio y una pestaña aparte para el catálogo. Hecho: el catálogo está en `productos/` (ver los pedidos del 31/10).
 - **Destacar la personalización:** que "Lo personalizamos con tu nombre, tu logo o tus fotos" resalte más. Hecho: la franja rosa y el bloque "¿Tenés una idea?".
 - **Ficha por producto:** al tocar un producto se abre su página, con galería, descripción, opciones y precio, como en Mupe. Hecho: cada producto tiene su página en `producto/<id>/`. Falta que Aixa:
   - mire las fotos elegidas: 4 de calendarios, 1 de la pizarra negra y 1 de bitácoras, con solo las tapas propias;
   - mande textos más largos para cada producto (van en `details`).
 - **Foto por opción:** que la foto cambie al elegir una opción.
-- **Sobre nosotros:** una foto de Aixa con el negro y una biografía. Faltan la foto y el texto.
-- **Contacto:** una pestaña con el mail (elstudioags@gmail.com), el Instagram (@__studioags) y los WhatsApp de Aixa y del negro. Los números están en el chat; confirmar cuáles se publican.
+- **Sobre nosotros:** una foto de Aixa con el negro y una biografía. La página `nosotros/` ya está, con un texto provisorio y la foto de la pizarra. Faltan la foto de ellos y su texto.
+- **Contacto:** una pestaña con el mail (elstudioags@gmail.com), el Instagram (@__studioags) y los WhatsApp de Aixa y del negro. La página `contacto/` ya tiene el mail y el Instagram. El botón "Escribinos" abre WhatsApp cuando esté el número; hasta entonces lleva a Instagram. Los números están en el chat; confirmar cuáles se publican.
 - **Pedidos personalizados:** un bloque "¿Tenés una idea? Contanos qué imaginaste y armamos algo personalizado" con un botón.
 
 **Diseño:**
@@ -45,13 +45,43 @@ Algunas descripciones ya están en su tienda de beacons.ai/studioags.
 - **Fotos de productos:** un álbum de Google Fotos (`studio ags-1-001.zip`); ver la tabla de abajo.
 - **Inspiración:** mupecuadernos.com.ar (gift cards y "Cuaderno emprendedor") y una conversación con ChatGPT sobre cómo mejorar la página (ver abajo).
 
+## Pedidos de Aixa (mensajes y audios del 31/10/2026)
+
+Mandó una página de papelería de ejemplo, con círculos de categorías, más vendidos y formas curvas.
+
+**Lo que pidió:**
+- **Formas:** que no todo sea un rectángulo de color.
+- **Marca de agua:** "studio ags" repetido de fondo en la franja azul, con el logo en blanco y el fondo del color. Como alternativas nombró rayas, cuadrados o las caritas. Puede que ella mande el diseño como imagen.
+- **Páginas:** los productos en otra página. En el inicio, algo como los círculos y los más vendidos. Arriba, Productos, Nosotros y Contacto; en Productos, "para regalar" y "para emprendedores".
+- **Fuente:** probar con solo Bristol.
+- **Textos:** que los escribamos nosotros, con un poco de chamuyo.
+
+**Qué quedó:**
+- **Páginas:**
+  - el inicio (hero, franja rosa, cuatro círculos por uso, más vendidos, adelanto de Nosotros y "¿Tenés una idea?");
+  - Productos, con el catálogo y "Cómo comprar";
+  - Nosotros, con la presentación y "Así preparamos tu pedido";
+  - Contacto, con las tarjetas, "Antes de pedir" y "¿Tenés una idea?".
+- **Menú:** Productos, Nosotros y Contacto, con la página actual marcada. En el celu de "Mi pedido" queda la bolsita con el número.
+- **Formas:**
+  - olas entre las franjas;
+  - "¿Tenés una idea?" como tarjeta azul redondeada con el logo repetido en blanco suave;
+  - la foto de Nosotros en forma de arco.
+- **Fuente:** todos los títulos en Bristol y en mayúsculas. Hemis salió del sitio y vuelve con git si la quieren. Bristol tiene ¿, ¡, Ñ y las tildes.
+
+**Falta que Aixa:**
+- **Más vendidos:** diga cuáles son. Hoy son de ejemplo: Calendarios, Fotos para guardar, Bitácoras y Láminas (`featuredProducts` en `src/business.ts`).
+- **Textos de Nosotros y del adelanto:** los apruebe o los cambie. Son provisorios y no dicen nada que no sepamos.
+- **Formas y marca de agua:** diga si le gustan. Si manda su propio fondo (o las caritas en PNG transparente), reemplaza al logo repetido.
+- **Usos:** confirme las líneas cortas de cada círculo y las fotos elegidas (Entre Flores, Tarjetas, Pizarra OrMa y Calendarios). Para no mostrar la marca de un cliente, no se usó la foto de Vinilos.
+
 ### Ideas de la conversación con ChatGPT
 
 Revisó la página de antes de los cambios del 30/10: varias cosas ya están hechas (páginas por producto, fotos reales, colores de la marca, bloque de pedidos personalizados) o ya estaban (precio que cambia con las opciones, contador del pedido, formulario y resumen antes de abrir WhatsApp). Lo nuevo que vale la pena:
 
 - **Categorías por tipo de producto** en lugar de los filtros por uso: Stickers y papelería, Fotos y recuerdos, Organización, Para tu emprendimiento, Decoración, y Juegos y regalos. Lo decide Aixa.
-- **Destacados o más vendidos** arriba del catálogo. Aixa tendría que decir cuáles son.
-- **Así preparamos tu pedido:** fotos del sello, el papel kraft y los moños. Hecho, en el inicio después de "Cómo comprar". Falta que Aixa confirme los textos, sobre todo "Si es un regalo, lo cerramos con moño".
+- **Destacados o más vendidos** arriba del catálogo. Hecho en el inicio, con cuatro de ejemplo; Aixa tiene que decir cuáles son.
+- **Así preparamos tu pedido:** fotos del sello, el papel kraft y los moños. Hecho, en Nosotros. Falta que Aixa confirme los textos, sobre todo "Si es un regalo, lo cerramos con moño".
 - **Opiniones de clientes:** solo con opiniones reales que mande Aixa.
 - **Precio "desde"** en las tarjetas, para que se note que cambia con las opciones. Hecho: "Desde $ X, según la opción" en las tarjetas y en cada página, solo cuando el precio cambia.
 - **Foto en las líneas del pedido** y un **botón de WhatsApp** siempre visible (este necesita el número).
@@ -120,20 +150,22 @@ Los calendarios suman pasteles: celeste `#ABD7DF`, naranja claro `#F9A65E`, aren
 | Sección | Color |
 |---|---|
 | Encabezado | Crema |
-| Inicio | Celeste |
+| Inicio (hero) | Celeste |
 | Franja de arriba | Rosa |
-| Catálogo | Rosa clarito, con las tarjetas en blanco |
-| "¿Tenés una idea?" | Azul |
+| Círculos por uso | Crema, con cada círculo en rosa, celeste, verde claro y amarillo |
+| Más vendidos y catálogo | Rosa clarito, con las tarjetas en blanco |
+| Adelanto de Nosotros y "Así preparamos tu pedido" | Naranja claro |
+| "¿Tenés una idea?" | Tarjeta azul con el logo en blanco suave |
+| Tarjetas de Contacto | Rosa, celeste, verde claro y amarillo claro |
 | "Antes de pedir" | Verde claro |
 | "Cómo comprar" | Amarillo |
-| "Así preparamos tu pedido" | Naranja claro |
 | Pie | Negro, con el logo en amarillo |
 
 El verde y el naranja van en su versión pastel porque, en la versión plena, la letra chica no se lee. Sobre los pasteles, las volantas y los textos grises pasan a tinta. El encabezado queda fijo arriba al bajar y se achica un poco. Falta que Aixa diga si le gusta la combinación.
 
 La hoja de identidad pide Hemis para títulos y acentos, y **Tablet Gothic Narrow** para subtítulos y textos. Aixa después eligió Creato para el texto. Si quieren Tablet Gothic Narrow, es una fuente paga: hacen falta los archivos y la licencia para web.
 
-Tipografías que mandó la dueña: Creato Display para el texto, y Hemis o Bristol para los títulos. El "ags" del logo está dibujado a mano, no es una fuente.
+Tipografías que mandó la dueña: Creato Display para el texto, y Hemis o Bristol para los títulos. El "ags" del logo está dibujado a mano, no es una fuente. El 31/10 pidió probar solo con Bristol: ahora todos los títulos van en Bristol y en mayúsculas.
 
 Qué prueba la rama `vista-marca`:
 - **Paleta del kit:**
@@ -142,16 +174,15 @@ Qué prueba la rama `vista-marca`:
   - rosa y verde en los stickers;
   - naranja en los detalles.
 - **Logo y personajes:** el logo real en el encabezado y el pie, y los personajes en "Cómo comprar".
-- **Fuentes:** Creato en el texto, Hemis en los títulos y Bristol en los acentos (las palabras en azul de los títulos y los números de los pasos). Bristol no va en textos con "i" porque se confunde con dos puntos. Las dos se cambian con `--display` y `--display-accent` en `src/styles.css`.
+- **Fuentes:** Creato en el texto y Bristol en todos los títulos, siempre en mayúsculas, porque en minúscula su "i" se confunde con dos puntos. Se cambia con `--display` en `src/styles.css`.
 - **Fuentes propias:** se sirven desde el sitio, ya no desde Google Fonts. La CSP pasó a `font-src 'self'`.
 
 Falta antes de pasarla a `main`:
-- **Decisiones de la dueña:** que confirme la mezcla de Hemis y Bristol, o elija una sola, y los colores.
-- **Licencias:** confirmar que Hemis y Bristol se pueden usar en una web. Creato tiene licencia OFL.
-- **Peso de las fuentes:** pasarlas de OTF a WOFF2. Hoy Creato y Hemis pesan unos 320 KB.
+- **Decisiones de la dueña:** que confirme si se queda solo con Bristol, y los colores.
+- **Licencias:** confirmar que Bristol se puede usar en una web. Creato tiene licencia OFL.
+- **Peso de las fuentes:** pasarlas de OTF a WOFF2. Hoy Creato y Bristol pesan unos 220 KB.
 - **Archivos originales:** pedir el logo y los personajes en SVG o PNG con fondo transparente. Los de la rama salen de los JPEG del kit.
 - **Favicon e imagen para compartir:** siguen con el estilo anterior.
-- **Signos que le faltan a Hemis:** no tiene ¿ ¡ « ni ·. Si un título los usa, esos signos salen en la fuente de respaldo.
 - **Nombres de los tokens:** quedaron los viejos, por ejemplo `--coral-dark` ahora es azul. Renombrarlos si se adopta.
 
 ## Antes de publicar (los responde la dueña)

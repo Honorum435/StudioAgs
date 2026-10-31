@@ -21,6 +21,7 @@ const completeBusiness: BusinessInfo = {
   shipping: "Envíos a todo el país.",
   paymentMethods: ["Transferencia bancaria"],
   instagramHandle: "studioags",
+  email: "hola@studioags.com.ar",
   responseTime: "Respondemos en el día.",
   exchangePolicy: "Te mandamos una muestra antes de imprimir.",
   pricesUpdatedAt: { year: 2026, month: 7, day: 14 },

@@ -616,6 +616,7 @@ export function aboutIntro(): string {
 // Con número de WhatsApp, main.ts cambia el botón de Instagram por el chat con un saludo escrito.
 export function contactSection(business: BusinessInfo): string {
   const handle = businessValue(business.instagramHandle).replace(/^@/, "");
+  const email = businessValue(business.email);
   const cards: Array<{ title: string; body: string }> = [
     {
       title: "Pedidos y consultas",
@@ -623,8 +624,8 @@ export function contactSection(business: BusinessInfo): string {
           <a class="primary-button contact-button" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer" data-contact-chat>Escribinos ${icon("arrow")}<span class="visually-hidden"> (se abre en otra pestaña)</span></a>`,
     },
     {
-      title: "Instagram",
-      body: `<p>Ahí vamos subiendo los trabajos que hacemos. Buscanos como ${instagramLink(business)}.</p>`,
+      title: "Instagram y mail",
+      body: `<p>En Instagram vamos subiendo los trabajos que hacemos: buscanos como ${instagramLink(business)}. Por mail, escribinos a <a href="mailto:${attr(email)}">${escapeHtml(email)}</a>.</p>`,
     },
     { title: "Dónde estamos", body: `<p>${escapeHtml(businessValue(business.pickupArea))}</p>` },
     { title: "Horarios", body: `<p>${escapeHtml(businessValue(business.responseTime))}</p>` },

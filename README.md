@@ -49,7 +49,14 @@ El error lista lo que falta, uno por uno:
 
 Todo está en `src/catalog.ts`: nombre, descripción, opciones con su precio, adicionales (`addOns`), filtros (`intents`), si se personaliza, si necesita fotos y el plazo. Cuando cambien los precios, actualizá también `pricesUpdatedAt` en `src/business.ts`: es la fecha que se muestra en la página.
 
-Cada producto tiene además su propia página en `producto/<id>/` (por ejemplo `producto/calendarios/`), con una galería de fotos, las mismas opciones y el mismo pedido que el inicio. Se arma sola al hacer el build. Para sumar texto a una página, agregá párrafos en `details`; para sumar fotos, ver `fotos-album.py` más abajo.
+El sitio tiene estas páginas, y todas se arman solas al hacer el build:
+
+- **Inicio** (`/`): los círculos por uso, que abren Productos ya filtrado (`productos/?uso=regalar`); los más vendidos, que se eligen en `featuredProducts` de `src/business.ts`; y un adelanto de Nosotros.
+- **Productos** (`productos/`): el catálogo con los filtros y la búsqueda.
+- **Nosotros** (`nosotros/`) y **Contacto** (`contacto/`): sus textos están en `src/templates.ts` y los datos de contacto en `src/business.ts`.
+- **Cada producto** (`producto/<id>/`, por ejemplo `producto/calendarios/`): una galería de fotos, las mismas opciones y el mismo pedido. Para sumar texto a una página, agregá párrafos en `details`; para sumar fotos, ver `fotos-album.py` más abajo.
+
+El pedido es el mismo en todas las páginas.
 
 ## Bueno saber
 

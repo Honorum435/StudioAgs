@@ -318,14 +318,17 @@ describe("contacto", () => {
     const cards = [...contactDoc.querySelectorAll(".contact-card")];
     expect(cards.map((card) => text(card.querySelector("h2")))).toEqual([
       "Pedidos y consultas",
-      "Instagram",
+      "Instagram y mail",
       "Dónde estamos",
       "Horarios",
     ]);
     const chat = contactDoc.querySelector<HTMLAnchorElement>("[data-contact-chat]")!;
     expect(chat.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
     expect(accessibleName(chat)).toBe("Escribinos (se abre en otra pestaña)");
-    expect(cards[1].querySelector("a")?.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+    expect([...cards[1].querySelectorAll("a")].map((link) => link.getAttribute("href"))).toEqual([
+      "https://www.instagram.com/__studioags/",
+      "mailto:elstudioags@gmail.com",
+    ]);
     expect(text(cards[2])).toContain(businessValue(business.pickupArea));
     expect(text(cards[3])).toContain(businessValue(business.responseTime));
   });
