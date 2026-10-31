@@ -38,6 +38,8 @@ export const HERO_SMALL_SIZES = "(max-width: 680px) 127px, 160px";
 // Página del producto: la galería ocupa el ancho en celular y algo más de la mitad desde 768 px.
 export const GALLERY_SIZES = "(max-width: 767px) 92vw, (max-width: 1351px) 52vw, 680px";
 export const GALLERY_THUMB_SIZES = "72px";
+// Cuatro columnas desde 1024 px y dos en tablet y celular.
+export const PROCESS_PHOTO_SIZES = "(max-width: 1023px) calc(50vw - 40px), 300px";
 
 export const TOTAL_NOTE = "El total final se confirma por WhatsApp.";
 export const ORDER_UPDATED_NOTE = "Actualizamos tu pedido · revisalo";
@@ -561,6 +563,15 @@ function photoHelp(product: CatalogProduct): string {
     </details>`;
 }
 
+// Cuando las opciones cambian el precio, el mínimo, para que se note que no es uno solo.
+function priceFrom(product: CatalogProduct): string {
+  const prices = product.combinations.map((combination) => combination.price);
+  const low = Math.min(...prices);
+  return low === Math.max(...prices)
+    ? ""
+    : `<p class="product-note product-from">Desde ${formatPrice(low)}, según la opción</p>`;
+}
+
 export function productCard(product: CatalogProduct): string {
   const resolved = initialResolved(product);
   const id = attr(product.id);
@@ -581,6 +592,7 @@ export function productCard(product: CatalogProduct): string {
           <h3 id="producto-${id}-titulo"><a class="product-link" href="${attr(productPath(product))}">${escapeHtml(product.name)}</a></h3>
           <p class="product-price" data-card-price>${cardPrice(resolved)}</p>
         </div>
+        ${priceFrom(product)}
         <p class="product-description">${escapeHtml(product.description)}</p>
         <p class="product-note product-lead-time">Producción: ${escapeHtml(lowerFirst(leadTime))}</p>
         ${product.note ? `<p class="product-note">${escapeHtml(product.note)}</p>` : ""}
@@ -642,6 +654,7 @@ export function productPage(product: CatalogProduct): string {
         ${product.personalizable ? '<p class="eyebrow">Personalizable</p>' : ""}
         <h1 id="producto-detalle-titulo">${escapeHtml(product.name)}</h1>
         <p class="product-price" data-card-price>${cardPrice(resolved)}</p>
+        ${priceFrom(product)}
         <div class="product-page-text">
           <p>${escapeHtml(product.description)}</p>${details}
         </div>
@@ -783,6 +796,56 @@ export function howToBuy(): string {
     </section>`;
 }
 
+// Fotos del álbum de la dueña, cuadradas como las produce fotos-album.py.
+const processSteps: Array<{ title: string; text: string; alt: string }> = [
+  {
+    title: "Sellamos a mano",
+    text: "Cada paquete lleva nuestra carita, estampada una por una.",
+    alt: "Sello con la carita de StudioAGS junto a la almohadilla y dos tarjetas recién selladas",
+  },
+  {
+    title: "Papel madera e hilo",
+    text: "Lo envolvemos y le sumamos una etiqueta de agradecimiento.",
+    alt: "Paquete de papel madera atado con hilo, con la carita sellada y una etiqueta que dice gracias",
+  },
+  {
+    title: "Listo para regalar",
+    text: "Si es un regalo, lo cerramos con moño.",
+    alt: "Regalo envuelto en papel madera con un moño bordó",
+  },
+  {
+    title: "En su bolsa",
+    text: "Sale en bolsa de papel, con nuestra etiqueta.",
+    alt: "Bolsas de papel madera con moño y la etiqueta de StudioAGS",
+  },
+];
+
+export function processSection(): string {
+  const steps = processSteps
+    .map((step, index) => {
+      const photo: ImageSpec = { base: `foto-proceso-${index + 1}`, widths: [600, 1200], width: 1200, height: 1200 };
+      return `
+        <li class="process-step">
+          ${responsiveImage(photo, { className: "process-photo", alt: step.alt, sizes: PROCESS_PHOTO_SIZES, loading: "lazy" })}
+          <h3>${escapeHtml(step.title)}</h3>
+          <p>${escapeHtml(step.text)}</p>
+        </li>`;
+    })
+    .join("");
+  return `
+    <section class="process-section" id="asi-lo-preparamos" aria-labelledby="process-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Hecho a mano</p>
+          <h2 id="process-title">Así preparamos <em>tu pedido.</em></h2>
+        </div>
+        <p class="section-intro">Cada pedido pasa por nuestras manos antes de llegar a las tuyas.</p>
+      </div>
+      <ol class="process-grid">${steps}
+      </ol>
+    </section>`;
+}
+
 export function siteFooter(): string {
   return `
     <footer class="site-footer">
@@ -900,6 +963,7 @@ export function renderPage(data: PageData): string {
     customOrder(data.business),
     trustSection(data),
     howToBuy(),
+    processSection(),
     "</main>",
     siteFooter(),
     fichaDialog(),

@@ -49,6 +49,13 @@ GALERIAS: dict[str, list[Foto]] = {
     "bitacoras": [
         Foto("IMG_8572.HEIC", (0.0, 0.5, 0.66, 1.0)),
     ],
+    # No es un producto: las fotos de "Así preparamos tu pedido", en el orden de los pasos.
+    "proceso": [
+        Foto("IMG_5911.HEIC"),
+        Foto("IMG_5935.HEIC"),
+        Foto("IMG_7040.HEIC"),
+        Foto("IMG_7029.HEIC"),
+    ],
 }
 
 

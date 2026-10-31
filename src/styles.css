@@ -270,6 +270,7 @@ button:disabled {
 .breadcrumb,
 .product-page,
 .related-section,
+.process-section,
 .site-footer {
   width: min(100% - 2 * var(--gutter), var(--page-max));
   margin-inline: auto;
@@ -895,6 +896,10 @@ p {
   font-weight: 600;
 }
 
+.product-from {
+  margin-top: 4px;
+}
+
 .option-group,
 .addon-group {
   min-width: 0;
@@ -1247,6 +1252,45 @@ p {
   font-size: clamp(32px, 3.4vw, 46px);
   font-weight: 600;
   line-height: 1.1;
+}
+
+/* Así preparamos tu pedido: cuatro fotos del armado, después de los pasos. */
+.process-section {
+  padding: 98px 0;
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.process-photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  display: block;
+  object-fit: cover;
+  border-radius: 18px;
+  background: var(--photo-bg);
+}
+
+.process-step h3 {
+  margin: 18px 0 6px;
+  font-family: var(--display);
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.process-step p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 /* Pedidos personalizados: la franja azul entre el catálogo y el bloque de confianza. */
@@ -2545,7 +2589,8 @@ textarea.field-input {
     gap: 16px 32px;
   }
 
-  .product-grid {
+  .product-grid,
+  .process-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -2570,8 +2615,22 @@ textarea.field-input {
     position: static;
   }
 
-  .related-section {
+  .related-section,
+  .process-section {
     padding-block: 64px;
+  }
+
+  .process-grid {
+    gap: 22px 14px;
+  }
+
+  .process-step h3 {
+    margin-top: 12px;
+    font-size: 20px;
+  }
+
+  .process-step p {
+    font-size: 14px;
   }
 
   input,

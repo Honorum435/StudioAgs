@@ -200,11 +200,49 @@ describe("página prerenderizada", () => {
       "custom-order",
       "trust-section",
       "how-section",
+      "process-section",
       "site-footer",
     ].map((name) => page.indexOf(`class="${name}"`));
     expect(order.every((position) => position >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
     expect(page.indexOf('class="filter-list"')).toBeLessThan(page.indexOf('class="search-field"'));
+  });
+});
+
+describe("así preparamos tu pedido", () => {
+  it("muestra los cuatro pasos con su foto cuadrada, texto alternativo y carga diferida", () => {
+    const section = doc.getElementById("asi-lo-preparamos")!;
+    expect(text(section.querySelector("h2"))).toBe("Así preparamos tu pedido.");
+    const steps = [...section.querySelectorAll(".process-step")];
+    expect(steps.map((step) => text(step.querySelector("h3")))).toEqual([
+      "Sellamos a mano",
+      "Papel madera e hilo",
+      "Listo para regalar",
+      "En su bolsa",
+    ]);
+    steps.forEach((step, index) => {
+      const image = step.querySelector("img")!;
+      expect(image.getAttribute("src")).toBe(`images/foto-proceso-${index + 1}-1200.webp`);
+      expect(image.getAttribute("alt")).not.toBe("");
+      expect(image.getAttribute("loading")).toBe("lazy");
+      expect([image.getAttribute("width"), image.getAttribute("height")]).toEqual(["1200", "1200"]);
+    });
+  });
+});
+
+describe("precio desde", () => {
+  it("avisa el mínimo solo cuando las opciones cambian el precio", () => {
+    for (const item of products) {
+      const prices = item.combinations.map((combination) => combination.price);
+      const note = card(item.id).querySelector(".product-from");
+      if (Math.min(...prices) === Math.max(...prices)) {
+        expect(note).toBeNull();
+      } else {
+        expect(text(note)).toBe(`Desde ${squash(formatPrice(Math.min(...prices)))}, según la opción`);
+      }
+    }
+    expect(text(card("calendarios").querySelector(".product-from"))).toBe(`Desde ${squash(formatPrice(21000))}, según la opción`);
+    expect(card("entre-flores").querySelector(".product-from")).toBeNull();
   });
 });
 

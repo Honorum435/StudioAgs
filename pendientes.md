@@ -42,8 +42,23 @@ Algunas descripciones ya están en su tienda de beacons.ai/studioags.
 **Archivos que mandó:**
 - **Diseños en CorelDRAW (.cdr):** Identidad, Calendario imán mini, Calendario libreta (no está terminado), Calendario imán H y V mes, Calendario H semanal y Notas imán V. Ya están en Descargas. Traen vistas previas chicas (unos 256 px), que sirven para ver el diseño y sacar los colores pero no para la web. Para la web hay que pedirlos exportados a SVG o PNG con fondo transparente.
 - **Colores de los calendarios:** 12 capturas con las combinaciones de color de los calendarios (cada una con los 12 meses). Sirven para la foto por opción.
-- **Fotos de productos:** un álbum de Google Fotos que está en el chat. La descarga (`studio ags-1-001.zip`) llegó vacía: hay que bajarla de nuevo.
-- **Inspiración:** mupecuadernos.com.ar (gift cards y "Cuaderno emprendedor") y un link a una conversación de ChatGPT que todavía no vimos.
+- **Fotos de productos:** un álbum de Google Fotos (`studio ags-1-001.zip`); ver la tabla de abajo.
+- **Inspiración:** mupecuadernos.com.ar (gift cards y "Cuaderno emprendedor") y una conversación con ChatGPT sobre cómo mejorar la página (ver abajo).
+
+### Ideas de la conversación con ChatGPT
+
+Revisó la página de antes de los cambios del 30/10: varias cosas ya están hechas (páginas por producto, fotos reales, colores de la marca, bloque de pedidos personalizados) o ya estaban (precio que cambia con las opciones, contador del pedido, formulario y resumen antes de abrir WhatsApp). Lo nuevo que vale la pena:
+
+- **Categorías por tipo de producto** en lugar de los filtros por uso: Stickers y papelería, Fotos y recuerdos, Organización, Para tu emprendimiento, Decoración, y Juegos y regalos. Lo decide Aixa.
+- **Destacados o más vendidos** arriba del catálogo. Aixa tendría que decir cuáles son.
+- **Así preparamos tu pedido:** fotos del sello, el papel kraft y los moños. Hecho, en el inicio después de "Cómo comprar". Falta que Aixa confirme los textos, sobre todo "Si es un regalo, lo cerramos con moño".
+- **Opiniones de clientes:** solo con opiniones reales que mande Aixa.
+- **Precio "desde"** en las tarjetas, para que se note que cambia con las opciones. Hecho: "Desde $ X, según la opción" en las tarjetas y en cada página, solo cuando el precio cambia.
+- **Foto en las líneas del pedido** y un **botón de WhatsApp** siempre visible (este necesita el número).
+- **Instagram:** algunas fotos fijas que lleven al perfil. Un feed en vivo necesita código de Instagram, que la CSP no deja cargar.
+- **Fecha de precios:** la del 14 de julio de 2026 es de ejemplo; Aixa tiene que confirmarla.
+
+Lo que no conviene seguir: la paleta "lila, violeta, celeste" y la "tipografía gruesa y redondeada", que no son las de la hoja de identidad.
 
 ### Fotos del álbum (`studio ags-1-001.zip`, en Descargas)
 
