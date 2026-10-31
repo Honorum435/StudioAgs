@@ -1,8 +1,19 @@
 /// <reference types="vitest/config" />
-import { defineConfig, loadEnv, type HtmlTagDescriptor, type Plugin } from "vite";
+import { readFileSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { defineConfig, loadEnv, normalizePath, type HtmlTagDescriptor, type Plugin } from "vite";
 import type { BusinessInfo } from "./src/business";
-import type { CatalogProduct } from "./src/catalog";
-import { headTags, injectApp, pendingFields, renderDocument, type PendingFields } from "./src/prerender";
+import { products as defaultCatalog, type CatalogProduct } from "./src/catalog";
+import {
+  headTags,
+  injectApp,
+  pendingFields,
+  productHeadTags,
+  renderDocument,
+  renderProductDocument,
+  type PendingFields,
+} from "./src/prerender";
 import { isValidWhatsAppNumber, normalizeSiteUrl } from "./src/validation";
 
 export const CONTENT_SECURITY_POLICY = [
@@ -88,7 +99,22 @@ function resolvePublishSettings(
   };
 }
 
+// Cada producto tiene su página en producto/<id>/. En el build es una entrada virtual en la raíz
+// (producto-<id>.html, con el mismo index.html de plantilla) que al final se mueve a su carpeta;
+// en desarrollo la sirve un middleware. El <base> hace que sus rutas relativas partan de la raíz.
+const PRODUCT_ENTRY_FILE = /^producto-([^/]+)\.html$/;
+const PRODUCT_BASE = "../../";
+
+function productIdFromPath(path: string, catalog: readonly CatalogProduct[]): string | null {
+  const match = /^\/producto-([^/]+)\.html$/.exec(path) ?? /^\/producto\/([^/]+)\/(?:index\.html)?$/.exec(path);
+  const id = match?.[1];
+  return id && catalog.some((product) => product.id === id) ? id : null;
+}
+
 export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
+  const catalog = options.catalog ?? defaultCatalog;
+  let root = process.cwd();
+  let productEntries = new Set<string>();
   // Se resuelven una sola vez y los usan la guardia, el prerender (canonical y Open Graph) y el
   // HTML del build.
   let settings: PublishSettings = {
@@ -137,17 +163,83 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
     },
   };
 
+  const productPages: Plugin = {
+    name: "studioags:product-pages",
+    enforce: "pre",
+    config(userConfig, env) {
+      if (env.command !== "build") {
+        return;
+      }
+      root = resolve(userConfig.root ?? process.cwd());
+      const entries = catalog.map((product) => [`producto-${product.id}`, resolve(root, `producto-${product.id}.html`)]);
+      productEntries = new Set(entries.map(([, file]) => normalizePath(file)));
+      return {
+        build: { rollupOptions: { input: { index: resolve(root, "index.html"), ...Object.fromEntries(entries) } } },
+      };
+    },
+    resolveId(id) {
+      return productEntries.has(normalizePath(id)) ? normalizePath(id) : null;
+    },
+    load(id) {
+      return productEntries.has(id) ? readFileSync(resolve(root, "index.html"), "utf8") : null;
+    },
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const path = (req.url ?? "").split("?")[0];
+        const match = /^\/producto\/([^/]+)\/?$/.exec(path);
+        if (!match || !catalog.some((product) => product.id === match[1])) {
+          next();
+          return;
+        }
+        if (!path.endsWith("/")) {
+          res.statusCode = 301;
+          res.setHeader("Location", `${path}/`);
+          res.end();
+          return;
+        }
+        readFile(resolve(server.config.root, "index.html"), "utf8")
+          .then((template) => server.transformIndexHtml(path, template, req.originalUrl))
+          .then((html) => {
+            res.setHeader("Content-Type", "text/html");
+            res.end(html);
+          })
+          .catch(next);
+      });
+    },
+  };
+
+  // Al final del build cada página de producto pasa a producto/<id>/index.html.
+  const productBundle: Plugin = {
+    name: "studioags:product-bundle",
+    apply: "build",
+    enforce: "post",
+    generateBundle(_outputOptions, bundle) {
+      for (const [fileName, output] of Object.entries(bundle)) {
+        const match = PRODUCT_ENTRY_FILE.exec(fileName);
+        if (!match || output.type !== "asset") {
+          continue;
+        }
+        delete bundle[fileName];
+        this.emitFile({ type: "asset", fileName: `producto/${match[1]}/index.html`, source: output.source });
+      }
+    },
+  };
+
   // En desarrollo y en los builds: la cáscara va en #app y los metadatos en el head.
   const prerender: Plugin = {
     name: "studioags:prerender",
     transformIndexHtml: {
       order: "pre",
-      handler(html) {
-        const tags: HtmlTagDescriptor[] = headTags({ ...options, siteUrl: settings.siteUrl }).map((tag) => ({
-          ...tag,
-          injectTo: "head",
-        }));
-        return { html: injectApp(html, renderDocument(options)), tags };
+      handler(html, ctx) {
+        const site = { ...options, siteUrl: settings.siteUrl };
+        const productId = productIdFromPath(ctx.path, catalog);
+        const head = productId ? productHeadTags(productId, site) : headTags(site);
+        const tags: HtmlTagDescriptor[] = head.map((tag) => ({ ...tag, injectTo: "head" }));
+        if (!productId) {
+          return { html: injectApp(html, renderDocument(options)), tags };
+        }
+        tags.unshift({ tag: "base", attrs: { href: PRODUCT_BASE }, injectTo: "head-prepend" });
+        return { html: injectApp(html, renderProductDocument(productId, options)), tags };
       },
     },
   };
@@ -175,7 +267,7 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
     },
   };
 
-  return [publishSettings, publishGuard, prerender, buildHtml];
+  return [productPages, publishSettings, publishGuard, prerender, buildHtml, productBundle];
 }
 
 export default defineConfig({

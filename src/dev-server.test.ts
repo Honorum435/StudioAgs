@@ -1,4 +1,6 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { createServer as createHttpServer, type Server } from "node:http";
+import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -71,5 +73,39 @@ describe("servidor de desarrollo", { timeout: 60_000 }, () => {
     expect(log).toContain("Faltan datos para publicar la tienda");
     expect(log).toMatch(/Falta VITE_WHATSAPP_NUMBER/);
     expect(log).toMatch(/Falta VITE_SITE_URL/);
+  });
+
+  it("sirve la página de cada producto en /producto/<id>/", async () => {
+    const envDir = join(workDir, "env");
+    await mkdir(envDir);
+    await writeFile(join(envDir, ".env"), "");
+    server = await createServer({
+      root,
+      configFile,
+      mode: "development",
+      envDir,
+      cacheDir: join(workDir, "cache"),
+      publicDir: false,
+      customLogger: createLogger("silent"),
+      optimizeDeps: { noDiscovery: true, include: [] },
+      server: { middlewareMode: true, ws: false, watch: null },
+    });
+    const http: Server = createHttpServer(server.middlewares);
+    await new Promise<void>((done) => http.listen(0, "127.0.0.1", done));
+    const { port } = http.address() as AddressInfo;
+    try {
+      const page = await fetch(`http://127.0.0.1:${port}/producto/calendarios/`);
+      expect(page.status).toBe(200);
+      const html = await page.text();
+      expect(html).toContain('<base href="../../">');
+      expect(html).toContain('<h1 id="producto-detalle-titulo">Calendarios</h1>');
+      expect(html).toContain("<title>Calendarios — StudioAGS</title>");
+
+      const withoutSlash = await fetch(`http://127.0.0.1:${port}/producto/calendarios`, { redirect: "manual" });
+      expect(withoutSlash.status).toBe(301);
+      expect(withoutSlash.headers.get("location")).toBe("/producto/calendarios/");
+    } finally {
+      await new Promise((done) => http.close(done));
+    }
   });
 });

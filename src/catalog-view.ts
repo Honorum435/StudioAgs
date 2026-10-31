@@ -94,7 +94,8 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   const fichaHeading = fichaDialog?.querySelector<HTMLElement>("[data-ficha-title]") ?? null;
 
   const cards = new Map<string, CardIsland>();
-  root.querySelectorAll<HTMLElement>(".product-card[data-product-id]").forEach((card) => {
+  // Islas: las tarjetas del catálogo y el detalle de la página de un producto.
+  root.querySelectorAll<HTMLElement>("[data-product-island][data-product-id]").forEach((card) => {
     const product = catalog.find((item) => item.id === card.dataset.productId);
     if (!product) {
       return;
@@ -338,6 +339,22 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     "zoom-ficha"(_element, event) {
       toggleZoom({ x: event.clientX, y: event.clientY });
     },
+    // Galería de la página del producto: la miniatura tocada pasa a la foto grande.
+    "show-photo"(element) {
+      const gallery = element.closest<HTMLElement>("[data-gallery]");
+      const index = Number(element.dataset.photoIndex);
+      if (!gallery || !Number.isInteger(index)) {
+        return;
+      }
+      gallery.querySelectorAll<HTMLElement>("[data-gallery-photo]").forEach((photo, position) => {
+        photo.hidden = position !== index;
+      });
+      gallery.querySelectorAll<HTMLElement>('[data-action="show-photo"]').forEach((thumb) => {
+        const active = thumb === element;
+        thumb.classList.toggle("is-active", active);
+        thumb.setAttribute("aria-pressed", String(active));
+      });
+    },
   };
 
   function onChange(event: Event): void {
@@ -345,7 +362,7 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     if (!(target instanceof HTMLInputElement)) {
       return;
     }
-    const card = target.closest<HTMLElement>(".product-card");
+    const card = target.closest<HTMLElement>("[data-product-island]");
     const island = card ? cards.get(card.dataset.productId ?? "") : undefined;
     if (island) {
       paintCard(island, true);
@@ -395,6 +412,9 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   });
   chips.forEach((chip) => {
     chip.disabled = false;
+  });
+  root.querySelectorAll<HTMLButtonElement>('[data-action="show-photo"]').forEach((thumb) => {
+    thumb.disabled = false;
   });
   if (searchInput) {
     searchInput.disabled = false;

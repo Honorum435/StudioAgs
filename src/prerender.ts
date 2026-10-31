@@ -7,11 +7,12 @@ import {
 import {
   imageUrl,
   listPendingCatalogFields,
+  productPath,
   products as defaultCatalog,
   type CatalogProduct,
 } from "./catalog";
 import { escapeHtml } from "./format";
-import { instagramUrl, renderPage, type PageData } from "./templates";
+import { instagramUrl, renderPage, renderProductPage, type PageData } from "./templates";
 
 // Lo único que importa vite.config.ts del código de la tienda: documento, metadatos y pendientes.
 
@@ -60,6 +61,19 @@ export function renderDocument(options: ContentOptions = {}): string {
   return renderPage(pageData(options));
 }
 
+function requireProduct(catalog: readonly CatalogProduct[], productId: string): CatalogProduct {
+  const product = catalog.find((item) => item.id === productId);
+  if (!product) {
+    throw new Error(`No hay un producto "${productId}" en el catálogo.`);
+  }
+  return product;
+}
+
+export function renderProductDocument(productId: string, options: ContentOptions = {}): string {
+  const data = pageData(options);
+  return renderProductPage(data, requireProduct(data.catalog, productId));
+}
+
 // Reemplaza el #app vacío de index.html por la cáscara prerenderizada.
 export function injectApp(html: string, markup: string): string {
   const index = html.indexOf(APP_PLACEHOLDER);
@@ -102,13 +116,11 @@ function productOffer(product: CatalogProduct, storeId: string): Record<string, 
   };
 }
 
-export function jsonLd(options: SiteOptions): string {
-  const { business, catalog } = pageData(options);
+function storeNode(options: SiteOptions, business: BusinessInfo): Record<string, unknown> {
   const home = absolute(options.siteUrl, "/");
-  const storeId = `${home}#tienda`;
-  const store = {
+  return {
     "@type": "Store",
-    "@id": storeId,
+    "@id": `${home}#tienda`,
     name: SITE_NAME,
     description: SITE_DESCRIPTION,
     url: home,
@@ -117,6 +129,22 @@ export function jsonLd(options: SiteOptions): string {
     paymentAccepted: businessValue(business.paymentMethods).join(", "),
     sameAs: [instagramUrl(businessValue(business.instagramHandle))],
   };
+}
+
+function productNode(options: SiteOptions, product: CatalogProduct): Record<string, unknown> {
+  return {
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: absolute(options.siteUrl, imageUrl(product.images.card, product.images.card.width)),
+    url: absolute(options.siteUrl, productPath(product)),
+    brand: { "@type": "Brand", name: SITE_NAME },
+    offers: productOffer(product, `${absolute(options.siteUrl, "/")}#tienda`),
+  };
+}
+
+export function jsonLd(options: SiteOptions): string {
+  const { business, catalog } = pageData(options);
   const list = {
     "@type": "ItemList",
     name: `Catálogo de ${SITE_NAME}`,
@@ -124,47 +152,73 @@ export function jsonLd(options: SiteOptions): string {
     itemListElement: catalog.map((product, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      item: {
-        "@type": "Product",
-        name: product.name,
-        description: product.description,
-        image: absolute(options.siteUrl, imageUrl(product.images.card, product.images.card.width)),
-        url: `${home}#producto-${product.id}`,
-        brand: { "@type": "Brand", name: SITE_NAME },
-        offers: productOffer(product, storeId),
-      },
+      item: productNode(options, product),
     })),
   };
-  return serializeForScript({ "@context": "https://schema.org", "@graph": [store, list] });
+  return serializeForScript({ "@context": "https://schema.org", "@graph": [storeNode(options, business), list] });
 }
 
-export function headTags(options: SiteOptions): HeadTag[] {
-  const home = absolute(options.siteUrl, "/");
+export function productJsonLd(productId: string, options: SiteOptions): string {
+  const { business, catalog } = pageData(options);
+  const product = requireProduct(catalog, productId);
+  return serializeForScript({
+    "@context": "https://schema.org",
+    "@graph": [storeNode(options, business), productNode(options, product)],
+  });
+}
+
+interface PageMeta {
+  title: string;
+  description: string;
+  url: string;
+  structuredData: string;
+}
+
+function pageHeadTags(options: SiteOptions, page: PageMeta): HeadTag[] {
   const image = absolute(options.siteUrl, SHARE_IMAGE.path);
   const meta = (key: "name" | "property", name: string, content: string): HeadTag => ({
     tag: "meta",
     attrs: { [key]: name, content },
   });
   return [
-    { tag: "title", children: escapeHtml(SITE_TITLE) },
-    meta("name", "description", SITE_DESCRIPTION),
-    { tag: "link", attrs: { rel: "canonical", href: home } },
+    { tag: "title", children: escapeHtml(page.title) },
+    meta("name", "description", page.description),
+    { tag: "link", attrs: { rel: "canonical", href: page.url } },
     meta("property", "og:type", "website"),
     meta("property", "og:locale", "es_AR"),
     meta("property", "og:site_name", SITE_NAME),
-    meta("property", "og:title", SITE_TITLE),
-    meta("property", "og:description", SITE_DESCRIPTION),
-    meta("property", "og:url", home),
+    meta("property", "og:title", page.title),
+    meta("property", "og:description", page.description),
+    meta("property", "og:url", page.url),
     meta("property", "og:image", image),
     meta("property", "og:image:type", "image/jpeg"),
     meta("property", "og:image:width", String(SHARE_IMAGE.width)),
     meta("property", "og:image:height", String(SHARE_IMAGE.height)),
     meta("property", "og:image:alt", SHARE_IMAGE.alt),
     meta("name", "twitter:card", "summary_large_image"),
-    meta("name", "twitter:title", SITE_TITLE),
-    meta("name", "twitter:description", SITE_DESCRIPTION),
+    meta("name", "twitter:title", page.title),
+    meta("name", "twitter:description", page.description),
     meta("name", "twitter:image", image),
     meta("name", "twitter:image:alt", SHARE_IMAGE.alt),
-    { tag: "script", attrs: { type: "application/ld+json" }, children: jsonLd(options) },
+    { tag: "script", attrs: { type: "application/ld+json" }, children: page.structuredData },
   ];
+}
+
+export function headTags(options: SiteOptions): HeadTag[] {
+  return pageHeadTags(options, {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: absolute(options.siteUrl, "/"),
+    structuredData: jsonLd(options),
+  });
+}
+
+export function productHeadTags(productId: string, options: SiteOptions): HeadTag[] {
+  const product = requireProduct(pageData(options).catalog, productId);
+  return pageHeadTags(options, {
+    title: `${product.name} — ${SITE_NAME}`,
+    description: product.description,
+    url: absolute(options.siteUrl, productPath(product)),
+    structuredData: productJsonLd(productId, options),
+  });
 }

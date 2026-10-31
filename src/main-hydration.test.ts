@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { STORAGE_KEY, createOrderStore, type OrderStore } from "./cart";
 import { initialSelection, products } from "./catalog";
 import type { Overlays } from "./overlays";
-import { injectApp, renderDocument } from "./prerender";
+import { injectApp, renderDocument, renderProductDocument } from "./prerender";
 import { nextPopState, squash } from "./test-utils";
 
 // Hidratación completa sobre el HTML que genera el prerender, con main.ts tal cual arranca.
@@ -206,6 +206,47 @@ describe("hidratación completa", () => {
     expect(back).toHaveBeenCalledTimes(1);
     expect(bar().hidden).toBe(false);
     back.mockRestore();
+  });
+});
+
+describe("página de un producto", () => {
+  function loadProductPage(id: string): void {
+    document.body.innerHTML = injectApp('<div id="app"></div>', renderProductDocument(id));
+  }
+
+  it("el detalle cambia el precio con la opción y suma al mismo pedido que ve el inicio", async () => {
+    loadProductPage("calendarios");
+    await hydrate();
+    const detail = $("article.product-page");
+    const add = detail.querySelector<HTMLButtonElement>('[data-action="add"]')!;
+    expect(add.disabled).toBe(false);
+
+    detail.querySelector<HTMLInputElement>('input[value="acrilico"]')!.click();
+    expect(detail.querySelector("[data-card-price]")?.textContent).toContain("55.000");
+    add.click();
+    expect(window.localStorage.getItem(STORAGE_KEY)).toContain("calendarios-acrilico");
+
+    overlays?.destroy();
+    overlays = null;
+    loadPrerenderedPage();
+    const { orderStore } = await hydrate();
+    expect(orderStore.getState().lines.map((line) => line.id)).toEqual(["calendarios-acrilico"]);
+  });
+
+  it("la miniatura tocada pasa a la foto grande", async () => {
+    loadProductPage("calendarios");
+    await hydrate();
+    const thumbs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-action="show-photo"]'));
+    const photos = Array.from(document.querySelectorAll<HTMLElement>("[data-gallery-photo]"));
+    expect(thumbs.every((thumb) => !thumb.disabled)).toBe(true);
+
+    thumbs[2].click();
+    expect(photos.map((photo) => photo.hidden)).toEqual(photos.map((_photo, index) => index !== 2));
+    expect(thumbs.map((thumb) => thumb.getAttribute("aria-pressed"))).toEqual(
+      thumbs.map((_thumb, index) => String(index === 2)),
+    );
+    expect(thumbs[2].classList.contains("is-active")).toBe(true);
+    expect(thumbs[0].classList.contains("is-active")).toBe(false);
   });
 });
 

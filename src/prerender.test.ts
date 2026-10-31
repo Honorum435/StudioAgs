@@ -8,7 +8,10 @@ import {
   injectApp,
   jsonLd,
   pendingFields,
+  productHeadTags,
+  productJsonLd,
   renderDocument,
+  renderProductDocument,
   serializeForScript,
   type HeadTag,
 } from "./prerender";
@@ -49,6 +52,41 @@ function graph(text: string): { store: Record<string, unknown>; list: Record<str
 function find(tags: HeadTag[], key: string, value: string): HeadTag | undefined {
   return tags.find((tag) => tag.attrs?.[key] === value);
 }
+
+describe("página de un producto", () => {
+  it("arma título, descripción, canonical y Open Graph con la dirección del producto", () => {
+    const tags = productHeadTags("pizarra-orma", { siteUrl, business: completeBusiness });
+    const pizarra = products.find((item) => item.id === "pizarra-orma")!;
+    const url = "https://studioags.com.ar/producto/pizarra-orma/";
+    expect(tags.find((tag) => tag.tag === "title")?.children).toBe("Pizarra OrMa — StudioAGS");
+    expect(find(tags, "name", "description")?.attrs?.content).toBe(pizarra.description);
+    expect(find(tags, "rel", "canonical")?.attrs?.href).toBe(url);
+    expect(find(tags, "property", "og:url")?.attrs?.content).toBe(url);
+    expect(find(tags, "property", "og:title")?.attrs?.content).toBe("Pizarra OrMa — StudioAGS");
+    expect(find(tags, "property", "og:image")?.attrs?.content).toBe(`${siteUrl}/${SHARE_IMAGE.path}`);
+  });
+
+  it("describe la tienda y el producto con su página y su oferta", () => {
+    const data = JSON.parse(productJsonLd("tarjetas", { siteUrl, business: completeBusiness })) as {
+      "@graph": Array<Record<string, unknown>>;
+    };
+    const item = data["@graph"].find((node) => node["@type"] === "Product")!;
+    expect(data["@graph"].some((node) => node["@type"] === "Store")).toBe(true);
+    expect(item.url).toBe("https://studioags.com.ar/producto/tarjetas/");
+    expect((item.offers as Record<string, unknown>)["@type"]).toBe("AggregateOffer");
+  });
+
+  it("la lista del inicio apunta a la página de cada producto", () => {
+    const { items } = graph(jsonLd({ siteUrl, business: completeBusiness }));
+    expect(items.map((item) => (item as unknown as { url: string }).url)).toEqual(
+      products.map((item) => `${siteUrl}/producto/${item.id}/`),
+    );
+  });
+
+  it("falla con un mensaje claro si el producto no existe", () => {
+    expect(() => renderProductDocument("no-existe")).toThrow('No hay un producto "no-existe" en el catálogo.');
+  });
+});
 
 describe("jsonLd", () => {
   it("es JSON válido con la tienda y los 8 productos en ARS", () => {

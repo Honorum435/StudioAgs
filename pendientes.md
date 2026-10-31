@@ -8,8 +8,10 @@ Lo que pidió después de ver el sitio con el kit de marca.
 
 **Estructura:**
 - **Inicio y catálogo separados:** una página de inicio y una pestaña aparte para el catálogo.
-- **Destacar la personalización:** que "Lo personalizamos con tu nombre, tu logo o tus fotos" resalte más.
-- **Ficha por producto:** al tocar un producto se abre su página, con galería, descripción, opciones y precio, como en Mupe.
+- **Destacar la personalización:** que "Lo personalizamos con tu nombre, tu logo o tus fotos" resalte más. Hecho: la franja rosa y el bloque "¿Tenés una idea?".
+- **Ficha por producto:** al tocar un producto se abre su página, con galería, descripción, opciones y precio, como en Mupe. Hecho: cada producto tiene su página en `producto/<id>/`. Falta que Aixa:
+  - mire las fotos elegidas: 4 de calendarios, 1 de la pizarra negra y 1 de bitácoras, con solo las tapas propias;
+  - mande textos más largos para cada producto (van en `details`).
 - **Foto por opción:** que la foto cambie al elegir una opción.
 - **Sobre nosotros:** una foto de Aixa con el negro y una biografía. Faltan la foto y el texto.
 - **Contacto:** una pestaña con el mail (elstudioags@gmail.com), el Instagram (@__studioags) y los WhatsApp de Aixa y del negro. Los números están en el chat; confirmar cuáles se publican.
@@ -149,6 +151,5 @@ Falta antes de pasarla a `main`:
 ## Ideas para después
 
 - Mercado Pago o pago online.
-- Fichas con link propio por producto.
 - Un precio por combinación en los datos estructurados (hoy van mínimo y máximo).
 - Medir de dónde llegan los pedidos (por ejemplo `?ref=ig`).

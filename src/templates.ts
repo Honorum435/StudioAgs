@@ -1,10 +1,12 @@
 import { businessValue, type BusinessInfo } from "./business";
 import type { OrderSummary, ResolvedLine, SentVia } from "./cart";
 import {
+  galleryPhotos,
   imageUrl,
   initialSelection,
   intents,
   lineName,
+  productPath,
   resolveSelection,
   type AddOn,
   type CatalogProduct,
@@ -33,6 +35,9 @@ export const CARD_IMAGE_SIZES =
 export const FICHA_SIZES = "(max-width: 767px) 100vw, (max-width: 927px) calc(100vw - 48px), 880px";
 export const HERO_MAIN_SIZES = "(max-width: 680px) 208px, 260px";
 export const HERO_SMALL_SIZES = "(max-width: 680px) 127px, 160px";
+// Página del producto: la galería ocupa el ancho en celular y algo más de la mitad desde 768 px.
+export const GALLERY_SIZES = "(max-width: 767px) 92vw, (max-width: 1351px) 52vw, 680px";
+export const GALLERY_THUMB_SIZES = "72px";
 
 export const TOTAL_NOTE = "El total final se confirma por WhatsApp.";
 export const ORDER_UPDATED_NOTE = "Actualizamos tu pedido · revisalo";
@@ -561,8 +566,8 @@ export function productCard(product: CatalogProduct): string {
   const id = attr(product.id);
   const leadTime = businessValue(product.leadTime).text;
   return `
-    <article class="product-card" id="producto-${id}" data-product-id="${id}" aria-labelledby="producto-${id}-titulo">
-      <div class="product-image-wrap">
+    <article class="product-card" id="producto-${id}" data-product-island data-product-id="${id}" aria-labelledby="producto-${id}-titulo">
+      <a class="product-image-wrap" href="${attr(productPath(product))}" tabindex="-1" aria-hidden="true">
         ${responsiveImage(product.images.card, {
           className: "product-image",
           alt: product.imageAlt,
@@ -570,10 +575,10 @@ export function productCard(product: CatalogProduct): string {
           loading: "lazy",
         })}
         ${product.personalizable ? '<span class="product-category">Personalizable</span>' : ""}
-      </div>
+      </a>
       <div class="product-content">
         <div class="product-title-row">
-          <h3 id="producto-${id}-titulo">${escapeHtml(product.name)}</h3>
+          <h3 id="producto-${id}-titulo"><a class="product-link" href="${attr(productPath(product))}">${escapeHtml(product.name)}</a></h3>
           <p class="product-price" data-card-price>${cardPrice(resolved)}</p>
         </div>
         <p class="product-description">${escapeHtml(product.description)}</p>
@@ -588,6 +593,82 @@ export function productCard(product: CatalogProduct): string {
         </div>
       </div>
     </article>`;
+}
+
+// Foto grande y miniaturas. Antes de hidratar se ve la primera; las demás esperan ocultas y
+// cargan recién cuando se muestran.
+function productGallery(product: CatalogProduct): string {
+  const photos = galleryPhotos(product);
+  const slides = photos
+    .map(
+      (photo, index) => `
+        <figure class="gallery-photo${photo.fit === "contain" ? " is-contained" : ""}" data-gallery-photo${index === 0 ? "" : " hidden"}>
+          ${responsiveImage(photo.image, {
+            alt: photo.alt,
+            sizes: GALLERY_SIZES,
+            ...(index === 0 ? { highPriority: true } : { loading: "lazy" as const }),
+          })}
+        </figure>`,
+    )
+    .join("");
+  const thumbs = photos
+    .map(
+      (photo, index) =>
+        `<button class="gallery-thumb${index === 0 ? " is-active" : ""}" type="button" data-action="show-photo" data-photo-index="${index}" aria-pressed="${index === 0}" disabled>${responsiveImage(photo.image, { alt: "", sizes: GALLERY_THUMB_SIZES, loading: "lazy" })}<span class="visually-hidden">Foto ${index + 1} de ${photos.length}</span></button>`,
+    )
+    .join("");
+  return `
+      <div class="product-gallery" data-gallery>${slides}
+        <div class="gallery-thumbs" role="group" aria-label="Fotos de ${attr(product.name)}">${thumbs}</div>
+      </div>`;
+}
+
+// El detalle es una isla como las tarjetas: mismas opciones, precio y botón de sumar.
+export function productPage(product: CatalogProduct): string {
+  const resolved = initialResolved(product);
+  const id = attr(product.id);
+  const leadTime = businessValue(product.leadTime).text;
+  const details = (product.details ?? []).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("");
+  return `
+    <nav class="breadcrumb" aria-label="Estás en">
+      <ol>
+        <li><a href="#catalogo">Catálogo</a></li>
+        <li><span aria-current="page">${escapeHtml(product.name)}</span></li>
+      </ol>
+    </nav>
+    <article class="product-page" id="producto-detalle" data-product-island data-product-id="${id}" aria-labelledby="producto-detalle-titulo">
+      ${productGallery(product)}
+      <div class="product-page-info">
+        ${product.personalizable ? '<p class="eyebrow">Personalizable</p>' : ""}
+        <h1 id="producto-detalle-titulo">${escapeHtml(product.name)}</h1>
+        <p class="product-price" data-card-price>${cardPrice(resolved)}</p>
+        <div class="product-page-text">
+          <p>${escapeHtml(product.description)}</p>${details}
+        </div>
+        <p class="product-note product-lead-time">Producción: ${escapeHtml(lowerFirst(leadTime))}</p>
+        ${product.note ? `<p class="product-note">${escapeHtml(product.note)}</p>` : ""}
+        ${optionGroups(product)}
+        ${addOnGroup(product)}
+        ${photoHelp(product)}
+        <div class="card-actions">
+          <button class="add-button" type="button" data-action="add" data-product-id="${id}" disabled>${addButtonContent(product, resolved)}</button>
+          <a class="text-button ficha-link" href="${attr(imageUrl(product.images.ficha, product.images.ficha.width))}" data-action="open-ficha" data-product-id="${id}">Ver ficha<span class="visually-hidden"> de ${escapeHtml(product.name)}</span></a>
+        </div>
+      </div>
+    </article>`;
+}
+
+// Los tres que siguen en el catálogo, dando la vuelta al final.
+export function relatedProducts({ catalog }: PageData, product: CatalogProduct): string {
+  const index = catalog.findIndex((item) => item.id === product.id);
+  const related = [...catalog.slice(index + 1), ...catalog.slice(0, Math.max(index, 0))].slice(0, 3);
+  return `
+    <section class="related-section" aria-labelledby="related-title">
+      <h2 id="related-title">Otros productos</h2>
+      <div class="product-grid">
+        ${related.map(productCard).join("")}
+      </div>
+    </section>`;
 }
 
 export function catalogSection(data: PageData): string {
@@ -784,8 +865,32 @@ export function announcer(): string {
   return '<div class="visually-hidden" role="status" data-announcer></div>';
 }
 
+// En la página de un producto el <base> apunta a la raíz: el salto lleva la ruta de la página.
+function skipLink(href: string, label: string): string {
+  return `<a class="skip-link" href="${attr(href)}">${escapeHtml(label)}</a>`;
+}
+
+export function renderProductPage(data: PageData, product: CatalogProduct): string {
+  return [
+    skipLink(`${productPath(product)}#producto-detalle`, "Ir al producto"),
+    siteHeader(),
+    noscriptNote(data.business),
+    "<main>",
+    productPage(product),
+    howToBuy(),
+    relatedProducts(data, product),
+    "</main>",
+    siteFooter(),
+    fichaDialog(),
+    cartDialog(),
+    stickyBar(),
+    announcer(),
+  ].join("\n");
+}
+
 export function renderPage(data: PageData): string {
   return [
+    skipLink("#catalogo", "Ir al catálogo"),
     siteHeader(),
     noscriptNote(data.business),
     "<main>",

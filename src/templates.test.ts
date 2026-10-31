@@ -13,6 +13,7 @@ import {
   cartCountContent,
   initialResolved,
   renderPage,
+  renderProductPage,
   stickyBarContent,
   type CartSummary,
 } from "./templates";
@@ -204,6 +205,71 @@ describe("página prerenderizada", () => {
     expect(order.every((position) => position >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
     expect(page.indexOf('class="filter-list"')).toBeLessThan(page.indexOf('class="search-field"'));
+  });
+});
+
+describe("página de un producto", () => {
+  const calendarios = product("calendarios");
+  const productDoc = parse(renderProductPage({ business, catalog: products }, calendarios));
+  const detail = productDoc.querySelector("article.product-page")!;
+
+  it("tiene un solo h1 con el nombre, el camino al catálogo y el salto al producto", () => {
+    expect(productDoc.querySelectorAll("h1")).toHaveLength(1);
+    expect(text(productDoc.querySelector("h1"))).toBe("Calendarios");
+    expect(productDoc.querySelector(".breadcrumb a")?.getAttribute("href")).toBe("#catalogo");
+    expect(text(productDoc.querySelector('.breadcrumb [aria-current="page"]'))).toBe("Calendarios");
+    const skip = productDoc.querySelector(".skip-link")!;
+    expect(skip.getAttribute("href")).toBe("producto/calendarios/#producto-detalle");
+  });
+
+  it("el detalle es una isla con precio, opciones, adicionales y botón de sumar deshabilitados", () => {
+    expect(detail.hasAttribute("data-product-island")).toBe(true);
+    expect(detail.getAttribute("data-product-id")).toBe("calendarios");
+    expect(text(detail.querySelector("[data-card-price]"))).toBe(text(parse(cardPrice(initialResolved(calendarios))).body));
+    expect(detail.querySelectorAll('fieldset[data-group="formato"] input[type="radio"]')).toHaveLength(8);
+    expect(detail.querySelectorAll('.addon-group input[type="checkbox"]')).toHaveLength(1);
+    const add = detail.querySelector<HTMLButtonElement>('[data-action="add"]')!;
+    expect(add.disabled).toBe(true);
+    expect(add.dataset.productId).toBe("calendarios");
+    expect(detail.querySelector('[data-action="open-ficha"]')).not.toBeNull();
+  });
+
+  it("la galería muestra la primera foto y deja las demás ocultas, con una miniatura por foto", () => {
+    const photos = [...detail.querySelectorAll<HTMLElement>("[data-gallery-photo]")];
+    expect(photos).toHaveLength((calendarios.gallery?.length ?? 0) + 2);
+    expect(photos.map((photo) => photo.hidden)).toEqual(photos.map((_photo, index) => index > 0));
+    expect(photos[0].querySelector("img")?.getAttribute("fetchpriority")).toBe("high");
+    expect(photos.slice(1).every((photo) => photo.querySelector("img")?.getAttribute("loading") === "lazy")).toBe(true);
+    expect(photos[photos.length - 1].classList.contains("is-contained")).toBe(true);
+
+    const thumbs = [...detail.querySelectorAll<HTMLButtonElement>('[data-action="show-photo"]')];
+    expect(thumbs).toHaveLength(photos.length);
+    expect(thumbs.every((thumb) => thumb.disabled)).toBe(true);
+    expect(thumbs.map((thumb) => thumb.getAttribute("aria-pressed"))).toEqual(
+      thumbs.map((_thumb, index) => String(index === 0)),
+    );
+    expect(text(thumbs[1])).toBe(`Foto 2 de ${photos.length}`);
+  });
+
+  it("ofrece los tres productos que siguen en el catálogo, dando la vuelta al final", () => {
+    const related = [...productDoc.querySelectorAll<HTMLElement>(".related-section .product-card")];
+    expect(related.map((card) => card.dataset.productId)).toEqual(["fotos", "pizarra-orma", "entre-flores"]);
+    const last = parse(renderProductPage({ business, catalog: products }, product("laminas")));
+    expect(
+      [...last.querySelectorAll<HTMLElement>(".related-section .product-card")].map((card) => card.dataset.productId),
+    ).toEqual(["calendarios", "fotos", "pizarra-orma"]);
+  });
+
+  it("en el inicio la foto y el nombre de cada tarjeta llevan a su página", () => {
+    for (const item of products) {
+      const element = card(item.id);
+      const image = element.querySelector(".product-image-wrap")!;
+      expect(image.getAttribute("href")).toBe(`producto/${item.id}/`);
+      expect(image.getAttribute("tabindex")).toBe("-1");
+      expect(image.getAttribute("aria-hidden")).toBe("true");
+      expect(element.querySelector("h3 a")?.getAttribute("href")).toBe(`producto/${item.id}/`);
+    }
+    expect(doc.querySelector(".skip-link")?.getAttribute("href")).toBe("#catalogo");
   });
 });
 

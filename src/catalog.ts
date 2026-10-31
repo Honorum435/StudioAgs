@@ -75,6 +75,14 @@ export interface ProductImages {
   hero?: ImageSpec;
 }
 
+// Una foto de la galería de la página del producto.
+export interface GalleryPhoto {
+  image: ImageSpec;
+  alt: string;
+  // La página del catálogo se muestra entera; las fotos llenan el cuadro.
+  fit?: "contain";
+}
+
 export interface CatalogProduct {
   id: string;
   name: string;
@@ -91,6 +99,10 @@ export interface CatalogProduct {
   leadTime: BusinessField<LeadTime>;
   photoInstructions?: PhotoInstructions;
   images: ProductImages;
+  // Fotos reales para la página del producto; sin ellas, la galería usa la foto y la ficha.
+  gallery?: readonly GalleryPhoto[];
+  // Párrafos extra para la página del producto.
+  details?: readonly string[];
 }
 
 export interface ResolvedSelection {
@@ -158,8 +170,27 @@ function heroImage(productId: string, widths: readonly number[], height: number)
   return cardImage(`hero-${productId}`, widths, height);
 }
 
+// Fotos del álbum de la dueña, cuadradas a 1200 y 600 px como las produce fotos-album.py.
+function albumPhoto(productId: string, number: number, alt: string): GalleryPhoto {
+  return { image: cardImage(`foto-${productId}-${number}`, [600, 1200], 1200), alt };
+}
+
 export function imageUrl(spec: ImageSpec, width: number): string {
   return `images/${spec.base}-${width}.webp`;
+}
+
+// Ruta de la página del producto, relativa a la raíz del sitio como las imágenes.
+export function productPath(product: Pick<CatalogProduct, "id">): string {
+  return `producto/${product.id}/`;
+}
+
+// Las fotos reales primero; después la de la tarjeta y la página del catálogo.
+export function galleryPhotos(product: CatalogProduct): GalleryPhoto[] {
+  return [
+    ...(product.gallery ?? []),
+    { image: product.images.card, alt: product.imageAlt },
+    { image: product.images.ficha, alt: `Página del catálogo de ${product.name}`, fit: "contain" },
+  ];
 }
 
 // Plazo provisorio para los productos que el catálogo no informa.
@@ -276,6 +307,12 @@ export const products: readonly CatalogProduct[] = [
     intents: ["organizarte", "regalar", "marca"],
     leadTime: pendingLeadTime(),
     images: { card: cardImage("calendarios", [400, 800], 600), ficha: fichaImage("calendarios") },
+    gallery: [
+      albumPhoto("calendarios", 1, "Calendarios de todos los colores, uno encima del otro"),
+      albumPhoto("calendarios", 2, "Calendario rosa sobre una mesa, junto a un florero con flores secas"),
+      albumPhoto("calendarios", 3, "Calendarios semanales rojos con fibrones para escribir"),
+      albumPhoto("calendarios", 4, "Calendario de acrílico transparente con el mes de septiembre"),
+    ],
   },
   {
     id: "fotos",
@@ -328,6 +365,7 @@ export const products: readonly CatalogProduct[] = [
       howToSend: photoSending,
     },
     images: { card: cardImage("pizarra-orma", [400, 617], 463), ficha: fichaImage("pizarra-orma") },
+    gallery: [albumPhoto("pizarra-orma", 1, "Pizarra OrMa negra con imanes, fotos, notas y fibrones")],
   },
   {
     id: "entre-flores",
@@ -400,6 +438,7 @@ export const products: readonly CatalogProduct[] = [
       ficha: fichaImage("bitacoras"),
       hero: heroImage("bitacoras", [400, 800], 1000),
     },
+    gallery: [albumPhoto("bitacoras", 1, "Bitácoras anilladas con tapas ilustradas de un perro salchicha y un sol")],
   },
   {
     id: "laminas",

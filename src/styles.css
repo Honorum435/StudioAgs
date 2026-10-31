@@ -267,6 +267,9 @@ button:disabled {
 .hero,
 .catalog-section,
 .trust-section,
+.breadcrumb,
+.product-page,
+.related-section,
 .site-footer {
   width: min(100% - 2 * var(--gutter), var(--page-max));
   margin-inline: auto;
@@ -787,11 +790,21 @@ p {
     transform var(--lift-dur) var(--ease-out);
 }
 
+/* La foto y el nombre llevan a la página del producto. */
 .product-image-wrap {
   position: relative;
+  display: block;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   background: var(--photo-bg);
+}
+
+.product-link {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 160ms ease;
 }
 
 .product-image {
@@ -1086,6 +1099,154 @@ p {
   font-weight: 700;
   text-underline-offset: 4px;
   transition: background-color 160ms ease;
+}
+
+/* Página de un producto: la galería a la izquierda queda a la vista mientras se eligen las
+   opciones a la derecha. En celular va todo en una columna. */
+.breadcrumb {
+  padding-top: 26px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.breadcrumb li + li::before {
+  content: "/";
+  margin-right: 8px;
+  color: var(--rule);
+}
+
+.breadcrumb a {
+  color: var(--coral-dark);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.product-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 56px;
+  padding: 22px 0 96px;
+  scroll-margin-top: 20px;
+}
+
+.product-gallery {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 12px;
+}
+
+.gallery-photo {
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border-radius: 18px;
+  background: var(--photo-bg);
+}
+
+.gallery-photo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.gallery-photo.is-contained img {
+  object-fit: contain;
+}
+
+.gallery-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.gallery-thumb {
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--photo-bg);
+  cursor: pointer;
+  transition: border-color 160ms ease;
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.gallery-thumb.is-active {
+  border-color: var(--ink);
+}
+
+.gallery-thumb:disabled {
+  cursor: default;
+}
+
+.product-page-info {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+}
+
+.product-page-info h1 {
+  margin: 10px 0 12px;
+  font-family: var(--display);
+  font-size: clamp(40px, 4.4vw, 60px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.02;
+}
+
+.product-page-info .product-price {
+  max-width: none;
+  padding: 0;
+  font-size: 20px;
+  text-align: left;
+}
+
+.product-page-text {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.product-page-text p {
+  margin: 0 0 10px;
+}
+
+.product-page-info .card-actions {
+  margin-top: 26px;
+}
+
+.related-section {
+  padding: 92px 0 98px;
+}
+
+.related-section h2 {
+  margin: 0 0 28px;
+  font-family: var(--display);
+  font-size: clamp(32px, 3.4vw, 46px);
+  font-weight: 600;
+  line-height: 1.1;
 }
 
 /* Pedidos personalizados: la franja azul entre el catálogo y el bloque de confianza. */
@@ -2172,6 +2333,14 @@ textarea.field-input {
     text-decoration: underline;
   }
 
+  .product-link:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .gallery-thumb:enabled:not(.is-active):hover {
+    border-color: var(--control-border);
+  }
+
   .trust-row a:hover,
   .noscript-note a:hover {
     text-decoration-thickness: 2px;
@@ -2389,6 +2558,20 @@ textarea.field-input {
 @media (max-width: 767px) {
   html {
     scroll-padding-top: 74px;
+  }
+
+  .product-page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+    padding-bottom: 64px;
+  }
+
+  .product-gallery {
+    position: static;
+  }
+
+  .related-section {
+    padding-block: 64px;
   }
 
   input,

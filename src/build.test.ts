@@ -204,7 +204,9 @@ describe("build", { timeout: 60_000 }, () => {
     const app = html.slice(appStart, html.indexOf("</body>"));
     expect(app.match(/<article class="product-card"/g)).toHaveLength(8);
     for (const product of completeCatalog) {
-      expect(app).toContain(`<h3 id="producto-${product.id}-titulo">${product.name}</h3>`);
+      expect(app).toContain(
+        `<h3 id="producto-${product.id}-titulo"><a class="product-link" href="producto/${product.id}/">${product.name}</a></h3>`,
+      );
     }
     expect(app).toContain("Precios actualizados al 14 de julio de 2026");
 
@@ -220,5 +222,36 @@ describe("build", { timeout: 60_000 }, () => {
     expect(ld).not.toBeNull();
     const data = JSON.parse(ld![1]) as { "@graph": Array<{ "@type": string; numberOfItems?: number }> };
     expect(data["@graph"].find((node) => node["@type"] === "ItemList")?.numberOfItems).toBe(8);
+  });
+
+  it("arma una página por producto en producto/<id>/, con <base>, sus metadatos y los mismos archivos", async () => {
+    const { html } = await runBuild({
+      env: { VITE_WHATSAPP_NUMBER: "5491123456789", VITE_SITE_URL: "https://studioags.com.ar" },
+      business: completeBusiness,
+      catalog: completeCatalog,
+    });
+    const homeScript = /<script type="module"[^>]* src="([^"]+)"/.exec(html)?.[1];
+    expect(homeScript).toBeDefined();
+    expect(existsSync(join(outDir(), "producto-calendarios.html"))).toBe(false);
+
+    for (const product of completeCatalog) {
+      const page = await readFile(join(outDir(), "producto", product.id, "index.html"), "utf8");
+      const head = page.slice(0, page.indexOf("</head>"));
+      expect(head.indexOf('<base href="../../">')).toBeGreaterThan(-1);
+      expect(head.indexOf('<base href="../../">')).toBeLessThan(head.indexOf('<link rel="icon"'));
+      expect(head).toMatch(/<meta http-equiv="Content-Security-Policy" content="[^"]+">/);
+      expect(head).toContain(`<title>${product.name} — StudioAGS</title>`);
+      expect(head).toContain(`<link rel="canonical" href="https://studioags.com.ar/producto/${product.id}/">`);
+      expect(head).not.toContain('name="robots"');
+
+      expect(page.match(/<div id="app"/g)).toHaveLength(1);
+      expect(page).toContain(`<article class="product-page" id="producto-detalle" data-product-island data-product-id="${product.id}"`);
+      expect(page).toContain(`<h1 id="producto-detalle-titulo">${product.name}</h1>`);
+
+      // Los archivos son los del inicio y existen: el <base> los resuelve desde la raíz.
+      const script = /<script type="module"[^>]* src="([^"]+)"/.exec(page)?.[1];
+      expect(script).toBe(homeScript);
+      expect(existsSync(join(outDir(), script!.replace(/^\.?\//, "")))).toBe(true);
+    }
   });
 });

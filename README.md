@@ -49,6 +49,8 @@ El error lista lo que falta, uno por uno:
 
 Todo está en `src/catalog.ts`: nombre, descripción, opciones con su precio, adicionales (`addOns`), filtros (`intents`), si se personaliza, si necesita fotos y el plazo. Cuando cambien los precios, actualizá también `pricesUpdatedAt` en `src/business.ts`: es la fecha que se muestra en la página.
 
+Cada producto tiene además su propia página en `producto/<id>/` (por ejemplo `producto/calendarios/`), con una galería de fotos, las mismas opciones y el mismo pedido que el inicio. Se arma sola al hacer el build. Para sumar texto a una página, agregá párrafos en `details`; para sumar fotos, ver `fotos-album.py` más abajo.
+
 ## Bueno saber
 
 - Editar `src/catalog.ts`, `src/business.ts`, `src/templates.ts` o `src/format.ts` (también `src/prerender.ts` y `src/validation.ts`) reinicia el servidor de desarrollo, porque el HTML se arma de antemano con esos archivos. Es normal: la página se recarga sola.
@@ -64,6 +66,14 @@ python extraer-imagenes.py "RUTA/AL/catalogo.pdf"
 ```
 
 Escribe en `public/images/`, nunca amplía una foto y al terminar imprime los anchos y altos que hay que declarar en `src/catalog.ts`. Qué foto y qué recorte usa cada producto se elige al principio del script; `--listar PAGINA` muestra las fotos de una página del PDF.
+
+Las fotos de la galería de cada página salen del álbum de fotos de la dueña (fotos HEIC y JPG del celular). Hace falta Pillow y [ffmpeg](https://ffmpeg.org/) para leer las HEIC:
+
+```sh
+python fotos-album.py "RUTA/AL/ALBUM_DESCOMPRIMIDO"
+```
+
+Qué fotos usa cada producto se elige al principio del script. Cada foto sale cuadrada a 1200 y 600 px; después se declara en `gallery` del producto en `src/catalog.ts`.
 
 ## Antes de publicar
 
