@@ -9,6 +9,7 @@ import {
   SWAP_DURATION,
   SWAP_HOLD,
   compactOnScroll,
+  cursorTrail,
   popNumber,
   scrollToTarget,
   slidingIndicator,
@@ -407,6 +408,68 @@ describe("inclinación de las polaroids", () => {
 
     expect(photo.classList.contains("is-hover")).toBe(false);
     expect(photo.style.getPropertyValue("--tilt-ry")).toBe("");
+    stop();
+  });
+});
+
+describe("cursor con estela", () => {
+  function moveOver(target: Element, pointerType = "mouse"): void {
+    target.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, pointerType, clientX: 120, clientY: 80 }));
+  }
+
+  function trail(): HTMLElement | null {
+    return document.querySelector<HTMLElement>(".cursor-trail");
+  }
+
+  it("con mouse aparece al primer movimiento, sigue al puntero y no lo lee un lector de pantalla", () => {
+    emulateMedia({ reduce: false });
+    const stop = cursorTrail(document);
+    expect(trail()).toBeNull();
+
+    moveOver($(".hero, .catalog-section"));
+    const created = trail()!;
+    expect(created.getAttribute("aria-hidden")).toBe("true");
+    expect(created.classList.contains("is-visible")).toBe(true);
+    expect(created.style.getPropertyValue("--cursor-x")).toBe("120px");
+    expect(created.style.getPropertyValue("--cursor-y")).toBe("80px");
+
+    document.dispatchEvent(new PointerEvent("pointerout", { relatedTarget: null }));
+    expect(created.classList.contains("is-visible")).toBe(false);
+    stop();
+    expect(trail()).toBeNull();
+  });
+
+  it("se achica sobre lo que se puede tocar y se esconde en los campos de texto", () => {
+    emulateMedia({ reduce: false });
+    const stop = cursorTrail(document);
+
+    moveOver($(".cart-trigger"));
+    expect(trail()!.classList.contains("is-pointer")).toBe(true);
+
+    moveOver($("[data-search]"));
+    expect(trail()!.classList.contains("is-pointer")).toBe(false);
+    expect(trail()!.classList.contains("is-text")).toBe(true);
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    expect(trail()!.classList.contains("is-pressed")).toBe(true);
+    document.dispatchEvent(new PointerEvent("pointerup"));
+    expect(trail()!.classList.contains("is-pressed")).toBe(false);
+    stop();
+  });
+
+  it("no aparece con el dedo, sin puntero fino ni con reducir movimiento", () => {
+    const stop = cursorTrail(document);
+
+    emulateMedia({ reduce: false });
+    moveOver($(".site-header"), "touch");
+    vi.restoreAllMocks();
+    emulateMedia({ reduce: false, finePointer: false });
+    moveOver($(".site-header"));
+    vi.restoreAllMocks();
+    emulateMedia({ reduce: true });
+    moveOver($(".site-header"));
+
+    expect(trail()).toBeNull();
     stop();
   });
 });

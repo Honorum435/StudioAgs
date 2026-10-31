@@ -51,7 +51,7 @@
 :root {
   font-family: var(--sans);
   color: var(--ink);
-  background: var(--paper);
+  background-color: var(--paper);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -96,6 +96,15 @@
   --line-tint: rgb(54 59 57 / 20%);
   /* Logo repetido en blanco sobre la franja azul: hasta el 14 % el texto blanco sigue en 4,5:1. */
   --watermark: rgb(255 255 255 / 14%);
+  /* Fondo de caritas: caritas.py dibuja las baldosas con estos dos colores (azul suave sobre los
+     fondos claros, blanco sobre las franjas de color) y tokens.test.ts prueba el contraste con
+     ellos. Hasta el 15 % el texto gris sigue en 4,5:1 sobre el rosa clarito. */
+  --faces-ink: rgb(61 119 188 / 15%);
+  --faces-light: rgb(255 255 255 / 45%);
+  --faces-tile: clamp(170px, 30vw, 220px);
+  /* Cursor con estela: el azul del logo. */
+  --cursor: #3d77bc;
+  --cursor-follow: 200ms;
   --shadow-header: 0 10px 28px rgb(54 40 28 / 10%);
   --shadow-photo: 0 19px 54px rgb(54 40 28 / 13%);
   --shadow-card: 0 15px 35px rgb(60 46 32 / 9%);
@@ -1975,6 +1984,97 @@ main > .catalog-section:first-child {
   font-weight: 600;
 }
 
+/* Fondo de caritas: una cara del kit repetida en toda la página. Va en azul suave sobre el papel y
+   el rosa clarito, y en blanco sobre las franjas de color; las olas la heredan con el fondo y las
+   franjas sin color propio muestran la del papel. El encabezado, la tarjeta azul, las tarjetas y
+   el pie quedan lisos. */
+html,
+.catalog-section,
+.best-section {
+  background-image: url("./carita-fondo.webp");
+  background-size: var(--faces-tile);
+}
+
+.hero,
+.value-strip,
+.about-teaser,
+.process-section,
+.trust-section,
+.how-section {
+  background-image: url("./carita-fondo-clara.webp");
+  background-size: var(--faces-tile);
+}
+
+/* Cursor con estela (motion.ts): el círculo llega al puntero con demora y el punto va justo en la
+   punta. Sobre lo que se puede tocar el círculo se achica y el punto crece; en los campos de texto
+   se esconde, y con la ficha o el pedido abiertos tampoco se muestra, porque quedaría debajo. */
+.cursor-trail {
+  position: fixed;
+  z-index: 90;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.cursor-trail.is-visible {
+  opacity: 1;
+}
+
+.cursor-trail.is-text,
+html[data-layer] .cursor-trail {
+  opacity: 0;
+}
+
+.cursor-ring,
+.cursor-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--cursor);
+  translate: var(--cursor-x, 0px) var(--cursor-y, 0px);
+}
+
+.cursor-ring {
+  top: -16px;
+  left: -16px;
+  width: 32px;
+  height: 32px;
+  opacity: 0.4;
+  transition:
+    translate var(--cursor-follow) var(--ease-out),
+    scale 200ms var(--ease-out),
+    opacity 200ms ease;
+}
+
+.cursor-dot {
+  top: -4px;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  transition:
+    scale 200ms var(--ease-out),
+    opacity 200ms ease;
+}
+
+.cursor-trail.is-pressed .cursor-ring {
+  scale: 0.75;
+}
+
+.cursor-trail.is-pointer .cursor-ring {
+  scale: 0.6;
+  opacity: 0;
+}
+
+.cursor-trail.is-pointer .cursor-dot {
+  scale: 4;
+  opacity: 0.3;
+}
+
+.cursor-trail.is-pointer.is-pressed .cursor-dot {
+  scale: 3.2;
+}
+
 /* Botón cuadrado de 44 px: cerrar el pedido y la ficha, y las cantidades del pedido. */
 .icon-button,
 .quantity-controls button {
@@ -3539,5 +3639,9 @@ textarea.field-input {
   .cart-count,
   .digit {
     animation: none !important;
+  }
+
+  .cursor-trail {
+    display: none;
   }
 }

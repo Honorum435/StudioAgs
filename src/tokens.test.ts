@@ -344,6 +344,18 @@ const textPairs: ContrastPair[] = [
   text("página actual del menú", "--coral-dark", "--paper"),
   text("botón de pedidos personalizados", "--ink", "--yellow"),
   text("botón de pedidos personalizados al pasar y al tocar", "--ink", "--white"),
+  // Donde el texto cae sobre una carita del fondo.
+  text("texto secundario sobre las caritas del papel", "--muted", "--faces-ink", "--paper"),
+  text("volantas y enlaces sobre las caritas del papel", "--coral-dark", "--faces-ink", "--paper"),
+  text("navegación y filtros sobre las caritas del papel", "--ink-mid", "--faces-ink", "--paper"),
+  text("texto secundario del catálogo sobre las caritas", "--muted", "--faces-ink", "--blush"),
+  text("volanta y botones de texto del catálogo sobre las caritas", "--coral-dark", "--faces-ink", "--blush"),
+  text("filtros del catálogo sobre las caritas", "--ink-mid", "--faces-ink", "--blush"),
+  text("descripción del inicio sobre las caritas", "--ink-soft", "--faces-light", "--blue-soft"),
+  text("franja de valores sobre las caritas", "--ink-soft", "--faces-light", "--lavender"),
+  text("volanta de Cómo comprar sobre las caritas", "--coral-dark", "--faces-light", "--yellow"),
+  text("textos de Así preparamos sobre las caritas", "--ink-soft", "--faces-light", "--orange-soft"),
+  text("respuestas de Antes de pedir sobre las caritas", "--ink-soft", "--faces-light", "--green-soft"),
 ];
 
 const nonTextPairs: ContrastPair[] = [

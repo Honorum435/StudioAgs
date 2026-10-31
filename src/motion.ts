@@ -281,6 +281,68 @@ export function tilt(area: HTMLElement, selector = ".hero-photo"): () => void {
   };
 }
 
+// Lo que se puede tocar (el círculo se achica) y los campos de texto (el círculo se esconde).
+const POINTER_TARGETS = "a[href], button, summary, label, select, [role='button']";
+const TEXT_FIELDS =
+  "textarea, input:not([type='checkbox']):not([type='radio']):not([type='button']):not([type='submit'])";
+
+// Cursor con estela: un círculo de la marca sigue al puntero con un poco de demora y un punto
+// marca la punta. El puntero del sistema sigue estando. Solo con mouse y sin "reducir movimiento";
+// el círculo se crea con el primer movimiento, así en el celu no se agrega nada.
+export function cursorTrail(doc: Document = document): () => void {
+  const win = doc.defaultView ?? window;
+  let trail: HTMLElement | null = null;
+
+  function hide(): void {
+    trail?.classList.remove("is-visible", "is-pressed");
+  }
+
+  function onMove(event: PointerEvent): void {
+    if (event.pointerType !== "mouse" || !matches(win, FINE_POINTER) || prefersReducedMotion(win)) {
+      hide();
+      return;
+    }
+    if (!trail) {
+      trail = doc.createElement("div");
+      trail.className = "cursor-trail";
+      trail.setAttribute("aria-hidden", "true");
+      trail.innerHTML = '<span class="cursor-ring"></span><span class="cursor-dot"></span>';
+      doc.body.append(trail);
+    }
+    trail.style.setProperty("--cursor-x", `${event.clientX}px`);
+    trail.style.setProperty("--cursor-y", `${event.clientY}px`);
+    const target = event.target instanceof Element ? event.target : null;
+    // Un campo de texto dentro de una etiqueta cuenta como campo.
+    const text = Boolean(target?.closest(TEXT_FIELDS));
+    trail.classList.toggle("is-text", text);
+    trail.classList.toggle("is-pointer", !text && Boolean(target?.closest(POINTER_TARGETS)));
+    trail.classList.add("is-visible");
+  }
+
+  function onOut(event: PointerEvent): void {
+    // Sin elemento de llegada, el puntero salió de la ventana.
+    if (!event.relatedTarget) {
+      hide();
+    }
+  }
+
+  const press = () => trail?.classList.add("is-pressed");
+  const release = () => trail?.classList.remove("is-pressed");
+
+  doc.addEventListener("pointermove", onMove, { passive: true });
+  doc.addEventListener("pointerout", onOut);
+  doc.addEventListener("pointerdown", press);
+  doc.addEventListener("pointerup", release);
+  return () => {
+    doc.removeEventListener("pointermove", onMove);
+    doc.removeEventListener("pointerout", onOut);
+    doc.removeEventListener("pointerdown", press);
+    doc.removeEventListener("pointerup", release);
+    trail?.remove();
+    trail = null;
+  };
+}
+
 // Encabezado fijo: apenas se baja se achica y suma sombra; arriba de todo vuelve a su alto.
 export function compactOnScroll(header: HTMLElement): () => void {
   const win = windowOf(header);

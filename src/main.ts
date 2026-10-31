@@ -5,7 +5,7 @@ import { mountCartView } from "./cart-view";
 import { products } from "./catalog";
 import { mountCatalogView } from "./catalog-view";
 import { WHATSAPP_NUMBER } from "./config";
-import { compactOnScroll, enableTouchActive, tilt } from "./motion";
+import { compactOnScroll, cursorTrail, enableTouchActive, tilt } from "./motion";
 import { createOverlays } from "./overlays";
 import { renderPage } from "./templates";
 import { CONTACT_MESSAGE, CUSTOM_ORDER_MESSAGE, buildWhatsAppLink, createOrderCode } from "./whatsapp";
@@ -48,6 +48,7 @@ for (const [selector, message] of chatButtons) {
 }
 
 enableTouchActive(document);
+cursorTrail(document);
 const header = root.querySelector<HTMLElement>(".site-header");
 if (header) {
   compactOnScroll(header);
