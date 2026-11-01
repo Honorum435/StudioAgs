@@ -60,10 +60,8 @@ export const INTENT_PHOTO_SIZES = "(max-width: 767px) 132px, 168px";
 // Cuatro columnas desde 1024 px, dos en tablet y celular.
 export const BEST_PHOTO_SIZES = "(max-width: 1023px) calc(50vw - 40px), 300px";
 export const ABOUT_PHOTO_SIZES = "(max-width: 767px) 90vw, 520px";
-// Banners del inicio: la foto va al costado desde 768 px y arriba en celular.
-export const BANNER_PHOTO_SIZES = "(max-width: 767px) 90vw, 420px";
-// Seis fotos en fila desde 768 px y tres por fila en celular.
-export const INSTAGRAM_PHOTO_SIZES = "(max-width: 767px) 33vw, 17vw";
+// Tres fotos por fila en la tarjeta rosa del inicio, que en celular ocupa todo el ancho.
+export const INSTAGRAM_PHOTO_SIZES = "(max-width: 1023px) 30vw, 150px";
 export const FAQ_PHOTO_SIZES = "(max-width: 1023px) 90vw, 440px";
 
 export const TOTAL_NOTE = "El total final se confirma por WhatsApp.";
@@ -514,20 +512,17 @@ export function hero(catalog: readonly CatalogProduct[]): string {
         </div>`
     : "";
 
+  // Como la página de ejemplo de la dueña: el título en rojo y azul a la izquierda, y las fotos
+  // sobre el panel azul de la derecha.
   return `
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow"><span class="eyebrow-mark" aria-hidden="true"></span> Papelería y objetos personalizados</p>
         <h1 id="hero-title">Pequeñas ideas,<br /><span>grandes recuerdos.</span></h1>
         <p class="hero-description">
           Calendarios, fotos, tarjetas y láminas para regalar, decorar o darle identidad a tu emprendimiento.
           Elegís en el catálogo y lo terminamos de coordinar por WhatsApp.
         </p>
         <a class="primary-button" href="${sitePagePath("productos")}">Ver productos ${icon("arrow")}</a>
-        <div class="hero-caption">
-          <span class="caption-rule" aria-hidden="true"></span>
-          <span>Impresiones · papelería · detalles a tu manera</span>
-        </div>
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="hero-sticker hero-sticker-top">hecho<br />con cariño</div>
@@ -539,61 +534,7 @@ export function hero(catalog: readonly CatalogProduct[]): string {
     </section>`;
 }
 
-// Cada beneficio con una carita del kit (las recorta caritas.py; styles.css pone cada una).
-const values: Array<{ face: number; text: string }> = [
-  { face: 1, text: "Hecho a mano en Paraná" },
-  { face: 3, text: "Con tu nombre, tu logo o tus fotos" },
-  { face: 4, text: "Te mandamos una muestra antes de imprimir" },
-  { face: 5, text: "Precios a la vista en cada producto" },
-  { face: 6, text: "Armás el pedido acá y lo cerramos por WhatsApp" },
-];
-
-export function valueStrip(): string {
-  return `
-    <ul class="value-strip" aria-label="Lo que ofrece StudioAGS">
-      ${values.map(({ face, text }) => `<li><span class="value-face value-face-${face}" aria-hidden="true"></span><span>${escapeHtml(text)}</span></li>`).join("")}
-    </ul>`;
-}
-
-// Como el banner de mayoristas de la tienda de ejemplo, para quien compra para su marca.
-export function brandBanner({ catalog }: PageData): string {
-  const product = catalog.find((item) => item.id === "tarjetas");
-  const photo = product
-    ? responsiveImage(product.images.card, { className: "banner-photo", alt: product.imageAlt, sizes: BANNER_PHOTO_SIZES, loading: "lazy" })
-    : "";
-  return `
-    <section class="banner banner-brand" aria-labelledby="brand-banner-title">
-      ${photo}
-      <div class="banner-copy">
-        <p class="eyebrow">Para emprendedores</p>
-        <h2 id="brand-banner-title">¿Tenés un emprendimiento?</h2>
-        <p>Tarjetas personales, vinilos y calendarios con tu logo, para que tu marca se vea en cada pedido.</p>
-        <a class="primary-button" href="${sitePagePath("productos")}?uso=marca">Ver productos para tu marca ${icon("arrow")}</a>
-      </div>
-    </section>`;
-}
-
-// Producto destacado de la temporada, con una foto real del álbum.
-const calendarPhoto: ImageSpec = { base: "foto-calendarios-1", widths: [600, 1200], width: 1200, height: 1200 };
-
-export function featuredBanner({ catalog }: PageData): string {
-  const product = catalog.find((item) => item.id === "calendarios");
-  if (!product) {
-    return "";
-  }
-  return `
-    <section class="banner banner-featured" aria-labelledby="featured-banner-title">
-      <div class="banner-copy">
-        <p class="eyebrow">Destacado</p>
-        <h2 id="featured-banner-title">Organizá tu año</h2>
-        <p>Calendarios clásicos, semanales, de acrílico o con imán, con tus colores, tu logo o tu diseño.</p>
-        <a class="primary-button" href="${attr(productPath(product))}">Quiero verlos ${icon("arrow")}</a>
-      </div>
-      ${responsiveImage(calendarPhoto, { className: "banner-photo", alt: "Calendarios de todos los colores, uno encima del otro", sizes: BANNER_PHOTO_SIZES, loading: "lazy" })}
-    </section>`;
-}
-
-// Fotos del álbum, cuadradas como las de Instagram. Todo el bloque es un solo enlace al perfil.
+// Fotos del álbum, cuadradas como las de Instagram. Las fotos y el usuario son un solo enlace.
 const instagramPhotos: ImageSpec[] = [
   "foto-calendarios-2",
   "foto-pizarra-orma-1",
@@ -603,14 +544,17 @@ const instagramPhotos: ImageSpec[] = [
   "foto-proceso-4",
 ].map((base) => ({ base, widths: [600, 1200], width: 1200, height: 1200 }));
 
-export function instagramStrip(business: BusinessInfo): string {
+// En el lugar de la reseña de la página de ejemplo: no hay reseñas reales todavía (pendientes.md).
+export function instagramCard(business: BusinessInfo): string {
   const handle = businessValue(business.instagramHandle).replace(/^@/, "");
   return `
-    <section class="instagram-strip" aria-labelledby="instagram-title">
-      <h2 id="instagram-title">${icon("instagram")} @${escapeHtml(handle)}</h2>
-      <a class="instagram-grid" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer">
-        <span class="visually-hidden">Ver nuestros trabajos en Instagram (se abre en otra pestaña)</span>
-        ${instagramPhotos.map((photo) => responsiveImage(photo, { alt: "", sizes: INSTAGRAM_PHOTO_SIZES, loading: "lazy" })).join("")}
+    <section class="instagram-card" aria-labelledby="instagram-title">
+      <h2 id="instagram-title">Lo que venimos haciendo</h2>
+      <a class="instagram-link" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer">
+        <span class="instagram-grid">
+          ${instagramPhotos.map((photo) => responsiveImage(photo, { alt: "", sizes: INSTAGRAM_PHOTO_SIZES, loading: "lazy" })).join("")}
+        </span>
+        <span class="instagram-handle">${icon("instagram")} Seguinos en @${escapeHtml(handle)} ${icon("arrow")}</span><span class="visually-hidden"> (se abre en otra pestaña)</span>
       </a>
     </section>`;
 }
@@ -641,12 +585,10 @@ export function intentCircles({ catalog }: PageData): string {
         </li>`;
     })
     .join("");
+  // Como los círculos de la página de ejemplo, sin título a la vista: el título queda para los lectores.
   return `
     <section class="intent-section" aria-labelledby="intent-title">
-      <div class="intent-heading">
-        <p class="eyebrow">Para cada ocasión</p>
-        <h2 id="intent-title">Encontrá lo que buscás</h2>
-      </div>
+      <h2 class="visually-hidden" id="intent-title">Encontrá lo que buscás</h2>
       <ul class="intent-list">${items}
       </ul>
     </section>`;
@@ -693,17 +635,28 @@ const STAMP_ALT = "Sello con la carita de StudioAGS junto a la almohadilla y dos
 const boardPhoto: ImageSpec = { base: "foto-pizarra-orma-1", widths: [600, 1200], width: 1200, height: 1200 };
 const BOARD_ALT = "Pizarra negra con imanes de colores que dicen ags studio, fotos, notas y fibrones";
 
+// Tarjeta blanca con la foto y una carita del kit pegada en la esquina, como la flor de la página
+// de ejemplo.
 export function aboutTeaser(): string {
   return `
     <section class="about-teaser" aria-labelledby="about-teaser-title">
-      ${responsiveImage(stampPhoto, { className: "about-photo", alt: STAMP_ALT, sizes: ABOUT_PHOTO_SIZES, loading: "lazy" })}
+      <div class="about-teaser-photo">
+        ${responsiveImage(stampPhoto, { className: "about-photo", alt: STAMP_ALT, sizes: ABOUT_PHOTO_SIZES, loading: "lazy" })}
+        <span class="about-sticker" aria-hidden="true"></span>
+      </div>
       <div class="about-copy">
-        <p class="eyebrow">Nosotros</p>
         <h2 id="about-teaser-title">Hecho a mano en Paraná</h2>
         <p>Somos un estudio de papelería personalizada. Cada pedido lo diseñamos con vos, lo imprimimos con cuidado y lo empaquetamos a mano, como si fuera para alguien nuestro.</p>
-        <a class="primary-button" href="${sitePagePath("nosotros")}">Conocenos ${icon("arrow")}</a>
+        <a class="soft-button" href="${sitePagePath("nosotros")}">Conocenos ${icon("arrow")}</a>
       </div>
     </section>`;
+}
+
+// Nosotros y los trabajos de Instagram, uno al lado del otro.
+export function storyRow(business: BusinessInfo): string {
+  return `
+    <div class="story-row">${aboutTeaser()}${instagramCard(business)}
+    </div>`;
 }
 
 // Textos de Nosotros: los propone la página y falta que la dueña los apruebe (pendientes.md).
@@ -1005,22 +958,19 @@ export function catalogSection(data: PageData, heading: "h1" | "h2" = "h2"): str
     </section>`;
 }
 
-// Logos de la marca de agua: alcanzan para cubrir la franja girada en una pantalla ancha.
-const WATERMARK_TILES = 48;
-
-// Para lo que no está en el catálogo. El botón lleva a Instagram; con número de WhatsApp,
-// main.ts lo cambia por el chat con el mensaje ya escrito.
+// Para lo que no está en el catálogo, en la franja roja de abajo de todo, como la de "Let's keep
+// in touch" de la página de ejemplo. El botón lleva a Instagram; con número de WhatsApp, main.ts
+// lo cambia por el chat con el mensaje ya escrito. La frase de la mancha amarilla es decorativa.
 export function customOrder(business: BusinessInfo): string {
   const handle = businessValue(business.instagramHandle).replace(/^@/, "");
   return `
     <section class="custom-order" id="pedidos-personalizados" aria-labelledby="custom-order-title">
-      <div class="watermark" aria-hidden="true">${"<span></span>".repeat(WATERMARK_TILES)}</div>
       <div class="custom-order-copy">
-        <p class="eyebrow">Pedidos personalizados</p>
         <h2 id="custom-order-title">¿Tenés una idea?</h2>
         <p>Contanos qué imaginaste y lo armamos a tu medida: un regalo, la identidad de tu emprendimiento o lo que tengas en mente.</p>
       </div>
       <a class="primary-button custom-order-button" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer" data-custom-order>Contanos tu idea ${icon("arrow")}<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
+      <p class="custom-order-tagline" aria-hidden="true">Tu idea, a tu manera</p>
     </section>`;
 }
 
@@ -1076,6 +1026,7 @@ export function howToBuy(): string {
       "Te confirmamos el total y el plazo, y te mandamos una muestra. Imprimimos cuando la aprobás.",
     ],
   ];
+  // Cada paso en una combinación de la hoja de identidad, con su carita (styles.css).
   return `
     <section class="how-section" id="como-comprar" aria-labelledby="how-title">
       <div class="how-heading">
@@ -1200,28 +1151,24 @@ export function faqSection({ business, catalog }: PageData): string {
     </section>`;
 }
 
-// Como el pie de la tienda de ejemplo: dónde estamos, el logo y las redes, con las páginas abajo.
+// Como el pie de la página de ejemplo: el logo, las páginas y las redes en una fila; abajo, dónde
+// estamos y la frase.
 export function siteFooter(business: BusinessInfo): string {
   const handle = businessValue(business.instagramHandle).replace(/^@/, "");
   const email = businessValue(business.email);
   const links = sitePages.map((page) => `<a class="footer-link" href="${sitePagePath(page.id)}">${page.label}</a>`);
   return `
     <footer class="site-footer">
-      <div class="footer-col footer-info">
-        <p class="footer-title">StudioAGS</p>
-        <p>Paraná, Entre Ríos</p>
-        <a class="footer-link" href="mailto:${attr(email)}">${escapeHtml(email)}</a>
-      </div>
       <a class="wordmark footer-wordmark" href="./" aria-label="StudioAGS, inicio">
         <span class="wordmark-small">studio</span><span class="wordmark-large">ags<span class="wordmark-dot">.</span></span>
       </a>
-      <div class="footer-col footer-social">
-        <p class="footer-title">Seguinos</p>
-        <a class="footer-link" href="${attr(instagramUrl(handle))}">${icon("instagram")} Instagram</a>
-      </div>
       <nav class="footer-nav" aria-label="Páginas">
         ${links.join("\n        ")}
       </nav>
+      <div class="footer-social">
+        <a class="footer-link" href="${attr(instagramUrl(handle))}">${icon("instagram")} Instagram</a>
+      </div>
+      <p class="footer-info">StudioAGS · Paraná, Entre Ríos · <a class="footer-link" href="mailto:${attr(email)}">${escapeHtml(email)}</a></p>
       <p class="footer-tagline">Para que lo lindo se quede.</p>
     </footer>`;
 }
@@ -1322,7 +1269,6 @@ function pageShell(data: PageData, skip: string, sections: readonly string[], cu
     '<main id="contenido">',
     ...sections,
     "</main>",
-    instagramStrip(data.business),
     siteFooter(data.business),
     fichaDialog(),
     cartDialog(),
@@ -1352,14 +1298,12 @@ export function renderSitePage(data: PageData, id: SitePageId): string {
 }
 
 export function renderPage(data: PageData): string {
+  // En el orden de la página de ejemplo de la dueña.
   return pageShell(data, skipLink("#contenido", "Ir al contenido"), [
     hero(data.catalog),
-    valueStrip(),
     intentCircles(data),
     bestSellers(data),
-    brandBanner(data),
-    featuredBanner(data),
-    aboutTeaser(),
+    storyRow(data.business),
     customOrder(data.business),
   ]);
 }

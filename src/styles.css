@@ -77,31 +77,24 @@
   --line-strong: #d8d0bb;
   --rule: #b9b19c;
   --control-border: #8a8576;
-  --focus-ring: #3d77bc;
-  --coral: #e94e26;
-  --coral-dark: #2a5f99;
-  --yellow: #fbd727;
+  /* Colores de la hoja de identidad. Van de a dos como en el kit: rosa con azul, amarillo con
+     verde, rojo con amarillo y azul con amarillo. */
+  --red: #e94e26;
+  --blue: #3d77bc;
+  --pink: #eca2c8;
+  --yellow: #ffd812;
+  --green: #2eaa54;
+  --black: #1e231f;
+  /* El rojo y el azul del kit no llegan a 4,5:1 con la letra chica: el rojo un punto más oscuro
+     va de fondo de la letra blanca y el azul más oscuro, de letra sobre el papel. */
+  --red-deep: #d73e16;
+  --blue-ink: #2a5f99;
+  --focus-ring: var(--blue);
   --yellow-soft: #fce77d;
-  --lavender: #eca2c8;
-  /* Rosas claros del kit: franjas y el destello de los botones al pasar y al tocar. */
+  /* Rosas claros del kit: el destello de los botones al pasar y al tocar. */
   --blush: #fde9f3;
   --blush-deep: #fbd9e9;
-  --green: #4cbb6c;
-  /* Pasteles de los calendarios: fondo de las franjas con mucho texto, donde el verde y el
-     naranja de la marca no dejan leer la letra chica. */
-  --blue-soft: #abd7df;
-  --green-soft: #b5d780;
-  --orange-soft: #f9a65e;
-  --black: #1e231f;
   --line-tint: rgb(54 59 57 / 20%);
-  /* Logo repetido en blanco sobre la franja azul: hasta el 14 % el texto blanco sigue en 4,5:1. */
-  --watermark: rgb(255 255 255 / 14%);
-  /* Fondo de caritas: caritas.py dibuja las baldosas con estos dos colores (azul suave sobre los
-     fondos claros, blanco sobre las franjas de color) y tokens.test.ts prueba el contraste con
-     ellos. Hasta el 15 % el texto gris sigue en 4,5:1 sobre el rosa clarito. */
-  --faces-ink: rgb(61 119 188 / 15%);
-  --faces-light: rgb(255 255 255 / 45%);
-  --faces-tile: clamp(170px, 30vw, 220px);
   /* Cursor con estela: el azul del logo. */
   --cursor: #3d77bc;
   --cursor-follow: 200ms;
@@ -120,9 +113,8 @@
   --gutter: clamp(18px, 5vw, 36px);
   --page-max: 1280px;
   /* Encabezado fijo: su alto arriba de todo y achicado al bajar. */
-  --header-height: 132px;
-  --header-compact: 108px;
-  --header-nav-row: 46px;
+  --header-height: 92px;
+  --header-compact: 72px;
   /* Alto de las olas que reemplazan el borde recto entre franjas. */
   --wave-height: 34px;
   --sticky-bar-space: calc(88px + env(safe-area-inset-bottom));
@@ -201,7 +193,7 @@ textarea {
 
 input,
 textarea {
-  caret-color: var(--coral-dark);
+  caret-color: var(--blue-ink);
 }
 
 button,
@@ -281,85 +273,38 @@ button:disabled {
 }
 
 /* Franjas a todo el ancho: el fondo llega al borde y el contenido se alinea con el contenedor.
-   Cada una lleva un color de la hoja de identidad: encabezado crema, inicio celeste, rosa, los
-   más vendidos y el catálogo en rosa clarito, Nosotros en naranja claro, verde claro, amarillo y
-   negro al pie. La azul de los pedidos personalizados es una tarjeta redondeada. */
+   Como en la página de ejemplo de la dueña, casi todo va sobre el papel crema y el color está en
+   las piezas: el panel azul del inicio, los círculos, las tarjetas y la franja roja de abajo. */
 .site-header,
 .hero,
-.value-strip,
 .intent-section,
 .best-section,
-.about-teaser,
+.story-row,
 .about-intro,
 .contact-section,
 .catalog-section,
 .trust-section,
 .how-section,
 .process-section,
-.banner,
 .faq-section,
+.custom-order,
 .site-footer {
   padding-inline: max(var(--gutter), (100% - var(--page-max)) / 2);
 }
 
-/* Olas: la franja que sigue sube sobre el relleno de abajo de la anterior con un borde curvo de
-   su mismo color, así no todo es un rectángulo. */
-.value-strip,
-.best-section,
-.banner,
-.about-teaser,
-.how-section,
-.process-section,
-.trust-section,
-.instagram-strip,
-.site-footer {
-  position: relative;
-}
-
-.value-strip::before,
-.best-section::before,
-.banner::before,
-.about-teaser::before,
-.how-section::before,
-.process-section::before,
-.trust-section::before,
-.instagram-strip::before,
-.site-footer::before {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  bottom: calc(100% - 1px);
-  left: 0;
-  height: var(--wave-height);
-  background: inherit;
-  mask: url("./ola.svg") center bottom / 100% 100% no-repeat;
-  pointer-events: none;
-}
-
-/* Algunas olas van al revés, para que no se vean todas iguales. */
-.about-teaser::before,
-.banner-featured::before,
-.trust-section::before {
-  transform: scaleX(-1);
-}
-
 /* Queda fijo arriba al bajar: se achica y el margen de abajo completa el alto que pierde, así el
-   contenido no salta. motion.ts le pone .is-scrolled. En la compu va en dos filas, como en la
-   tienda de ejemplo: el buscador, el logo al medio y el pedido; abajo, el menú. */
+   contenido no salta. motion.ts le pone .is-scrolled. En la compu va en una fila, como en la
+   página de ejemplo: el logo, el menú al medio, el buscador y el pedido. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 30;
   height: var(--header-height);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) var(--header-nav-row);
-  grid-template-areas:
-    "search logo cart"
-    "nav nav nav";
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-areas: "logo nav search cart";
   align-items: center;
-  column-gap: 16px;
+  column-gap: clamp(16px, 2vw, 28px);
   border-bottom: 1px solid var(--line);
   background: var(--paper);
   transition:
@@ -379,13 +324,12 @@ button:disabled {
   display: inline-block;
   width: 84px;
   aspect-ratio: 693 / 430;
-  background-color: var(--coral-dark);
+  background-color: var(--blue);
   mask: url("./logo-studioags.png") center / contain no-repeat;
 }
 
 .site-header .wordmark {
   grid-area: logo;
-  justify-self: center;
   transition: width var(--lift-dur) var(--ease-out);
 }
 
@@ -396,8 +340,7 @@ button:disabled {
 
 .header-search {
   grid-area: search;
-  justify-self: start;
-  width: min(100%, 290px);
+  width: clamp(170px, 17vw, 240px);
   margin: 0;
 }
 
@@ -465,10 +408,9 @@ button:disabled {
 .main-nav {
   grid-area: nav;
   justify-self: center;
-  align-self: start;
   display: flex;
   align-items: center;
-  gap: 38px;
+  gap: clamp(20px, 2.6vw, 40px);
   color: var(--ink-mid);
   font-size: 14px;
   font-weight: 600;
@@ -482,7 +424,7 @@ button:disabled {
 
 /* La página en la que estás: en azul y subrayada. */
 .main-nav a[aria-current="page"] {
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 6px;
@@ -501,7 +443,7 @@ button:disabled {
   display: inline-flex;
   align-items: center;
   gap: 11px;
-  padding: 0 0 0 14px;
+  padding: 0;
   border: 0;
   background: transparent;
   font-size: 14px;
@@ -519,7 +461,7 @@ button:disabled {
   min-width: 21px;
   height: 21px;
   padding: 0 5px;
-  background: var(--coral-dark);
+  background: var(--red-deep);
   border-radius: 999px;
   color: var(--white);
   font-size: 12px;
@@ -539,7 +481,7 @@ button:disabled {
 
 .cart-trigger-note {
   flex-basis: 100%;
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   line-height: 1.3;
   text-align: right;
 }
@@ -553,50 +495,59 @@ button:disabled {
   line-height: 1.6;
 }
 
-/* Inicio en celeste. Como en las otras franjas pastel, la volanta y los textos grises pasan a
-   tinta; el acento azul del título alcanza porque es letra grande. */
+/* Inicio como el de la página de ejemplo: el título sobre el papel a la izquierda y, a la derecha,
+   un panel azul hasta el borde con las fotos y los stickers rosa y amarillo (las combinaciones
+   del kit con el azul). Arriba a la izquierda, una mancha del mismo azul. El rojo y el azul del
+   título alcanzan sobre el papel porque son letra grande. */
 .hero {
   position: relative;
-  min-height: 558px;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 560px;
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
-  padding-block: 42px 55px;
-  background: var(--blue-soft);
+  column-gap: 40px;
+  padding-block: 96px 64px;
 }
 
-.hero :focus-visible {
-  outline-color: var(--ink);
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  background: var(--blue);
+  pointer-events: none;
+}
+
+.hero::before {
+  top: 0;
+  left: 0;
+  width: min(30vw, 360px);
+  height: 64px;
+  border-radius: 0 0 100% 0 / 0 0 100% 0;
+}
+
+.hero::after {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 47%;
+  border-radius: 0 0 0 160px;
 }
 
 .hero-copy {
   z-index: 1;
-  padding: 12px 0 0 4.5%;
 }
 
 .eyebrow {
   margin: 0;
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.16em;
   line-height: 1.5;
   text-transform: uppercase;
-}
-
-.hero-copy > .eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--ink);
-}
-
-.eyebrow-mark {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: var(--coral);
-  border-radius: 50%;
 }
 
 h1,
@@ -608,39 +559,42 @@ p {
 
 .hero h1 {
   max-width: 640px;
-  margin: 22px 0 17px;
+  margin: 0 0 22px;
+  color: var(--red);
   font-family: var(--display);
   text-transform: uppercase;
-  font-size: clamp(45px, 5.4vw, 78px);
+  font-size: clamp(45px, 5.8vw, 84px);
   font-weight: 600;
   letter-spacing: -0.01em;
-  line-height: 0.99;
+  line-height: 0.96;
 }
 
 .hero h1 span {
-  color: var(--coral-dark);
+  color: var(--blue);
 }
 
 .hero-description {
   max-width: 440px;
-  margin-bottom: 26px;
+  margin-bottom: 28px;
   color: var(--ink-soft);
-  font-size: 15px;
-  line-height: 1.75;
+  font-size: 17px;
+  line-height: 1.6;
 }
 
-.primary-button {
+/* Botón principal en rojo, como en la página de ejemplo; el secundario, en rosa. */
+.primary-button,
+.soft-button {
   min-height: 52px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 17px;
-  padding: 0 21px;
-  border: 1px solid var(--ink);
+  padding: 0 24px;
+  border: 1px solid var(--red-deep);
   border-radius: 999px;
-  background: var(--ink);
+  background: var(--red-deep);
   color: var(--white);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   transition:
     background-color 180ms ease,
@@ -648,7 +602,15 @@ p {
     transform var(--lift-dur) var(--ease-out);
 }
 
+.soft-button {
+  min-height: 48px;
+  border-color: var(--pink);
+  background: var(--pink);
+  color: var(--ink);
+}
+
 .primary-button svg,
+.soft-button svg,
 .add-button svg,
 .footer-link svg,
 .text-button svg {
@@ -657,27 +619,10 @@ p {
   flex: 0 0 auto;
 }
 
-.hero-caption {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 37px;
-  color: var(--ink-soft);
-  font-size: 14px;
-  letter-spacing: 0.025em;
-}
-
-.caption-rule {
-  flex: 0 0 auto;
-  width: 32px;
-  height: 1px;
-  background: var(--ink-soft);
-}
-
 .hero-art {
   position: relative;
   height: 440px;
-  margin: 5px 2% 0 0;
+  margin-left: 6%;
 }
 
 .hero-photo {
@@ -726,7 +671,7 @@ p {
   width: 176px;
   height: 218px;
   padding: 8px 8px 30px;
-  background: var(--yellow-soft);
+  background: var(--yellow);
   --photo-turn: -9deg;
 }
 
@@ -750,14 +695,14 @@ p {
 .hero-sticker-top {
   top: 0;
   right: 0;
-  background: var(--lavender);
+  background: var(--pink);
   transform: rotate(8deg);
 }
 
 .hero-sticker-bottom {
   right: 4%;
   bottom: 0;
-  background: var(--green);
+  background: var(--yellow);
   transform: rotate(-7deg);
 }
 
@@ -766,69 +711,13 @@ p {
   z-index: 2;
   top: 54%;
   right: 2%;
-  color: var(--coral);
+  color: var(--yellow);
   font-size: 48px;
 }
 
-/* Beneficios, cada uno con una carita del kit en un círculo blanco, como los íconos de la tienda de
-   ejemplo. */
-.value-strip {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 24px clamp(16px, 3vw, 40px);
-  margin: 0;
-  padding-block: 34px 38px;
-  list-style: none;
-  background: var(--lavender);
-  color: var(--ink-soft);
-  font-family: var(--display);
-  text-transform: uppercase;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.3;
-  text-align: center;
-}
-
-.value-strip > li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.value-face {
-  width: 68px;
-  height: 68px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: var(--white) center / 46px no-repeat;
-}
-
-.value-face-1 {
-  background-image: url("./carita-1.webp");
-}
-
-.value-face-3 {
-  background-image: url("./carita-3.webp");
-}
-
-.value-face-4 {
-  background-image: url("./carita-4.webp");
-}
-
-.value-face-5 {
-  background-image: url("./carita-5.webp");
-}
-
-.value-face-6 {
-  background-image: url("./carita-6.webp");
-}
-
-/* Catálogo en rosa clarito: las tarjetas blancas se despegan del fondo y todos los textos y
-   bordes de la barra de filtros siguen llegando a su contraste. */
+/* Catálogo sobre el papel: las tarjetas blancas se despegan del fondo. */
 .catalog-section {
-  padding-block: 108px 98px;
-  background: var(--blush);
+  padding-block: 88px 98px;
   scroll-margin-top: 30px;
 }
 
@@ -845,15 +734,19 @@ main > .catalog-section:first-child {
   margin-bottom: 32px;
 }
 
+/* Títulos en rojo, como "Best Sellers" en la página de ejemplo; el acento, en azul. Los dos
+   alcanzan sobre el papel y el blanco porque son letra grande. */
 .section-heading h1,
 .section-heading h2,
 .trust-heading h2,
 .how-heading h2,
-.intent-heading h2,
 .best-heading h2,
 .about-copy :is(h1, h2),
-.contact-heading h1 {
+.contact-heading h1,
+.faq-heading h1,
+.related-section h2 {
   margin: 13px 0 0;
+  color: var(--red);
   font-family: var(--display);
   text-transform: uppercase;
   font-size: clamp(36px, 4.1vw, 56px);
@@ -863,7 +756,7 @@ main > .catalog-section:first-child {
 }
 
 .section-heading :is(h1, h2) em {
-  color: var(--coral-dark);
+  color: var(--blue);
   font-style: normal;
 }
 
@@ -903,7 +796,7 @@ main > .catalog-section:first-child {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--coral);
+  background: var(--red);
   transform: translateY(-2px);
 }
 
@@ -1108,7 +1001,7 @@ main > .catalog-section:first-child {
   max-width: 55%;
   margin: 0;
   padding-top: 3px;
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.35;
@@ -1347,7 +1240,7 @@ main > .catalog-section:first-child {
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-size: 14px;
   font-weight: 700;
   text-underline-offset: 4px;
@@ -1378,7 +1271,7 @@ main > .catalog-section:first-child {
 }
 
 .breadcrumb a {
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-weight: 600;
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -1461,6 +1354,7 @@ main > .catalog-section:first-child {
 
 .product-page-info h1 {
   margin: 10px 0 12px;
+  color: var(--red);
   font-family: var(--display);
   text-transform: uppercase;
   font-size: clamp(40px, 4.4vw, 60px);
@@ -1504,20 +1398,9 @@ main > .catalog-section:first-child {
   line-height: 1.1;
 }
 
-/* Así preparamos tu pedido: cuatro fotos del armado, después de los pasos, en la franja naranja
-   claro. Sobre ella el gris y la volanta azul no llegan a 4,5:1: pasan a tinta. El acento azul
-   del título sí alcanza, porque es letra grande. */
+/* Así preparamos tu pedido: cuatro fotos del armado, después de los pasos. */
 .process-section {
-  padding-block: 98px;
-  background: var(--orange-soft);
-}
-
-.process-section .eyebrow {
-  color: var(--ink);
-}
-
-.process-section .section-intro {
-  color: var(--ink-soft);
+  padding-block: 88px 98px;
 }
 
 .process-grid {
@@ -1555,99 +1438,94 @@ main > .catalog-section:first-child {
   line-height: 1.6;
 }
 
-/* Pedidos personalizados: tarjeta azul con bordes redondeados, separada de los costados, y el
-   logo repetido en blanco suave de fondo. */
+/* Pedidos personalizados: la franja roja de abajo de todo, con la ola arriba, el botón amarillo y
+   una mancha amarilla con la frase que llega al borde (rojo con amarillo, como en el kit). La
+   franja recorta lo que sobra: la ola es papel que baja sobre el rojo. */
 .custom-order {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(200px, 0.75fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 28px 56px;
-  width: min(100% - 2 * var(--gutter), var(--page-max));
-  margin: 88px auto;
-  padding: 64px clamp(28px, 5vw, 72px);
-  border-radius: 40px;
-  background: var(--coral-dark);
+  gap: 28px clamp(28px, 4vw, 56px);
+  margin-top: 72px;
+  padding-block: calc(var(--wave-height) + 56px) 64px;
+  background: var(--red-deep);
   color: var(--white);
 }
 
-/* Grilla girada más grande que la tarjeta: los bordes nunca quedan vacíos. Las columnas pares
-   bajan medio logo y el dibujo queda en zigzag. */
-.watermark {
+.custom-order::before {
+  content: "";
   position: absolute;
-  z-index: -1;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  grid-template-columns: repeat(10, 110px);
-  gap: 30px 40px;
-  translate: -50% -50%;
-  rotate: -12deg;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: var(--wave-height);
+  background: var(--paper);
+  mask: url("./ola.svg") center / 100% 100% no-repeat;
+  transform: scaleY(-1);
   pointer-events: none;
 }
 
-.watermark span {
-  aspect-ratio: 693 / 430;
-  background-color: var(--watermark);
-  mask: url("./logo-studioags.png") center / contain no-repeat;
-}
-
-.watermark span:nth-child(even) {
-  translate: 0 50%;
-}
-
 .custom-order-copy {
-  max-width: 640px;
-}
-
-.custom-order .eyebrow {
-  color: var(--white);
+  max-width: 560px;
 }
 
 .custom-order h2 {
-  margin: 12px 0 14px;
+  margin: 0 0 12px;
   font-family: var(--display);
-  font-size: clamp(34px, 3.6vw, 48px);
+  font-size: clamp(38px, 4.4vw, 58px);
   font-weight: 500;
-  line-height: 1.1;
+  line-height: 1;
   text-transform: uppercase;
 }
 
 .custom-order-copy > p:last-child {
   margin: 0;
   font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
 .custom-order .custom-order-button {
-  flex: 0 0 auto;
   border-color: var(--yellow);
   background: var(--yellow);
   color: var(--ink);
-  font-size: 15px;
+}
+
+/* La franja tiene el relleno de la página a cada lado: la mancha lo come para llegar al borde. */
+.custom-order-tagline {
+  min-height: 170px;
+  display: grid;
+  place-items: center;
+  margin: 0 calc(-1 * max(var(--gutter), (100vw - var(--page-max)) / 2)) 0 0;
+  padding: 24px 40px 24px 56px;
+  border-radius: 100% 0 0 100% / 70% 0 0 100%;
+  background: var(--yellow);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.05;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .custom-order :focus-visible {
   outline-color: var(--white);
 }
 
-/* Inicio: un círculo de color por uso, con la foto de un producto adentro. */
+/* Inicio: un círculo de un color del kit por uso, con la foto de un producto adentro, en fila
+   debajo del inicio como en la página de ejemplo. */
 .intent-section {
-  padding-block: 92px 96px;
+  padding-block: 64px 40px;
   text-align: center;
-}
-
-.intent-heading h2 {
-  margin-bottom: 0;
 }
 
 .intent-list {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 28px;
-  margin: 44px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -1659,10 +1537,10 @@ main > .catalog-section:first-child {
 }
 
 .intent-photo {
-  width: 168px;
+  width: 160px;
   aspect-ratio: 1;
   margin-bottom: 14px;
-  padding: 12px;
+  padding: 18px;
   border-radius: 50%;
   transition: transform var(--lift-dur) var(--ease-out);
 }
@@ -1676,19 +1554,19 @@ main > .catalog-section:first-child {
 }
 
 .intent-regalar .intent-photo {
-  background: var(--lavender);
+  background: var(--pink);
 }
 
 .intent-marca .intent-photo {
-  background: var(--blue-soft);
+  background: var(--blue);
 }
 
 .intent-decorar .intent-photo {
-  background: var(--green-soft);
+  background: var(--yellow);
 }
 
 .intent-organizarte .intent-photo {
-  background: var(--yellow);
+  background: var(--red);
 }
 
 .intent-label {
@@ -1704,10 +1582,10 @@ main > .catalog-section:first-child {
   line-height: 1.5;
 }
 
-/* Los más vendidos: tarjetas blancas simples sobre el rosa clarito, como el catálogo. */
+/* Los más vendidos: la foto y abajo el nombre y el precio, sin tarjeta, como en la página de
+   ejemplo. */
 .best-section {
-  padding-block: 92px 98px;
-  background: var(--blush);
+  padding-block: 48px 72px;
 }
 
 .best-heading {
@@ -1728,7 +1606,7 @@ main > .catalog-section:first-child {
   flex: 0 0 auto;
   align-items: center;
   gap: 9px;
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-size: 14px;
   font-weight: 600;
 }
@@ -1752,10 +1630,6 @@ main > .catalog-section:first-child {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 12px 12px 18px;
-  border-radius: 22px;
-  background: var(--surface);
-  box-shadow: var(--shadow-card);
   transition: transform var(--lift-dur) var(--ease-out);
 }
 
@@ -1763,7 +1637,7 @@ main > .catalog-section:first-child {
   overflow: hidden;
   aspect-ratio: 1;
   margin-bottom: 12px;
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--photo-bg);
 }
 
@@ -1787,22 +1661,109 @@ main > .catalog-section:first-child {
   font-size: 14px;
 }
 
-/* Adelanto de Nosotros en el inicio y presentación de su página: la foto lleva forma de arco. */
-.about-teaser,
-.about-intro {
+/* Inicio: Nosotros en una tarjeta blanca y los trabajos de Instagram en una rosa, lado a lado,
+   como la dueña y la reseña de la página de ejemplo. */
+.story-row {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  align-items: center;
-  gap: 40px clamp(32px, 6vw, 88px);
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 24px;
+  padding-block: 24px;
 }
 
 .about-teaser {
-  padding-block: 96px;
-  background: var(--orange-soft);
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 28px clamp(24px, 3vw, 44px);
+  padding: 28px clamp(24px, 3vw, 40px) 28px 28px;
+  border-radius: 32px;
+  background: var(--surface);
 }
 
+.about-teaser-photo {
+  position: relative;
+}
+
+.about-teaser .about-photo {
+  border-radius: 24px;
+}
+
+/* La carita rosa sobre azul del kit, pegada en la esquina de la foto. */
+.about-sticker {
+  position: absolute;
+  top: -14px;
+  left: -14px;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: url("./mascota-azul.webp") center / cover no-repeat;
+  transform: rotate(-10deg);
+}
+
+.instagram-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 32px clamp(24px, 3vw, 36px);
+  border-radius: 32px;
+  background: var(--pink);
+}
+
+.instagram-card h2 {
+  margin: 0;
+  font-family: var(--display);
+  text-transform: uppercase;
+  font-size: clamp(28px, 2.8vw, 38px);
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+.instagram-link {
+  display: grid;
+  gap: 18px;
+}
+
+.instagram-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.instagram-grid img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  display: block;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: opacity 180ms ease;
+}
+
+.instagram-handle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.instagram-handle svg {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+}
+
+.instagram-card :focus-visible {
+  outline-color: var(--ink);
+}
+
+/* Presentación de Nosotros: la foto lleva forma de arco. */
 .about-intro {
+  display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: 40px clamp(32px, 6vw, 88px);
   padding-block: 72px 110px;
 }
 
@@ -1834,21 +1795,24 @@ main > .catalog-section:first-child {
   font-size: 18px;
 }
 
-.about-teaser .eyebrow {
-  color: var(--ink);
+.about-teaser .about-copy h2 {
+  margin-top: 0;
+  font-size: clamp(30px, 3vw, 42px);
 }
 
-.about-teaser :focus-visible {
-  outline-color: var(--ink);
+.about-teaser .about-copy p {
+  font-size: 15px;
+  line-height: 1.7;
 }
 
-.about-copy .primary-button {
+.about-copy :is(.primary-button, .soft-button) {
   margin-top: 8px;
 }
 
-/* Contacto: cuatro tarjetas de colores claros con cómo escribirnos y dónde estamos. */
+/* Contacto: cuatro tarjetas, una en cada color del kit. La primera, amarilla con el botón rojo.
+   Abajo sigue Antes de pedir, sobre el mismo papel. */
 .contact-section {
-  padding-block: 72px 110px;
+  padding-block: 72px 48px;
 }
 
 .contact-heading {
@@ -1883,19 +1847,29 @@ main > .catalog-section:first-child {
 }
 
 .contact-card:nth-child(1) {
-  background: var(--blush-deep);
+  background: var(--yellow);
 }
 
 .contact-card:nth-child(2) {
-  background: var(--blue-soft);
+  background: var(--pink);
 }
 
+/* Sobre el azul la letra va en blanco; sobre el verde, en el negro de la marca, porque el gris
+   no llega a 4,5:1. */
 .contact-card:nth-child(3) {
-  background: var(--green-soft);
+  background: var(--blue);
+}
+
+.contact-card:nth-child(3) :is(h2, p) {
+  color: var(--white);
 }
 
 .contact-card:nth-child(4) {
-  background: var(--yellow-soft);
+  background: var(--green);
+}
+
+.contact-card:nth-child(4) :is(h2, p) {
+  color: var(--black);
 }
 
 .contact-card h2 {
@@ -1928,19 +1902,9 @@ main > .catalog-section:first-child {
   margin-top: auto;
 }
 
-/* Bloque de confianza: filas de dato y respuesta en la franja verde claro. Como en la naranja,
-   la volanta, las respuestas y el enlace van en tinta. */
+/* Bloque de confianza: filas de dato y respuesta sobre el papel. */
 .trust-section {
-  padding-block: 98px;
-  background: var(--green-soft);
-}
-
-.trust-section .eyebrow {
-  color: var(--ink);
-}
-
-.trust-section :focus-visible {
-  outline-color: var(--ink);
+  padding-block: 40px 88px;
 }
 
 .trust-heading {
@@ -1980,7 +1944,7 @@ main > .catalog-section:first-child {
 
 .trust-row a,
 .noscript-note a {
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-weight: 600;
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -2001,8 +1965,7 @@ main > .catalog-section:first-child {
 }
 
 .how-section {
-  padding-block: 83px 94px;
-  background: var(--yellow);
+  padding-block: 72px 94px;
 }
 
 .how-heading {
@@ -2022,23 +1985,36 @@ main > .catalog-section:first-child {
   list-style: none;
 }
 
+/* Cada paso en una combinación del kit, con la carita de la combinación al revés: azul con la
+   carita rosa, amarillo con la verde y rosa con la azul. */
 .step-card {
   position: relative;
   min-height: 183px;
   padding: 23px 23px 20px;
-  border: 1px solid var(--line-strong);
-  border-radius: 18px;
-  background: var(--surface-soft);
+  border-radius: 24px;
+  color: var(--ink);
 }
 
-/* Un personaje del kit en cada paso. */
+.step-card:nth-child(1) {
+  background: var(--blue);
+  color: var(--white);
+}
+
+.step-card:nth-child(2) {
+  background: var(--yellow);
+}
+
+.step-card:nth-child(3) {
+  background: var(--pink);
+}
+
 .step-card::after {
   content: "";
   position: absolute;
   top: 14px;
   right: 16px;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: center / cover no-repeat;
 }
@@ -2056,15 +2032,16 @@ main > .catalog-section:first-child {
 }
 
 .step-card > span {
-  color: var(--coral-dark);
   font-family: var(--display);
   text-transform: uppercase;
   font-size: 19px;
   font-weight: 500;
 }
 
+/* El título deja lugar a la carita de la esquina. */
 .step-card h3 {
   margin: 26px 0 8px;
+  padding-right: 64px;
   font-family: var(--display);
   text-transform: uppercase;
   font-size: 25px;
@@ -2074,71 +2051,55 @@ main > .catalog-section:first-child {
 .step-card p {
   max-width: 300px;
   margin: 0;
-  color: var(--muted);
   font-size: 14px;
   line-height: 1.65;
 }
 
-/* Pie en el negro de la marca, con el logo en amarillo: dónde estamos, el logo y las redes, y
-   abajo las páginas, como en la tienda de ejemplo. */
+/* Pie sobre el papel, como en la página de ejemplo: el logo en rojo, las páginas al medio y las
+   redes; abajo, una línea con dónde estamos y la frase. */
 .site-footer {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   grid-template-areas:
-    "info logo social"
-    "nav nav nav"
-    "tagline tagline tagline";
+    "logo nav social"
+    "info info tagline";
   align-items: center;
-  gap: 18px 24px;
-  padding-block: 58px 34px;
-  background: var(--black);
-  color: var(--paper);
-}
-
-.footer-col {
-  display: grid;
-  gap: 2px;
-}
-
-.footer-info {
-  grid-area: info;
-  justify-items: start;
+  gap: 22px 0;
+  padding-block: 40px 28px;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
 }
 
 .footer-social {
   grid-area: social;
-  justify-items: end;
+  justify-self: end;
 }
 
-.footer-title {
-  color: var(--yellow);
-  font-family: var(--display);
-  text-transform: uppercase;
-  font-size: 22px;
-  font-weight: 500;
-}
-
-.footer-info > p:not(.footer-title) {
+.footer-info,
+.footer-tagline {
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
   font-size: 14px;
+}
+
+.footer-info {
+  grid-area: info;
+  color: var(--ink-mid);
 }
 
 .footer-tagline {
   grid-area: tagline;
-  justify-self: center;
+  text-align: right;
   font-family: var(--display);
   text-transform: uppercase;
   font-size: 18px;
   font-weight: 500;
 }
 
-.site-footer :focus-visible {
-  outline-color: var(--yellow);
-}
-
 .footer-wordmark {
   grid-area: logo;
   width: 96px;
-  background-color: var(--yellow);
+  background-color: var(--red);
 }
 
 .site-footer p {
@@ -2152,7 +2113,14 @@ main > .catalog-section:first-child {
   flex-wrap: wrap;
   justify-content: center;
   gap: 0 26px;
-  padding-top: 8px;
+}
+
+.footer-info .footer-link {
+  min-height: 0;
+  display: inline;
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .footer-link {
@@ -2162,29 +2130,6 @@ main > .catalog-section:first-child {
   gap: 9px;
   font-size: 14px;
   font-weight: 600;
-}
-
-/* Fondo de caritas: una cara del kit repetida en toda la página. Va en azul suave sobre el papel y
-   el rosa clarito, y en blanco sobre las franjas de color; las olas la heredan con el fondo y las
-   franjas sin color propio muestran la del papel. El encabezado, la tarjeta azul, las tarjetas y
-   el pie quedan lisos. */
-html,
-.catalog-section,
-.best-section,
-.instagram-strip {
-  background-image: url("./carita-fondo.webp");
-  background-size: var(--faces-tile);
-}
-
-.hero,
-.value-strip,
-.banner,
-.about-teaser,
-.process-section,
-.trust-section,
-.how-section {
-  background-image: url("./carita-fondo-clara.webp");
-  background-size: var(--faces-tile);
 }
 
 /* Cursor con estela (motion.ts): el círculo llega al puntero con demora y el punto va justo en la
@@ -2257,11 +2202,11 @@ html[data-layer] .cursor-trail {
   scale: 3.2;
 }
 
-/* Avisos que corren arriba de todo, como en la tienda de ejemplo. Al pasar el mouse se frenan;
-   con "reducir movimiento" quedan quietos y en varias líneas. */
+/* Avisos que corren arriba de todo, en la franja roja como en la página de ejemplo. Al pasar el
+   mouse se frenan; con "reducir movimiento" quedan quietos y en varias líneas. */
 .announce-bar {
   overflow: hidden;
-  background: var(--coral-dark);
+  background: var(--red-deep);
   color: var(--white);
   font-size: 13px;
   font-weight: 600;
@@ -2287,8 +2232,9 @@ html[data-layer] .cursor-trail {
 }
 
 .announce-list li::after {
-  content: "/";
+  content: "✳";
   margin: 0 22px;
+  color: var(--yellow);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -2305,104 +2251,6 @@ html[data-layer] .cursor-trail {
   to {
     translate: -50% 0;
   }
-}
-
-/* Banners del inicio: foto y texto lado a lado, como los de mayoristas y agendas de la tienda de
-   ejemplo. */
-.banner {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  align-items: center;
-  gap: clamp(32px, 6vw, 88px);
-  padding-block: 96px;
-}
-
-.banner-featured {
-  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-}
-
-.banner-brand {
-  background: var(--green-soft);
-}
-
-.banner-featured {
-  background: var(--yellow);
-}
-
-.banner-photo {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 32px;
-  box-shadow: var(--shadow-photo);
-}
-
-.banner .eyebrow {
-  color: var(--ink);
-}
-
-.banner :focus-visible {
-  outline-color: var(--ink);
-}
-
-.banner-copy h2 {
-  margin: 10px 0 18px;
-  font-family: var(--display);
-  text-transform: uppercase;
-  font-size: clamp(34px, 4vw, 52px);
-  font-weight: 500;
-  line-height: 1.02;
-}
-
-.banner-copy p:not(.eyebrow) {
-  max-width: 470px;
-  margin: 0 0 28px;
-  color: var(--ink-soft);
-  font-size: 17px;
-  line-height: 1.6;
-}
-
-/* Fotos del álbum en fila, de borde a borde, como el feed de Instagram de la tienda de ejemplo. */
-.instagram-strip {
-  padding-top: 64px;
-  background-color: var(--paper);
-  text-align: center;
-}
-
-/* Después de la tarjeta azul ya hay aire: su margen de abajo. */
-main:has(> .custom-order:last-child) + .instagram-strip {
-  padding-top: 0;
-}
-
-.instagram-strip h2 {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 28px;
-  color: var(--ink);
-  font-family: var(--display);
-  text-transform: uppercase;
-  font-size: clamp(24px, 3vw, 32px);
-  font-weight: 500;
-}
-
-.instagram-strip h2 svg {
-  width: 28px;
-  height: 28px;
-}
-
-.instagram-grid {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-}
-
-.instagram-grid img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
-  transition: opacity 180ms ease;
 }
 
 /* Preguntas frecuentes: la lista que se despliega y una foto al costado. */
@@ -2431,7 +2279,7 @@ main:has(> .custom-order:last-child) + .instagram-strip {
 }
 
 .faq-heading a {
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -2467,7 +2315,7 @@ main:has(> .custom-order:last-child) + .instagram-strip {
 .faq-item summary::after {
   content: "+";
   flex: 0 0 auto;
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-size: 24px;
   font-weight: 400;
   line-height: 1;
@@ -2510,7 +2358,7 @@ main:has(> .custom-order:last-child) + .instagram-strip {
   gap: 9px;
   padding: 0 22px 0 18px;
   border-radius: 999px;
-  background: var(--coral-dark);
+  background: var(--blue);
   box-shadow: var(--shadow-card);
   color: var(--white);
   font-size: 15px;
@@ -2524,7 +2372,7 @@ main:has(> .custom-order:last-child) + .instagram-strip {
 }
 
 .chat-float:focus-visible {
-  outline-color: var(--coral-dark);
+  outline-color: var(--blue-ink);
 }
 
 html[data-layer] .chat-float {
@@ -2705,7 +2553,7 @@ html[data-layer] .chat-float {
 .cart-notice {
   margin-top: 16px;
   padding: 14px 16px 8px;
-  border-left: 3px solid var(--coral-dark);
+  border-left: 3px solid var(--blue-ink);
   background: var(--sand);
   color: var(--ink-soft);
   font-size: 14px;
@@ -2979,7 +2827,7 @@ textarea.field-input {
 
 .field-input[aria-invalid="true"],
 .field[aria-invalid="true"] .option-chip span {
-  border-color: var(--coral-dark);
+  border-color: var(--blue-ink);
   border-width: 2px;
 }
 
@@ -2992,7 +2840,7 @@ textarea.field-input {
 }
 
 .field-error {
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-weight: 600;
 }
 
@@ -3081,7 +2929,7 @@ textarea.field-input {
   margin: 0;
   padding: 12px 14px;
   background: var(--green);
-  color: var(--ink);
+  color: var(--black);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
@@ -3093,7 +2941,7 @@ textarea.field-input {
 
 .checkout-changed {
   margin: 0;
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
@@ -3213,7 +3061,7 @@ textarea.field-input {
 
 /* Avisos de restauración o la pregunta de si se envió: se distinguen de la nota del total. */
 .sticky-bar-note.is-alert {
-  color: var(--coral-dark);
+  color: var(--blue-ink);
   font-weight: 600;
 }
 
@@ -3362,20 +3210,21 @@ textarea.field-input {
 @media (hover: hover) and (pointer: fine) {
   .main-nav a:hover,
   .cart-trigger:enabled:hover,
-  .photo-help summary:hover {
-    color: var(--coral-dark);
-  }
-
+  .photo-help summary:hover,
   .footer-link:hover {
-    color: var(--yellow);
+    color: var(--blue-ink);
   }
 
   .primary-button:not(:disabled):hover {
-    border-color: var(--coral-dark);
-    background: var(--coral-dark);
+    border-color: var(--ink);
+    background: var(--ink);
   }
 
-  /* Sobre la franja azul el botón no puede ponerse azul: pasa a blanco. */
+  .soft-button:hover {
+    background: var(--blush);
+  }
+
+  /* Sobre la franja roja el botón amarillo pasa a blanco. */
   .custom-order .primary-button:not(:disabled):hover {
     border-color: var(--white);
     background: var(--white);
@@ -3500,18 +3349,19 @@ textarea.field-input {
 
 .main-nav a:active,
 .cart-trigger:enabled:active,
-.photo-help summary:active {
-  color: var(--coral-dark);
-}
-
+.photo-help summary:active,
 .footer-link:active {
-  color: var(--yellow);
+  color: var(--blue-ink);
 }
 
 .primary-button:not(:disabled):active {
-  border-color: var(--coral-dark);
-  background: var(--coral-dark);
+  border-color: var(--ink);
+  background: var(--ink);
   transition-duration: var(--press-dur);
+}
+
+.soft-button:active {
+  background: var(--blush-deep);
 }
 
 .custom-order .primary-button:not(:disabled):active {
@@ -3628,8 +3478,86 @@ textarea.field-input {
     right: 8%;
   }
 
-  .value-strip {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .site-header {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas: "toggle logo cart";
+  }
+
+  .site-header .wordmark {
+    justify-self: center;
+  }
+
+  .menu-toggle {
+    justify-self: start;
+  }
+
+  .cart-trigger {
+    justify-self: end;
+  }
+
+  .site-header.has-menu .menu-toggle {
+    display: inline-grid;
+  }
+
+  /* Sin JavaScript el menú no se despliega: las páginas siguen en el pie. */
+  .header-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: none;
+    gap: 6px;
+    padding: 16px max(var(--gutter), (100% - var(--page-max)) / 2) 12px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    box-shadow: var(--shadow-header);
+  }
+
+  .site-header.is-menu-open .header-menu {
+    display: grid;
+  }
+
+  /* Dentro del panel ya no son celdas del encabezado. */
+  .header-search,
+  .main-nav {
+    grid-area: auto;
+    justify-self: stretch;
+  }
+
+  .header-search {
+    width: 100%;
+  }
+
+  .main-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    font-size: 16px;
+  }
+
+  .main-nav a {
+    min-height: 50px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .main-nav a:last-child {
+    border-bottom: 0;
+  }
+
+  .main-nav a[aria-current="page"] {
+    text-underline-offset: 5px;
+  }
+
+  .story-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .custom-order {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .custom-order-tagline {
+    display: none;
   }
 
   .faq-body {
@@ -3702,88 +3630,6 @@ textarea.field-input {
     width: 60px;
   }
 
-  .site-header {
-    grid-template-rows: minmax(0, 1fr);
-    grid-template-areas: "toggle logo cart";
-  }
-
-  .site-header.has-menu .menu-toggle {
-    display: inline-grid;
-  }
-
-  /* Sin JavaScript el menú no se despliega: las páginas siguen en el pie. */
-  .header-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
-    display: none;
-    gap: 6px;
-    padding: 16px max(var(--gutter), (100% - var(--page-max)) / 2) 12px;
-    border-bottom: 1px solid var(--line);
-    background: var(--paper);
-    box-shadow: var(--shadow-header);
-  }
-
-  .site-header.is-menu-open .header-menu {
-    display: grid;
-  }
-
-  /* Dentro del panel ya no son celdas del encabezado. */
-  .header-search,
-  .main-nav {
-    grid-area: auto;
-    justify-self: stretch;
-  }
-
-  .header-search {
-    width: 100%;
-  }
-
-  .main-nav {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    font-size: 16px;
-  }
-
-  .main-nav a {
-    min-height: 50px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .main-nav a:last-child {
-    border-bottom: 0;
-  }
-
-  .main-nav a[aria-current="page"] {
-    text-underline-offset: 5px;
-  }
-
-  .cart-trigger {
-    gap: 6px;
-    padding: 0;
-  }
-
-  .banner,
-  .banner-featured {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 30px;
-    padding-block: 64px 72px;
-  }
-
-  .banner-featured .banner-photo {
-    order: -1;
-  }
-
-  .instagram-strip {
-    padding-top: 48px;
-  }
-
-  .instagram-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .faq-section {
     padding-block: 48px 64px;
   }
@@ -3817,16 +3663,17 @@ textarea.field-input {
     bottom: calc(var(--sticky-bar-space) + 12px);
   }
 
-  .intent-section,
-  .best-section,
-  .about-teaser {
-    padding-block: 64px 72px;
+  .intent-section {
+    padding-block: 44px 28px;
+  }
+
+  .best-section {
+    padding-block: 36px 56px;
   }
 
   .intent-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 30px 14px;
-    margin-top: 32px;
   }
 
   .intent-photo {
@@ -3850,6 +3697,17 @@ textarea.field-input {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .about-teaser,
+  .instagram-card {
+    padding: 20px 20px 26px;
+    border-radius: 26px;
+  }
+
+  .about-sticker {
+    width: 64px;
+    height: 64px;
+  }
+
   .about-intro {
     padding-block: 48px 72px;
   }
@@ -3864,7 +3722,7 @@ textarea.field-input {
   }
 
   .contact-section {
-    padding-block: 48px 72px;
+    padding-block: 48px 24px;
   }
 
   .contact-grid {
@@ -3876,11 +3734,6 @@ textarea.field-input {
     padding: 22px 22px 24px;
   }
 
-  .custom-order {
-    margin-block: 56px;
-    border-radius: 28px;
-  }
-
   .cart-trigger svg {
     width: 19px;
     height: 19px;
@@ -3889,7 +3742,20 @@ textarea.field-input {
   .hero {
     min-height: unset;
     grid-template-columns: 1fr;
-    padding-block: 57px 37px;
+    padding-block: 68px 28px;
+  }
+
+  .hero::before {
+    width: 44vw;
+    height: 40px;
+  }
+
+  /* El panel azul queda abajo, detrás de las fotos, con las esquinas de arriba redondeadas. */
+  .hero::after {
+    top: auto;
+    width: 100%;
+    height: 410px;
+    border-radius: 48px 48px 0 0;
   }
 
   .hero-copy {
@@ -3897,23 +3763,18 @@ textarea.field-input {
   }
 
   .hero h1 {
-    margin-top: 18px;
     font-size: clamp(46px, 13vw, 66px);
   }
 
   .hero-description {
     max-width: 390px;
-    font-size: 14px;
-  }
-
-  .hero-caption {
-    margin-top: 24px;
+    font-size: 15px;
   }
 
   .hero-art {
     width: min(100%, 410px);
     height: 350px;
-    margin: 21px auto 0;
+    margin: 56px auto 0;
     transform: none;
   }
 
@@ -3951,17 +3812,6 @@ textarea.field-input {
     font-size: 35px;
   }
 
-  .value-strip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px 14px;
-    padding-block: 28px 32px;
-    font-size: 14px;
-  }
-
-  .value-strip > li:last-child {
-    grid-column: 1 / -1;
-  }
-
   .catalog-section {
     padding-block: 72px 64px;
   }
@@ -3971,9 +3821,10 @@ textarea.field-input {
   }
 
   .custom-order {
-    align-items: flex-start;
-    flex-direction: column;
-    padding-block: 48px 52px;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    margin-top: 56px;
+    padding-block: calc(var(--wave-height) + 36px) 52px;
   }
 
   .section-heading {
@@ -4065,19 +3916,28 @@ textarea.field-input {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "logo"
-      "info"
-      "social"
       "nav"
+      "social"
+      "info"
       "tagline";
     justify-items: center;
-    gap: 14px;
-    padding-block: 44px 30px;
+    gap: 10px;
+    padding-block: 36px 28px;
     text-align: center;
   }
 
-  .footer-info,
   .footer-social {
-    justify-items: center;
+    justify-self: center;
+  }
+
+  .footer-info {
+    width: 100%;
+  }
+
+  .footer-tagline {
+    padding-top: 0;
+    border-top: 0;
+    text-align: center;
   }
 
   .footer-nav {
@@ -4134,7 +3994,7 @@ textarea.field-input {
   }
 
   .cart-trigger.has-note .cart-count {
-    box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--coral-dark);
+    box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--blue-ink);
   }
 
   /* La barra fija no tapa el pie: la página suma su alto mientras hay productos, aunque la

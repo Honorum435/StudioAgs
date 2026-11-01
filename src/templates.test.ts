@@ -164,7 +164,7 @@ describe("página prerenderizada", () => {
     expect(trust.querySelector("a")?.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
   });
 
-  it("ofrece pedidos personalizados en el inicio, Nosotros y Contacto, con el logo de fondo decorativo", () => {
+  it("ofrece pedidos personalizados en el inicio, Nosotros y Contacto, con la frase decorativa", () => {
     for (const pageDoc of [homeDoc, aboutDoc, contactDoc]) {
       const block = pageDoc.getElementById("pedidos-personalizados")!;
       expect(text(block.querySelector("h2"))).toBe("¿Tenés una idea?");
@@ -172,10 +172,7 @@ describe("página prerenderizada", () => {
       expect(button.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
       expect(button.getAttribute("target")).toBe("_blank");
       expect(accessibleName(button)).toBe("Contanos tu idea (se abre en otra pestaña)");
-      const watermark = block.querySelector(".watermark")!;
-      expect(watermark.getAttribute("aria-hidden")).toBe("true");
-      expect(watermark.children.length).toBeGreaterThan(0);
-      expect(text(watermark)).toBe("");
+      expect(block.querySelector(".custom-order-tagline")?.getAttribute("aria-hidden")).toBe("true");
     }
     expect(doc.getElementById("pedidos-personalizados")).toBeNull();
   });
@@ -217,21 +214,19 @@ describe("página prerenderizada", () => {
           "announce-bar",
           "site-header",
           "hero",
-          "value-strip",
           "intent-section",
           "best-section",
-          "banner banner-brand",
-          "banner banner-featured",
+          "story-row",
           "about-teaser",
+          "instagram-card",
           "custom-order",
-          "instagram-strip",
           "site-footer",
         ],
       ],
-      [page, ["announce-bar", "site-header", "catalog-section", "how-section", "instagram-strip", "site-footer"]],
-      [about, ["site-header", "about-intro", "process-section", "custom-order", "instagram-strip", "site-footer"]],
-      [faq, ["site-header", "faq-section", "custom-order", "instagram-strip", "site-footer"]],
-      [contact, ["site-header", "contact-section", "trust-section", "custom-order", "instagram-strip", "site-footer"]],
+      [page, ["announce-bar", "site-header", "catalog-section", "how-section", "site-footer"]],
+      [about, ["site-header", "about-intro", "process-section", "custom-order", "site-footer"]],
+      [faq, ["site-header", "faq-section", "custom-order", "site-footer"]],
+      [contact, ["site-header", "contact-section", "trust-section", "custom-order", "site-footer"]],
     ];
     for (const [html, sections] of pages) {
       const order = sections.map((name) => html.indexOf(`class="${name}"`));
@@ -291,16 +286,8 @@ describe("página prerenderizada", () => {
     expect(page.indexOf('class="announce-bar"')).toBeLessThan(page.indexOf('class="site-header"'));
   });
 
-  it("todas las páginas tienen la tira de Instagram y el botón flotante para escribir", () => {
+  it("todas las páginas tienen el botón flotante para escribir", () => {
     for (const pageDoc of [homeDoc, doc, aboutDoc, faqDoc, contactDoc]) {
-      const grid = pageDoc.querySelector<HTMLAnchorElement>(".instagram-strip a.instagram-grid")!;
-      expect(grid.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
-      expect(grid.getAttribute("target")).toBe("_blank");
-      const photos = [...grid.querySelectorAll("img")];
-      expect(photos).toHaveLength(6);
-      expect(photos.every((photo) => photo.getAttribute("alt") === "" && photo.getAttribute("loading") === "lazy")).toBe(true);
-      expect(accessibleName(grid)).toContain("Instagram");
-
       const chat = pageDoc.querySelector<HTMLAnchorElement>("a.chat-float")!;
       expect(chat.hasAttribute("data-contact-chat")).toBe(true);
       expect(chat.getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
@@ -383,23 +370,31 @@ describe("inicio", () => {
     );
   });
 
-  it("muestra los beneficios, cada uno con una carita decorativa", () => {
-    const items = [...homeDoc.querySelectorAll(".value-strip > li")];
-    expect(items).toHaveLength(5);
-    for (const item of items) {
-      expect(item.querySelector(".value-face")?.getAttribute("aria-hidden")).toBe("true");
-    }
-    expect(text(items[0])).toBe("Hecho a mano en Paraná");
+  it("los círculos tienen un título para los lectores aunque no se vea", () => {
+    const section = homeDoc.querySelector(".intent-section")!;
+    const title = homeDoc.getElementById(section.getAttribute("aria-labelledby")!)!;
+    expect(title.tagName).toBe("H2");
+    expect(title.classList.contains("visually-hidden")).toBe(true);
   });
 
-  it("los banners llevan a los productos para tu marca y a los calendarios", () => {
-    expect(homeDoc.querySelector(".banner-brand a")?.getAttribute("href")).toBe("productos/?uso=marca");
-    expect(homeDoc.querySelector(".banner-featured a")?.getAttribute("href")).toBe("producto/calendarios/");
-    expect(homeDoc.querySelector(".banner-featured img")?.getAttribute("alt")).not.toBe("");
-  });
-
-  it("el adelanto de Nosotros lleva a su página", () => {
+  it("el adelanto de Nosotros lleva a su página y su carita es decorativa", () => {
     expect(homeDoc.querySelector(".about-teaser a")?.getAttribute("href")).toBe("nosotros/");
+    expect(homeDoc.querySelector(".about-teaser .about-sticker")?.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("al lado de Nosotros, seis trabajos que llevan a Instagram en un solo enlace", () => {
+    const card = homeDoc.querySelector(".story-row .instagram-card")!;
+    const links = [...card.querySelectorAll<HTMLAnchorElement>("a")];
+    expect(links).toHaveLength(1);
+    expect(links[0].getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
+    expect(links[0].getAttribute("target")).toBe("_blank");
+    expect(accessibleName(links[0])).toBe("Seguinos en @__studioags (se abre en otra pestaña)");
+    const photos = [...card.querySelectorAll("img")];
+    expect(photos).toHaveLength(6);
+    expect(photos.every((photo) => photo.getAttribute("alt") === "" && photo.getAttribute("loading") === "lazy")).toBe(true);
+    for (const pageDoc of [doc, aboutDoc, faqDoc, contactDoc]) {
+      expect(pageDoc.querySelector(".instagram-card")).toBeNull();
+    }
   });
 });
 

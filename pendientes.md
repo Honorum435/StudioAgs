@@ -142,9 +142,41 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 
 **Falta que Aixa:**
 - **Avisos de arriba y Preguntas frecuentes:** los revise. Salen de los datos que todavía son de ejemplo (envíos, retiro, pagos, cambios y horarios).
-- **Banners:** apruebe los textos y las fotos. El de emprendimientos usa la foto de Tarjetas; el destacado, la de calendarios de colores.
 - **Fotos de Instagram:** apruebe las seis, o diga cuáles prefiere.
-- **Caritas:** diga si le gusta el fondo y cuál cara va en cada beneficio.
+- Los banners, la franja de beneficios y el fondo de caritas salieron el 01/11 (ver abajo).
+
+## Colores del kit y la página de ejemplo (01/11/2026)
+
+**Lo que pidió Aixa:**
+- que las caritas no estén en todos lados;
+- que los colores vayan como en las combinaciones de la hoja de identidad;
+- que todo quede distribuido como la foto de la página de ejemplo que mandó (una papelería con el título rojo y azul, los círculos, los más vendidos y la franja roja de abajo).
+
+**Las combinaciones del kit:** rosa con azul, amarillo con verde, rojo con amarillo y azul con amarillo. Ahora se usan los colores exactos de la hoja (#ECA2C8, #3D77BC, #E94E26, #FFD812, #2EAA54, #FBF9F2, #363B39 y #1E231F). Salieron el celeste, el verde claro y el naranja, que no son del kit.
+
+**Cómo quedó:**
+- **Fondo:** todo va sobre el crema liso, sin el fondo de caritas. El color está en las piezas, como en la foto.
+- **Arriba:** los avisos en la franja roja y el encabezado en una fila: el logo a la izquierda, el menú al medio, y el buscador y "Mi pedido" a la derecha. En la tablet y el celu, menú hamburguesa.
+- **Inicio**, en el orden de la foto:
+  1. El título en rojo y azul con el botón rojo. A la derecha, las fotos sobre un panel azul con los stickers rosa y amarillo, y una mancha azul arriba a la izquierda.
+  2. Los cuatro círculos por uso, en rosa, azul, amarillo y rojo.
+  3. Los más vendidos, con el título en rojo, sin tarjeta.
+  4. Nosotros en una tarjeta blanca con el botón rosa y una carita pegada en la foto. Al lado, una tarjeta rosa con seis trabajos que llevan a Instagram, en el lugar de la reseña de la foto.
+  5. La franja roja de "¿Tenés una idea?" con la ola arriba, el botón amarillo y una mancha amarilla con la frase.
+- **Pie:** sobre el crema, con el logo en rojo, las páginas y las redes. Abajo, dónde estamos y la frase.
+- **Caritas:** solo en dos lugares. Una en la tarjeta de Nosotros y una en cada paso de "Cómo comprar", que van en azul, amarillo y rosa, cada uno con la carita de su combinación.
+- **Contacto:** las cuatro tarjetas en amarillo, rosa, azul y verde.
+- **Títulos:** en rojo, con el acento en azul.
+- **Letra chica:** el rojo y el azul del kit no se leen bien de fondo. El botón rojo, los avisos y la franja roja usan un rojo un punto más oscuro (#D73E16), y los enlaces chicos, un azul más oscuro.
+
+**Lo que salió y por qué:**
+- **La franja rosa de beneficios, los dos banners y la tira de Instagram de todas las páginas:** la foto no los tiene. Los beneficios siguen en los avisos de arriba, y las fotos de Instagram, en la tarjeta rosa del inicio. Si los quiere de vuelta, están en git.
+- **El logo repetido de marca de agua:** con él, la letra blanca de la franja roja no se leía bien.
+- **La reseña de la foto:** no hay reseñas reales. Si Aixa manda alguna, la tarjeta rosa puede mostrarla.
+
+**Falta que Aixa:**
+- diga si le gusta cómo quedó la distribución;
+- mande reseñas reales de clientas, si quiere la tarjeta como la de la foto.
 
 ### Ideas de la conversación con ChatGPT
 

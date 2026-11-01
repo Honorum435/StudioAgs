@@ -5,7 +5,7 @@ import { windowOf } from "./dom";
 // siempre está a la vista. El buscador lleva a productos/?q=, que catalog-view.ts lee al montar.
 
 const OPEN = "is-menu-open";
-const DESKTOP = "(min-width: 768px)";
+const DESKTOP = "(min-width: 1024px)";
 
 export function mountHeader(header: HTMLElement): () => void {
   const win = windowOf(header);
