@@ -8,6 +8,7 @@ import { WHATSAPP_NUMBER } from "./config";
 import { mountHeader } from "./header";
 import { compactOnScroll, cursorTrail, enableTouchActive, tilt } from "./motion";
 import { createOverlays } from "./overlays";
+import { mountSlideshow } from "./slideshow";
 import { renderPage } from "./templates";
 import { CONTACT_MESSAGE, CUSTOM_ORDER_MESSAGE, buildWhatsAppLink, createOrderCode } from "./whatsapp";
 
@@ -60,5 +61,6 @@ const heroArt = root.querySelector<HTMLElement>(".hero-art");
 if (heroArt) {
   tilt(heroArt);
 }
+root.querySelectorAll<HTMLElement>("[data-slideshow]").forEach(mountSlideshow);
 
 root.removeAttribute("data-prerendered");

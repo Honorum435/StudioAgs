@@ -51,14 +51,14 @@ Todo está en `src/catalog.ts`: nombre, descripción, opciones con su precio, ad
 
 El sitio tiene estas páginas, y todas se arman solas al hacer el build:
 
-- **Inicio** (`/`): armado como la página de ejemplo que mandó la dueña. Tiene el título con las fotos sobre el panel azul, los círculos por uso que abren Productos ya filtrado (`productos/?uso=regalar`) y los más vendidos, que se eligen en `featuredProducts` de `src/business.ts`. Abajo van Nosotros con los trabajos de Instagram al lado y la franja roja de "¿Tenés una idea?".
+- **Inicio** (`/`): armado como la página de ejemplo que mandó la dueña. Tiene el título con las fotos sobre el panel azul, los círculos por uso que abren Productos ya filtrado (`productos/?uso=regalar`) y los más vendidos, que se eligen en `featuredProducts` de `src/business.ts`. Abajo van Nosotros con Comunidad AGS al lado (pedidos ya entregados, que llevan a Instagram) y la franja roja de "¿Tenés una idea?".
 - **Productos** (`productos/`): el catálogo con los filtros, la búsqueda y el orden. El buscador del encabezado lleva acá con el texto (`productos/?q=tarjetas`).
-- **Nosotros** (`nosotros/`), **Preguntas frecuentes** (`preguntas-frecuentes/`) y **Contacto** (`contacto/`): sus textos están en `src/templates.ts` y los datos de contacto en `src/business.ts`. Las respuestas de Preguntas frecuentes salen de los mismos datos que "Antes de pedir".
+- **Nosotros** (`nosotros/`), **Preguntas frecuentes** (`preguntas-frecuentes/`) y **Contacto** (`contacto/`): sus textos están en `src/templates.ts` y los datos de contacto en `src/business.ts`. Las respuestas de Preguntas frecuentes salen de los mismos datos que "Antes de pedir", y al lado van pasando fotos de las galerías (`src/slideshow.ts`).
 - **Cada producto** (`producto/<id>/`, por ejemplo `producto/calendarios/`): una galería de fotos, las mismas opciones y el mismo pedido. Para sumar texto a una página, agregá párrafos en `details`; para sumar fotos, ver `fotos-album.py` más abajo.
 
 El pedido es el mismo en todas las páginas. Todas tienen además los avisos que corren arriba y el botón flotante "Escribinos", que abre WhatsApp cuando está el número.
 
-Los colores son los de la hoja de identidad del kit y van de a dos, como en el kit: rosa con azul, amarillo con verde, rojo con amarillo y azul con amarillo. Están en `:root` de `src/styles.css`, y `src/tokens.test.ts` prueba que cada texto se lea sobre su fondo.
+Los colores son los de la hoja de identidad del kit y van de a dos, como en el kit: rosa con azul, amarillo con verde, rojo con amarillo y azul con amarillo. Sobre un fondo de color la letra va en su pareja, nunca en negro, como en las tarjetas personales de la marca. Donde la pareja del kit no se lee (el rosa sobre el azul y el amarillo sobre el verde), el azul y el verde son los más oscuros de las tarjetas impresas. Están en `:root` de `src/styles.css`, y `src/tokens.test.ts` prueba que cada texto se lea sobre su fondo.
 
 ## Bueno saber
 
@@ -76,13 +76,13 @@ python extraer-imagenes.py "RUTA/AL/catalogo.pdf"
 
 Escribe en `public/images/`, nunca amplía una foto y al terminar imprime los anchos y altos que hay que declarar en `src/catalog.ts`. Qué foto y qué recorte usa cada producto se elige al principio del script; `--listar PAGINA` muestra las fotos de una página del PDF.
 
-Las fotos de la galería de cada página salen del álbum de fotos de la dueña (fotos HEIC y JPG del celular). Hace falta Pillow y [ffmpeg](https://ffmpeg.org/) para leer las HEIC:
+Las fotos de la galería de cada página, las de Comunidad AGS y las de "Así preparamos tu pedido" salen del álbum de fotos de la dueña (fotos HEIC y JPG del celular) y de las que mandó por WhatsApp. Hace falta Pillow y [ffmpeg](https://ffmpeg.org/) para leer las HEIC. Se le pasan todas las carpetas donde buscar:
 
 ```sh
-python fotos-album.py "RUTA/AL/ALBUM_DESCOMPRIMIDO"
+python fotos-album.py "RUTA/AL/ALBUM_DESCOMPRIMIDO" "RUTA/A/LAS_FOTOS_DE_WHATSAPP"
 ```
 
-Qué fotos usa cada producto se elige al principio del script. Cada foto sale cuadrada a 1200 y 600 px; después se declara en `gallery` del producto en `src/catalog.ts`.
+Qué fotos usa cada producto se elige al principio del script. Cada foto sale cuadrada a 1200 y 600 px, o a la medida del cuadrado si es más chico (las de WhatsApp miden 960); las marcadas para no recortar salen enteras. Después se declaran en `gallery` del producto en `src/catalog.ts`. Un producto que no estaba en el catálogo en PDF, como Complementos, no tiene ficha: su foto de tarjeta es la primera de la galería.
 
 ## Antes de publicar
 

@@ -71,7 +71,8 @@ export interface ImageSpec {
 
 export interface ProductImages {
   card: ImageSpec;
-  ficha: ImageSpec;
+  // La página del catálogo en PDF; los productos que no estaban en el catálogo no la tienen.
+  ficha?: ImageSpec;
   hero?: ImageSpec;
 }
 
@@ -170,9 +171,16 @@ function heroImage(productId: string, widths: readonly number[], height: number)
   return cardImage(`hero-${productId}`, widths, height);
 }
 
-// Fotos del álbum de la dueña, cuadradas a 1200 y 600 px como las produce fotos-album.py.
-function albumPhoto(productId: string, number: number, alt: string): GalleryPhoto {
-  return { image: cardImage(`foto-${productId}-${number}`, [600, 1200], 1200), alt };
+// Fotos del álbum de la dueña y de las que mandó por WhatsApp, cuadradas como las produce
+// fotos-album.py: a 1200 y 600 px, o a la medida del cuadrado si es más chico (las de WhatsApp
+// miden 960).
+function albumPhoto(productId: string, number: number, alt: string, size = 1200): GalleryPhoto {
+  return { image: cardImage(`foto-${productId}-${number}`, [600, size], size), alt };
+}
+
+// Una foto que la dueña pidió sin recortar: se ve entera dentro del cuadro de la galería.
+function uncroppedPhoto(productId: string, number: number, alt: string, width: number, height: number): GalleryPhoto {
+  return { image: cardImage(`foto-${productId}-${number}`, [600, width], height), alt, fit: "contain" };
 }
 
 export function imageUrl(spec: ImageSpec, width: number): string {
@@ -184,12 +192,15 @@ export function productPath(product: Pick<CatalogProduct, "id">): string {
   return `producto/${product.id}/`;
 }
 
-// Las fotos reales primero; después la de la tarjeta y la página del catálogo.
+// Las fotos reales primero; después la de la tarjeta, si no es una de ellas, y la página del
+// catálogo, si la tiene.
 export function galleryPhotos(product: CatalogProduct): GalleryPhoto[] {
+  const gallery = product.gallery ?? [];
+  const { card, ficha } = product.images;
   return [
-    ...(product.gallery ?? []),
-    { image: product.images.card, alt: product.imageAlt },
-    { image: product.images.ficha, alt: `Página del catálogo de ${product.name}`, fit: "contain" },
+    ...gallery,
+    ...(gallery.some((photo) => photo.image.base === card.base) ? [] : [{ image: card, alt: product.imageAlt }]),
+    ...(ficha ? [{ image: ficha, alt: `Página del catálogo de ${product.name}`, fit: "contain" as const }] : []),
   ];
 }
 
@@ -309,9 +320,9 @@ export const products: readonly CatalogProduct[] = [
     images: { card: cardImage("calendarios", [400, 800], 600), ficha: fichaImage("calendarios") },
     gallery: [
       albumPhoto("calendarios", 1, "Calendarios de todos los colores, uno encima del otro"),
-      albumPhoto("calendarios", 2, "Calendario rosa sobre una mesa, junto a un florero con flores secas"),
-      albumPhoto("calendarios", 3, "Calendarios semanales rojos con fibrones para escribir"),
-      albumPhoto("calendarios", 4, "Calendario de acrílico transparente con el mes de septiembre"),
+      albumPhoto("calendarios", 2, "Calendarios semanales rojos con fibrones para escribir"),
+      albumPhoto("calendarios", 3, "Calendario de cumpleaños personalizado para La Carmela, con caballos", 960),
+      albumPhoto("calendarios", 4, "Calendario 2027 personalizado con la foto de dos gatos, Minga y Pipi", 1075),
     ],
   },
   {
@@ -325,7 +336,6 @@ export const products: readonly CatalogProduct[] = [
       { id: "tira", label: "Tira de fotos", price: 1500, unit: "por tira" },
       { id: "foto-10x10", label: "Foto 10 × 10", price: 1500 },
       { id: "iman-10x10", label: "Imán 10 × 10", price: 4000 },
-      { id: "marco-con-iman", label: "Marco con imán", price: 5500 },
     ]),
     addOns: [],
     personalizable: true,
@@ -365,7 +375,10 @@ export const products: readonly CatalogProduct[] = [
       howToSend: photoSending,
     },
     images: { card: cardImage("pizarra-orma", [400, 617], 463), ficha: fichaImage("pizarra-orma") },
-    gallery: [albumPhoto("pizarra-orma", 1, "Pizarra OrMa negra con imanes, fotos, notas y fibrones")],
+    gallery: [
+      uncroppedPhoto("pizarra-orma", 2, "Pizarra OrMa gris con marco de madera, fotos, polaroids y una gorra colgada", 959, 1278),
+      albumPhoto("pizarra-orma", 1, "Pizarra OrMa negra con imanes, fotos, notas y fibrones"),
+    ],
   },
   {
     id: "entre-flores",
@@ -401,6 +414,7 @@ export const products: readonly CatalogProduct[] = [
     // El catálogo dice "de 1 a 4 días", sin aclarar si son hábiles.
     leadTime: { min: 1, max: 4, text: "De 1 a 4 días" },
     images: { card: cardImage("vinilos", [369], 277), ficha: fichaImage("vinilos") },
+    gallery: [albumPhoto("vinilos", 1, "Planchas de stickers redondos con el logo de Maika", 960)],
   },
   {
     id: "tarjetas",
@@ -416,29 +430,64 @@ export const products: readonly CatalogProduct[] = [
     intents: ["marca"],
     leadTime: pendingLeadTime(),
     images: { card: cardImage("tarjetas", [400, 679], 509), ficha: fichaImage("tarjetas") },
+    gallery: [
+      albumPhoto("tarjetas", 1, "Gift cards, tarjetas de agradecimiento y tarjetas personales hechas para Maika", 960),
+      albumPhoto("tarjetas", 2, "Tarjetas personales de StudioAGS en rosa, amarillo, azul y verde, con las caritas de la marca", 960),
+      albumPhoto("tarjetas", 3, "Tarjetas personales de Aura artesanal, velas y resina", 960),
+      albumPhoto("tarjetas", 4, "Tarjetas rosas de Las Reinas, artesanías para el hogar", 960),
+      albumPhoto("tarjetas", 5, "Tarjetas de Luz Sosa con la foto de dos manos tomadas", 960),
+    ],
   },
   {
     id: "bitacoras",
-    name: "Bitácoras y separadores",
-    description: "Bitácoras A5 o A6 con 60 hojas, y separadores clásicos o imantados.",
-    imageAlt: "Colección de diseños ilustrados para bitácoras",
+    name: "Bitácoras",
+    description: "Bitácoras anilladas A5 o A6 con 60 hojas y tapas ilustradas.",
+    imageAlt: "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas",
     ...singleGroup("bitacoras", { id: "formato", label: "Formato" }, [
       { id: "bitacora-a5", label: "Bitácora A5", price: 7000 },
       { id: "bitacora-a6", label: "Bitácora A6", price: 5000 },
-      { id: "separador", label: "Separador clásico", price: 1300 },
-      { id: "separador-con-iman", label: "Separador con imán", price: 1500 },
     ]),
     addOns: [],
     personalizable: true,
     needsPhotos: false,
     intents: ["organizarte", "regalar"],
     leadTime: pendingLeadTime(),
+    // La foto principal es la que eligió la dueña; la del catálogo queda en el inicio.
     images: {
-      card: cardImage("bitacoras", [400, 800], 600),
+      card: albumPhoto("bitacoras", 1, "", 896).image,
       ficha: fichaImage("bitacoras"),
       hero: heroImage("bitacoras", [400, 800], 1000),
     },
-    gallery: [albumPhoto("bitacoras", 1, "Bitácoras anilladas con tapas ilustradas de un perro salchicha y un sol")],
+    gallery: [albumPhoto("bitacoras", 1, "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas", 896)],
+  },
+  // Lo que se suma a otra cosa: los separadores, que antes iban con las bitácoras, y los marcos
+  // con imán, que iban con las fotos. Los precios son los del catálogo y los del cartel de la feria.
+  {
+    id: "complementos",
+    name: "Complementos",
+    description: "Separadores imantados para tus libros y bitácoras, y marcos con imán para tus fotos.",
+    imageAlt: "Separadores imantados con flores y moños, en sus tarjetas de colores",
+    ...singleGroup("complementos", { id: "tipo", label: "Tipo" }, [
+      { id: "separador", label: "Separador clásico", price: 1300 },
+      { id: "separador-con-iman", label: "Separador con imán", price: 1500 },
+      { id: "marco-con-iman", label: "Marco con imán", price: 5500 },
+    ]),
+    addOns: [],
+    personalizable: true,
+    needsPhotos: true,
+    intents: ["regalar", "organizarte"],
+    leadTime: pendingLeadTime(),
+    photoInstructions: {
+      quantity: "Solo para los marcos: una foto por cada marco. Los separadores no llevan fotos.",
+      quality: photoQuality,
+      howToSend: photoSending,
+    },
+    images: { card: albumPhoto("complementos", 1, "", 960).image },
+    gallery: [
+      albumPhoto("complementos", 1, "Separadores imantados con flores y moños, en sus tarjetas de colores", 960),
+      albumPhoto("complementos", 2, "Separadores imantados con flores, cuadros y figuras en blanco y negro", 960),
+      albumPhoto("complementos", 3, "Marco con imán en la heladera, con la foto de un perro"),
+    ],
   },
   {
     id: "laminas",
@@ -460,6 +509,7 @@ export const products: readonly CatalogProduct[] = [
     intents: ["decorar", "regalar"],
     leadTime: pendingLeadTime(),
     images: { card: cardImage("laminas", [400, 740], 555), ficha: fichaImage("laminas") },
+    gallery: [albumPhoto("laminas", 1, "Láminas e ilustraciones de distintos artistas en un exhibidor", 960)],
   },
 ];
 

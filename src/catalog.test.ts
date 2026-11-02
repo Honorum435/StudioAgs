@@ -32,7 +32,6 @@ const expectedPrices: Record<string, number> = {
   "fotos-tira": 1500,
   "fotos-foto-10x10": 1500,
   "fotos-iman-10x10": 4000,
-  "fotos-marco-con-iman": 5500,
   "pizarra-orma-gris-galvanizada": 50000,
   "pizarra-orma-negro-mate": 60000,
   "entre-flores": 35000,
@@ -44,8 +43,9 @@ const expectedPrices: Record<string, number> = {
   "vinilos-transparente-laca-completa": 21000,
   "bitacoras-bitacora-a5": 7000,
   "bitacoras-bitacora-a6": 5000,
-  "bitacoras-separador": 1300,
-  "bitacoras-separador-con-iman": 1500,
+  "complementos-separador": 1300,
+  "complementos-separador-con-iman": 1500,
+  "complementos-marco-con-iman": 5500,
   "laminas-a3-plus": 7000,
   "laminas-a3": 7000,
   "laminas-a4": 5000,
@@ -72,7 +72,7 @@ const allCombinations = products.flatMap((item) => item.combinations);
 const allAddOns = products.flatMap((item) => item.addOns);
 
 describe("catálogo", () => {
-  it("tiene los 8 productos con IDs únicos", () => {
+  it("tiene los 9 productos con IDs únicos", () => {
     const ids = products.map((item) => item.id);
     expect(ids).toEqual([
       "calendarios",
@@ -82,6 +82,7 @@ describe("catálogo", () => {
       "vinilos",
       "tarjetas",
       "bitacoras",
+      "complementos",
       "laminas",
     ]);
     expect(new Set(ids).size).toBe(ids.length);
@@ -104,6 +105,7 @@ describe("catálogo", () => {
       vinilos: ["material", "laca"],
       tarjetas: ["cantidad", "faz", "terminacion"],
       bitacoras: ["formato"],
+      complementos: ["tipo"],
       laminas: ["tamano"],
     });
   });
@@ -197,21 +199,24 @@ describe("catálogo", () => {
     expect(products.filter((item) => item.needsPhotos).map((item) => item.id)).toEqual([
       "fotos",
       "pizarra-orma",
+      "complementos",
     ]);
   });
 
   it("declara sus imágenes con anchos, ancho y alto", () => {
     for (const item of products) {
       const { card, ficha, hero } = item.images;
-      for (const spec of [card, ficha, ...(hero ? [hero] : [])]) {
+      for (const spec of [card, ...(ficha ? [ficha] : []), ...(hero ? [hero] : [])]) {
         expect(spec.base.length).toBeGreaterThan(0);
         expect(spec.widths.length).toBeGreaterThan(0);
         expect([...spec.widths].sort((a, b) => a - b)).toEqual(spec.widths);
         expect(spec.width).toBe(Math.max(...spec.widths));
         expect(spec.height).toBeGreaterThan(0);
       }
-      expect(card.base).toBe(item.id);
+      // La foto de la tarjeta es la del catálogo o una de la galería.
+      expect([item.id, ...(item.gallery ?? []).map((photo) => photo.image.base)]).toContain(card.base);
     }
+    expect(products.filter((item) => !item.images.ficha).map((item) => item.id)).toEqual(["complementos"]);
     expect(products.filter((item) => item.images.hero).map((item) => item.id)).toEqual([
       "fotos",
       "bitacoras",
@@ -224,7 +229,7 @@ describe("catálogo", () => {
 
   it("arma la ruta de cada imagen con su nombre base y su ancho", () => {
     expect(imageUrl(product("tarjetas").images.card, 400)).toBe("images/tarjetas-400.webp");
-    expect(imageUrl(product("tarjetas").images.ficha, 1800)).toBe("images/ficha-tarjetas-1800.webp");
+    expect(imageUrl(product("tarjetas").images.ficha!, 1800)).toBe("images/ficha-tarjetas-1800.webp");
   });
 });
 

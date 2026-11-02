@@ -29,8 +29,8 @@ describe("filtro por intención", () => {
     expect(visible({ intent: "organizarte" })).toContain("calendarios");
   });
 
-  it("'Todo' devuelve los 8 productos", () => {
-    expect(visible({ intent: ALL_INTENTS })).toHaveLength(8);
+  it("'Todo' devuelve los 9 productos", () => {
+    expect(visible({ intent: ALL_INTENTS })).toHaveLength(9);
     expect(visible({})).toEqual(products.map((product) => product.id));
   });
 
@@ -61,7 +61,7 @@ describe("búsqueda", () => {
   });
 
   it("una búsqueda vacía o solo con espacios no filtra", () => {
-    expect(visible({ query: "   " })).toHaveLength(8);
+    expect(visible({ query: "   " })).toHaveLength(9);
   });
 
   it("filtro y búsqueda sin coincidencias devuelve vacío", () => {

@@ -178,6 +178,48 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 - diga si le gusta cómo quedó la distribución;
 - mande reseñas reales de clientas, si quiere la tarjeta como la de la foto.
 
+## Combinaciones de las tarjetas y fotos nuevas (chat del 02/11/2026)
+
+**Lo que pidió Aixa:**
+- **Letras:** que sobre cada fondo de color la letra vaya en su color contrario, no en negro, como en sus tarjetas personales.
+- **Contacto:** "en azul va rosa, en rosa azul, en amarillo el verde y en verde amarillo", y el "Escribinos" en verde nomás, para que no haya tantos colores.
+- **Franja roja:** en la mancha amarilla, la letra naranja en vez de negra.
+- **Fuente:** el texto en Creato Light.
+- **Menú:** en azul, como el logo.
+- **Círculos del inicio:** con la diagonal, como sus historias destacadas de Instagram (/precios, /ferias).
+- **Preguntas frecuentes:** que las fotos se vayan pasando.
+- **Fotos nuevas** para Pizarra OrMa (sin recortar), Calendarios, Bitácoras (la de los cuadernos como principal), Tarjetas ("tarjetería para emprendimientos") y Láminas.
+- **Comunidad AGS:** pedidos entregados (las bolsas, el cuaderno rosa, los minijuegos, los imanes de La Josefa, las pizarras del cumple).
+- **Complementos:** una sección con los marcos y los separadores.
+- **Productos nuevos:** sumar los minijuegos, y el DTF (mandó las fotos de las remeras).
+
+**Cómo quedó:**
+- **Letras de color:** rosa con letra azul, amarillo con letra verde, azul con letra rosa y verde con letra amarilla. Va así en las tarjetas de Contacto, los pasos de "Cómo comprar", los stickers del inicio, el botón rosa, Comunidad AGS y el aviso de WhatsApp del pedido. El rosa sobre el azul del kit y el amarillo sobre el verde del kit no se leen, así que esas tarjetas usan un azul (#1D4687) y un verde (#176B33) más oscuros, como los de sus tarjetas impresas.
+- **Franja roja:** el título en amarillo y, sobre el amarillo, la frase y el botón en rojo. La letra blanca sobre el rojo y los avisos de arriba quedan en blanco, porque el amarillo chico no se lee sobre el rojo.
+- **El "Escribinos" de Contacto:** en verde, con la letra amarilla.
+- **Texto en Creato Light:** los títulos siguen en Bristol y lo que estaba en negrita sigue igual.
+- **Menú del encabezado:** en el azul del logo, apenas más oscuro para que se lea.
+- **Círculos:** "/PARA REGALAR", "/PARA TU EMPRENDIMIENTO", y así.
+- **Preguntas frecuentes:** pasan solas seis fotos de las galerías, con un botón para frenarlas. Con "reducir movimiento" arrancan quietas.
+- **Comunidad AGS:** la tarjeta rosa del inicio, que antes decía "Lo que venimos haciendo", ahora tiene ocho pedidos entregados y sigue llevando a Instagram. También van ahí las dos de calendarios que salieron de la galería.
+- **Galerías:**
+  - **Calendarios:** salieron la de septiembre y la del florero, y entraron el de La Carmela y el de 2027 con los gatos.
+  - **Pizarra OrMa:** la pizarra gris va primera y entera.
+  - **Bitácoras:** la de los cuadernos es la principal, recortada para que no se vea la tapa con un personaje de otro. Salió la que había puesto yo.
+  - **Tarjetas:** Maika, las tarjetas de StudioAGS con las caritas, Aura, Las Reinas y Luz Sosa.
+  - **Vinilos:** los stickers de Maika.
+  - **Láminas:** el exhibidor.
+- **Complementos:** un producto nuevo con el separador clásico ($ 1.300), el separador con imán ($ 1.500) y el marco con imán ($ 5.500). Los separadores salieron de Bitácoras y el marco, de Fotos. Los precios son los del catálogo y los del cartel de la feria (IMG_9314). Como no estaba en el catálogo en PDF, no tiene "Ver ficha".
+
+**Falta que Aixa:**
+- **Mande dos fotos que citó en el chat y no llegaron en los zip:**
+  - la que respondió con "Fijate de poner estos en calendario", con unos calendarios amarillos y rojos;
+  - la que respondió con "Y estas, borra las q pusiste nomas", para Bitácoras.
+- **Minijuegos y DTF:** precios y opciones para sumarlos a Productos. Las fotos ya están (los minijuegos en el álbum y en Comunidad AGS; las remeras, en el zip de los videos).
+- **Complementos:** confirme los precios del cartel de la feria y si los separadores con imán x3 a $ 3.000 van como opción.
+- **Creato Light:** diga si le gusta así o si prefiere la regular.
+- **El rojo con la carita:** mandó la carita amarilla sobre el rojo del kit sin decir para qué es; preguntarle dónde la quiere.
+
 ### Ideas de la conversación con ChatGPT
 
 Revisó la página de antes de los cambios del 30/10: varias cosas ya están hechas (páginas por producto, fotos reales, colores de la marca, bloque de pedidos personalizados) o ya estaban (precio que cambia con las opciones, contador del pedido, formulario y resumen antes de abrir WhatsApp). Lo nuevo que vale la pena:

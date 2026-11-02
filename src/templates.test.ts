@@ -108,8 +108,8 @@ const filledCart: CartSummary = (() => {
 })();
 
 describe("página prerenderizada", () => {
-  it("muestra los 8 productos con nombre, precio inicial con unidad, plazo y marca de personalizable", () => {
-    expect(doc.querySelectorAll("article.product-card")).toHaveLength(8);
+  it("muestra los 9 productos con nombre, precio inicial con unidad, plazo y marca de personalizable", () => {
+    expect(doc.querySelectorAll("article.product-card")).toHaveLength(9);
 
     for (const item of products) {
       const element = card(item.id);
@@ -218,7 +218,7 @@ describe("página prerenderizada", () => {
           "best-section",
           "story-row",
           "about-teaser",
-          "instagram-card",
+          "community-card",
           "custom-order",
           "site-footer",
         ],
@@ -382,18 +382,19 @@ describe("inicio", () => {
     expect(homeDoc.querySelector(".about-teaser .about-sticker")?.getAttribute("aria-hidden")).toBe("true");
   });
 
-  it("al lado de Nosotros, seis trabajos que llevan a Instagram en un solo enlace", () => {
-    const card = homeDoc.querySelector(".story-row .instagram-card")!;
+  it("al lado de Nosotros, Comunidad AGS: ocho pedidos que llevan a Instagram en un solo enlace", () => {
+    const card = homeDoc.querySelector(".story-row .community-card")!;
+    expect(card.querySelector("h2")?.textContent).toBe("Comunidad AGS");
     const links = [...card.querySelectorAll<HTMLAnchorElement>("a")];
     expect(links).toHaveLength(1);
     expect(links[0].getAttribute("href")).toBe("https://www.instagram.com/__studioags/");
     expect(links[0].getAttribute("target")).toBe("_blank");
     expect(accessibleName(links[0])).toBe("Seguinos en @__studioags (se abre en otra pestaña)");
     const photos = [...card.querySelectorAll("img")];
-    expect(photos).toHaveLength(6);
+    expect(photos).toHaveLength(8);
     expect(photos.every((photo) => photo.getAttribute("alt") === "" && photo.getAttribute("loading") === "lazy")).toBe(true);
     for (const pageDoc of [doc, aboutDoc, faqDoc, contactDoc]) {
-      expect(pageDoc.querySelector(".instagram-card")).toBeNull();
+      expect(pageDoc.querySelector(".community-card")).toBeNull();
     }
   });
 });
@@ -590,10 +591,10 @@ describe("sin estilos en línea", () => {
 describe("controles antes de hidratar", () => {
   it("cada botón de sumar tiene un nombre distinto con el producto y viene deshabilitado", () => {
     const buttons = [...doc.querySelectorAll<HTMLButtonElement>('button[data-action="add"]')];
-    expect(buttons).toHaveLength(8);
+    expect(buttons).toHaveLength(9);
 
     const names = buttons.map(accessibleName);
-    expect(new Set(names).size).toBe(8);
+    expect(new Set(names).size).toBe(9);
     for (const [index, item] of products.entries()) {
       const button = buttons[index];
       expect(button.dataset.productId).toBe(item.id);
@@ -641,6 +642,11 @@ describe("controles antes de hidratar", () => {
   it("'Ver ficha' es un enlace común a la página de 1800 px, con el producto en el nombre", () => {
     for (const item of products) {
       const link = card(item.id).querySelector<HTMLAnchorElement>("a.ficha-link")!;
+      if (!item.images.ficha) {
+        // Lo que no estaba en el catálogo en PDF no tiene ficha.
+        expect(link).toBeNull();
+        continue;
+      }
       expect(link.getAttribute("href")).toBe(`images/ficha-${item.id}-1800.webp`);
       expect(link.dataset.action).toBe("open-ficha");
       expect(link.dataset.productId).toBe(item.id);

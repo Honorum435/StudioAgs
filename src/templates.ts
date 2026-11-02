@@ -61,14 +61,14 @@ export const INTENT_PHOTO_SIZES = "(max-width: 767px) 132px, 168px";
 export const BEST_PHOTO_SIZES = "(max-width: 1023px) calc(50vw - 40px), 300px";
 export const ABOUT_PHOTO_SIZES = "(max-width: 767px) 90vw, 520px";
 // Tres fotos por fila en la tarjeta rosa del inicio, que en celular ocupa todo el ancho.
-export const INSTAGRAM_PHOTO_SIZES = "(max-width: 1023px) 30vw, 150px";
+export const COMMUNITY_PHOTO_SIZES = "(max-width: 1023px) 22vw, 110px";
 export const FAQ_PHOTO_SIZES = "(max-width: 1023px) 90vw, 440px";
 
 export const TOTAL_NOTE = "El total final se confirma por WhatsApp.";
 export const ORDER_UPDATED_NOTE = "Actualizamos tu pedido · revisalo";
 export const ORDER_CHANGED_NOTE = "Cambiaste el pedido: volvé a tocar Continuar.";
 
-type IconName = "bag" | "close" | "search" | "arrow" | "plus" | "minus" | "menu" | "chat" | "instagram";
+type IconName = "bag" | "close" | "search" | "arrow" | "plus" | "minus" | "menu" | "chat" | "instagram" | "pause" | "play";
 
 const iconPaths: Record<IconName, string> = {
   bag: '<path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
@@ -80,6 +80,8 @@ const iconPaths: Record<IconName, string> = {
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   minus: '<path d="M5 12h14"/>',
+  pause: '<path d="M9 6v12M15 6v12"/>',
+  play: '<path d="M8 5.5v13l11-6.5-11-6.5Z"/>',
 };
 
 function icon(name: IconName): string {
@@ -115,6 +117,12 @@ function responsiveImage(spec: ImageSpec, options: ImageOptions): string {
     options.highPriority ? 'fetchpriority="high"' : 'decoding="async"',
   ];
   return `<img ${attributes.filter(Boolean).join(" ")} />`;
+}
+
+// Fotos cuadradas como las produce fotos-album.py: a 1200 y 600 px, o a la medida del cuadrado si
+// es más chico (las de WhatsApp miden 960).
+function squarePhoto(base: string, size = 1200): ImageSpec {
+  return { base, widths: [600, size], width: size, height: size };
 }
 
 function lowerFirst(text: string): string {
@@ -534,27 +542,30 @@ export function hero(catalog: readonly CatalogProduct[]): string {
     </section>`;
 }
 
-// Fotos del álbum, cuadradas como las de Instagram. Las fotos y el usuario son un solo enlace.
-const instagramPhotos: ImageSpec[] = [
-  "foto-calendarios-2",
-  "foto-pizarra-orma-1",
-  "foto-proceso-2",
-  "foto-bitacoras-1",
-  "foto-calendarios-3",
-  "foto-proceso-4",
-].map((base) => ({ base, widths: [600, 1200], width: 1200, height: 1200 }));
+// Comunidad AGS: pedidos que ya se entregaron, como los eligió la dueña. Las fotos y el usuario
+// son un solo enlace a Instagram.
+const communityPhotos: ImageSpec[] = [
+  squarePhoto("foto-comunidad-1", 960),
+  squarePhoto("foto-comunidad-2", 960),
+  squarePhoto("foto-comunidad-3", 960),
+  squarePhoto("foto-comunidad-4", 960),
+  squarePhoto("foto-comunidad-5"),
+  squarePhoto("foto-comunidad-6", 816),
+  squarePhoto("foto-comunidad-7"),
+  squarePhoto("foto-comunidad-8"),
+];
 
 // En el lugar de la reseña de la página de ejemplo: no hay reseñas reales todavía (pendientes.md).
-export function instagramCard(business: BusinessInfo): string {
+export function communityCard(business: BusinessInfo): string {
   const handle = businessValue(business.instagramHandle).replace(/^@/, "");
   return `
-    <section class="instagram-card" aria-labelledby="instagram-title">
-      <h2 id="instagram-title">Lo que venimos haciendo</h2>
-      <a class="instagram-link" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer">
-        <span class="instagram-grid">
-          ${instagramPhotos.map((photo) => responsiveImage(photo, { alt: "", sizes: INSTAGRAM_PHOTO_SIZES, loading: "lazy" })).join("")}
+    <section class="community-card" aria-labelledby="community-title">
+      <h2 id="community-title">Comunidad AGS</h2>
+      <a class="community-link" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer">
+        <span class="community-grid">
+          ${communityPhotos.map((photo) => responsiveImage(photo, { alt: "", sizes: COMMUNITY_PHOTO_SIZES, loading: "lazy" })).join("")}
         </span>
-        <span class="instagram-handle">${icon("instagram")} Seguinos en @${escapeHtml(handle)} ${icon("arrow")}</span><span class="visually-hidden"> (se abre en otra pestaña)</span>
+        <span class="community-handle">${icon("instagram")} Seguinos en @${escapeHtml(handle)} ${icon("arrow")}</span><span class="visually-hidden"> (se abre en otra pestaña)</span>
       </a>
     </section>`;
 }
@@ -630,9 +641,9 @@ export function bestSellers({ business, catalog }: PageData): string {
     </section>`;
 }
 
-const stampPhoto: ImageSpec = { base: "foto-proceso-1", widths: [600, 1200], width: 1200, height: 1200 };
+const stampPhoto = squarePhoto("foto-proceso-1");
 const STAMP_ALT = "Sello con la carita de StudioAGS junto a la almohadilla y dos tarjetas recién selladas";
-const boardPhoto: ImageSpec = { base: "foto-pizarra-orma-1", widths: [600, 1200], width: 1200, height: 1200 };
+const boardPhoto = squarePhoto("foto-pizarra-orma-1");
 const BOARD_ALT = "Pizarra negra con imanes de colores que dicen ags studio, fotos, notas y fibrones";
 
 // Tarjeta blanca con la foto y una carita del kit pegada en la esquina, como la flor de la página
@@ -652,10 +663,10 @@ export function aboutTeaser(): string {
     </section>`;
 }
 
-// Nosotros y los trabajos de Instagram, uno al lado del otro.
+// Nosotros y Comunidad AGS, uno al lado del otro.
 export function storyRow(business: BusinessInfo): string {
   return `
-    <div class="story-row">${aboutTeaser()}${instagramCard(business)}
+    <div class="story-row">${aboutTeaser()}${communityCard(business)}
     </div>`;
 }
 
@@ -825,7 +836,7 @@ export function productCard(product: CatalogProduct): string {
         ${photoHelp(product)}
         <div class="card-actions">
           <button class="add-button" type="button" data-action="add" data-product-id="${id}" disabled>${addButtonContent(product, resolved)}</button>
-          <a class="text-button ficha-link" href="${attr(imageUrl(product.images.ficha, product.images.ficha.width))}" data-action="open-ficha" data-product-id="${id}">Ver ficha<span class="visually-hidden"> de ${escapeHtml(product.name)}</span></a>
+          ${fichaLink(product)}
         </div>
       </div>
     </article>`;
@@ -889,7 +900,7 @@ export function productPage(product: CatalogProduct): string {
         ${photoHelp(product)}
         <div class="card-actions">
           <button class="add-button" type="button" data-action="add" data-product-id="${id}" disabled>${addButtonContent(product, resolved)}</button>
-          <a class="text-button ficha-link" href="${attr(imageUrl(product.images.ficha, product.images.ficha.width))}" data-action="open-ficha" data-product-id="${id}">Ver ficha<span class="visually-hidden"> de ${escapeHtml(product.name)}</span></a>
+          ${fichaLink(product)}
         </div>
       </div>
     </article>`;
@@ -1071,7 +1082,7 @@ const processSteps: Array<{ title: string; text: string; alt: string }> = [
 export function processSection(): string {
   const steps = processSteps
     .map((step, index) => {
-      const photo: ImageSpec = { base: `foto-proceso-${index + 1}`, widths: [600, 1200], width: 1200, height: 1200 };
+      const photo = squarePhoto(`foto-proceso-${index + 1}`);
       return `
         <li class="process-step">
           ${responsiveImage(photo, { className: "process-photo", alt: step.alt, sizes: PROCESS_PHOTO_SIZES, loading: "lazy" })}
@@ -1094,7 +1105,35 @@ export function processSection(): string {
     </section>`;
 }
 
-const faqPhoto: ImageSpec = { base: "foto-calendarios-4", widths: [600, 1200], width: 1200, height: 1200 };
+// Fotos que se van pasando junto a las preguntas, como pidió la dueña. Son de las galerías.
+const faqPhotos: ImageSpec[] = [
+  squarePhoto("foto-calendarios-3", 960),
+  squarePhoto("foto-complementos-1", 960),
+  squarePhoto("foto-bitacoras-1", 896),
+  squarePhoto("foto-tarjetas-1", 960),
+  squarePhoto("foto-calendarios-4", 1075),
+  squarePhoto("foto-tarjetas-2", 960),
+];
+
+// Una foto a la vista por vez; slideshow.ts las pasa solas y muestra el botón para frenarlas.
+// Sin JavaScript queda la primera. Son de adorno: el texto está en las preguntas.
+function slideshow(photos: readonly ImageSpec[], className: string, sizes: string): string {
+  const slides = photos
+    .map((photo, index) =>
+      responsiveImage(photo, {
+        className: `slideshow-slide${index === 0 ? " is-current" : ""}`,
+        alt: "",
+        sizes,
+        loading: "lazy",
+      }),
+    )
+    .join("");
+  return `
+        <div class="slideshow ${className}" data-slideshow>
+          <div class="slideshow-slides">${slides}</div>
+          <button class="slideshow-toggle" type="button" aria-pressed="false" data-slideshow-toggle hidden>${icon("pause")}${icon("play")}<span class="visually-hidden">Pausar las fotos</span></button>
+        </div>`;
+}
 
 // Preguntas frecuentes: las respuestas salen de los mismos datos que "Antes de pedir".
 export function faqSection({ business, catalog }: PageData): string {
@@ -1146,7 +1185,7 @@ export function faqSection({ business, catalog }: PageData): string {
             )
             .join("\n          ")}
         </div>
-        ${responsiveImage(faqPhoto, { className: "faq-photo", alt: "Calendario de acrílico transparente con el mes de septiembre", sizes: FAQ_PHOTO_SIZES, loading: "lazy" })}
+        ${slideshow(faqPhotos, "faq-slideshow", FAQ_PHOTO_SIZES)}
       </div>
     </section>`;
 }
@@ -1191,10 +1230,22 @@ export function fichaAlt(product: CatalogProduct): string {
   return `Página del catálogo de ${product.name}, con sus formatos y precios`;
 }
 
+// Sin página del catálogo, el producto no tiene "Ver ficha".
+function fichaLink(product: CatalogProduct): string {
+  const ficha = product.images.ficha;
+  if (!ficha) {
+    return "";
+  }
+  return `<a class="text-button ficha-link" href="${attr(imageUrl(ficha, ficha.width))}" data-action="open-ficha" data-product-id="${attr(product.id)}">Ver ficha<span class="visually-hidden"> de ${escapeHtml(product.name)}</span></a>`;
+}
+
 // Contenido de la ficha: la foto de la tarjeta queda a la vista hasta que carga la página.
 export function fichaContent(product: CatalogProduct, placeholderSrc?: string): string {
   const card = product.images.card;
   const ficha = product.images.ficha;
+  if (!ficha) {
+    return "";
+  }
   const placeholder = placeholderSrc ?? imageUrl(card, Math.min(...card.widths));
   return `
     <div class="ficha-frame" data-action="zoom-ficha">

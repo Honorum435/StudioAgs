@@ -218,7 +218,7 @@ describe("build", { timeout: 60_000 }, () => {
     const ld = /<script type="application\/ld\+json">([^<]*)<\/script>/.exec(head);
     expect(ld).not.toBeNull();
     const data = JSON.parse(ld![1]) as { "@graph": Array<{ "@type": string; numberOfItems?: number }> };
-    expect(data["@graph"].find((node) => node["@type"] === "ItemList")?.numberOfItems).toBe(8);
+    expect(data["@graph"].find((node) => node["@type"] === "ItemList")?.numberOfItems).toBe(9);
   });
 
   it("arma Productos, Nosotros y Contacto en <id>/, con <base>, sus metadatos y los mismos archivos", async () => {
@@ -249,7 +249,7 @@ describe("build", { timeout: 60_000 }, () => {
     }
 
     const catalog = await readFile(join(outDir(), "productos", "index.html"), "utf8");
-    expect(catalog.match(/<article class="product-card"/g)).toHaveLength(8);
+    expect(catalog.match(/<article class="product-card"/g)).toHaveLength(9);
     for (const product of completeCatalog) {
       expect(catalog).toContain(
         `<h3 id="producto-${product.id}-titulo"><a class="product-link" href="producto/${product.id}/">${product.name}</a></h3>`,

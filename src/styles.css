@@ -1,5 +1,13 @@
 /* Fuentes de la marca, alojadas en el sitio. Creato Display tiene licencia OFL
    (creato-display-licencia.txt); falta confirmar la de Bristol antes de publicar. */
+/* El texto va en Creato Light, como pidió la dueña; la regular queda para lo que pide 400. */
+@font-face {
+  font-family: "Creato Display";
+  src: url("./creato-display-light.otf") format("opentype");
+  font-weight: 300;
+  font-display: swap;
+}
+
 @font-face {
   font-family: "Creato Display";
   src: url("./creato-display-regular.otf") format("opentype");
@@ -57,7 +65,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-optical-sizing: auto;
-  font-weight: 400;
+  font-weight: 300;
   letter-spacing: 0.012em;
   --paper: #fbf9f2;
   --white: #ffffff;
@@ -89,6 +97,15 @@
      va de fondo de la letra blanca y el azul más oscuro, de letra sobre el papel. */
   --red-deep: #d73e16;
   --blue-ink: #2a5f99;
+  /* Sobre un fondo de color la letra va en su pareja, nunca en negro, como en las tarjetas
+     personales de la marca. El rosa sobre el azul del kit y el amarillo sobre el verde no llegan
+     a 4,5:1: el azul y el verde de esas parejas son los de las tarjetas impresas, más oscuros.
+     El rojo más oscuro es la letra chica sobre el amarillo. */
+  --blue-deep: #1d4687;
+  --green-deep: #176b33;
+  --red-ink: #b22e0c;
+  /* El azul del logo, apenas más oscuro para que el menú se lea sobre el papel. */
+  --blue-text: #3a73b8;
   --focus-ring: var(--blue);
   --yellow-soft: #fce77d;
   /* Rosas claros del kit: el destello de los botones al pasar y al tocar. */
@@ -411,7 +428,7 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: clamp(20px, 2.6vw, 40px);
-  color: var(--ink-mid);
+  color: var(--blue-text);
   font-size: 14px;
   font-weight: 600;
 }
@@ -422,9 +439,8 @@ button:disabled {
   align-items: center;
 }
 
-/* La página en la que estás: en azul y subrayada. */
+/* La página en la que estás: subrayada. */
 .main-nav a[aria-current="page"] {
-  color: var(--blue-ink);
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 6px;
@@ -606,7 +622,7 @@ p {
   min-height: 48px;
   border-color: var(--pink);
   background: var(--pink);
-  color: var(--ink);
+  color: var(--blue-deep);
 }
 
 .primary-button svg,
@@ -696,6 +712,7 @@ p {
   top: 0;
   right: 0;
   background: var(--pink);
+  color: var(--blue-deep);
   transform: rotate(8deg);
 }
 
@@ -703,6 +720,7 @@ p {
   right: 4%;
   bottom: 0;
   background: var(--yellow);
+  color: var(--green-deep);
   transform: rotate(-7deg);
 }
 
@@ -1474,6 +1492,7 @@ main > .catalog-section:first-child {
 
 .custom-order h2 {
   margin: 0 0 12px;
+  color: var(--yellow);
   font-family: var(--display);
   font-size: clamp(38px, 4.4vw, 58px);
   font-weight: 500;
@@ -1490,7 +1509,7 @@ main > .catalog-section:first-child {
 .custom-order .custom-order-button {
   border-color: var(--yellow);
   background: var(--yellow);
-  color: var(--ink);
+  color: var(--red-ink);
 }
 
 /* La franja tiene el relleno de la página a cada lado: la mancha lo come para llegar al borde. */
@@ -1502,7 +1521,7 @@ main > .catalog-section:first-child {
   padding: 24px 40px 24px 56px;
   border-radius: 100% 0 0 100% / 70% 0 0 100%;
   background: var(--yellow);
-  color: var(--ink);
+  color: var(--red-deep);
   font-family: var(--display);
   font-size: clamp(24px, 2.4vw, 32px);
   line-height: 1.05;
@@ -1574,6 +1593,12 @@ main > .catalog-section:first-child {
   text-transform: uppercase;
   font-size: 21px;
   line-height: 1.15;
+}
+
+/* Con la diagonal, como las historias destacadas de Instagram. Los lectores no la leen. */
+.intent-label::before {
+  content: "/";
+  content: "/" / "";
 }
 
 .intent-blurb {
@@ -1700,17 +1725,20 @@ main > .catalog-section:first-child {
   transform: rotate(-10deg);
 }
 
-.instagram-card {
+/* Comunidad AGS: la tarjeta rosa con letra azul y ocho pedidos entregados. */
+.community-card {
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 32px clamp(24px, 3vw, 36px);
   border-radius: 32px;
   background: var(--pink);
+  color: var(--blue-deep);
 }
 
-.instagram-card h2 {
+.community-card h2 {
   margin: 0;
+  color: inherit;
   font-family: var(--display);
   text-transform: uppercase;
   font-size: clamp(28px, 2.8vw, 38px);
@@ -1718,44 +1746,43 @@ main > .catalog-section:first-child {
   line-height: 1.05;
 }
 
-.instagram-link {
+.community-link {
   display: grid;
   gap: 18px;
 }
 
-.instagram-grid {
+.community-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
-.instagram-grid img {
+.community-grid img {
   width: 100%;
   height: auto;
   aspect-ratio: 1;
   display: block;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 10px;
   transition: opacity 180ms ease;
 }
 
-.instagram-handle {
+.community-handle {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: var(--ink);
   font-size: 15px;
   font-weight: 700;
 }
 
-.instagram-handle svg {
+.community-handle svg {
   width: 19px;
   height: 19px;
   flex: 0 0 auto;
 }
 
-.instagram-card :focus-visible {
-  outline-color: var(--ink);
+.community-card :focus-visible {
+  outline-color: var(--blue-deep);
 }
 
 /* Presentación de Nosotros: la foto lleva forma de arco. */
@@ -1846,30 +1873,26 @@ main > .catalog-section:first-child {
   border-radius: 28px;
 }
 
+/* Como las tarjetas personales de la marca: amarillo con verde, rosa con azul, azul con rosa y
+   verde con amarillo. Todo lo de adentro va en el color de la letra. */
 .contact-card:nth-child(1) {
   background: var(--yellow);
+  color: var(--green-deep);
 }
 
 .contact-card:nth-child(2) {
   background: var(--pink);
+  color: var(--blue-deep);
 }
 
-/* Sobre el azul la letra va en blanco; sobre el verde, en el negro de la marca, porque el gris
-   no llega a 4,5:1. */
 .contact-card:nth-child(3) {
-  background: var(--blue);
-}
-
-.contact-card:nth-child(3) :is(h2, p) {
-  color: var(--white);
+  background: var(--blue-deep);
+  color: var(--pink);
 }
 
 .contact-card:nth-child(4) {
-  background: var(--green);
-}
-
-.contact-card:nth-child(4) :is(h2, p) {
-  color: var(--black);
+  background: var(--green-deep);
+  color: var(--yellow);
 }
 
 .contact-card h2 {
@@ -1882,24 +1905,26 @@ main > .catalog-section:first-child {
 
 .contact-card p {
   margin: 0;
-  color: var(--ink-soft);
   font-size: 15px;
   line-height: 1.65;
 }
 
 .contact-card a:not(.primary-button) {
-  color: var(--ink);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .contact-card :focus-visible {
-  outline-color: var(--ink);
+  outline-color: currentColor;
 }
 
-.contact-button {
+/* El "Escribinos" va en verde nomás, para que no haya tantos colores. */
+.contact-card .contact-button {
   margin-top: auto;
+  border-color: var(--green-deep);
+  background: var(--green-deep);
+  color: var(--yellow);
 }
 
 /* Bloque de confianza: filas de dato y respuesta sobre el papel. */
@@ -1996,16 +2021,18 @@ main > .catalog-section:first-child {
 }
 
 .step-card:nth-child(1) {
-  background: var(--blue);
-  color: var(--white);
+  background: var(--blue-deep);
+  color: var(--pink);
 }
 
 .step-card:nth-child(2) {
   background: var(--yellow);
+  color: var(--green-deep);
 }
 
 .step-card:nth-child(3) {
   background: var(--pink);
+  color: var(--blue-deep);
 }
 
 .step-card::after {
@@ -2336,13 +2363,63 @@ html[data-layer] .cursor-trail {
   margin-bottom: 8px;
 }
 
-.faq-photo {
+/* Fotos que se van pasando: todas en el mismo cuadro, se ve una por vez y se funden al cambiar.
+   El botón para frenarlas va arriba, lejos del "Escribinos" flotante. */
+.slideshow {
+  position: relative;
+}
+
+.slideshow-slides {
+  display: grid;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border-radius: 32px;
+  background: var(--photo-bg);
+  box-shadow: var(--shadow-photo);
+}
+
+.slideshow-slide {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.slideshow-slide.is-current {
+  opacity: 1;
+}
+
+.slideshow-toggle {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface-veil);
+  color: var(--ink);
+}
+
+.slideshow-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.slideshow-toggle[aria-pressed="false"] svg:last-of-type,
+.slideshow-toggle[aria-pressed="true"] svg:first-of-type {
+  display: none;
+}
+
+.faq-slideshow {
   position: sticky;
   top: calc(var(--header-compact) + 24px);
-  width: 100%;
-  height: auto;
-  border-radius: 32px;
-  box-shadow: var(--shadow-photo);
 }
 
 /* Botón flotante para escribir, abajo a la derecha. En el celu sube cuando aparece la barra del
@@ -2928,8 +3005,8 @@ textarea.field-input {
 .checkout-notice {
   margin: 0;
   padding: 12px 14px;
-  background: var(--green);
-  color: var(--black);
+  background: var(--green-deep);
+  color: var(--yellow);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
@@ -2937,6 +3014,7 @@ textarea.field-input {
 
 .checkout-notice.is-warning {
   background: var(--yellow-soft);
+  color: var(--ink);
 }
 
 .checkout-changed {
@@ -3564,7 +3642,7 @@ textarea.field-input {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .faq-photo {
+  .faq-slideshow {
     position: static;
     max-width: 440px;
   }
@@ -3698,7 +3776,7 @@ textarea.field-input {
   }
 
   .about-teaser,
-  .instagram-card {
+  .community-card {
     padding: 20px 20px 26px;
     border-radius: 26px;
   }

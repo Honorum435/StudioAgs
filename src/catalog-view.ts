@@ -253,7 +253,7 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
 
   function zoomWidth(fitWidth: number, product: CatalogProduct): number {
     const density = win.devicePixelRatio || 1;
-    return Math.round(Math.max(fitWidth * 2, product.images.ficha.width / density));
+    return Math.round(Math.max(fitWidth * 2, (product.images.ficha?.width ?? 0) / density));
   }
 
   // Alterna entre la página ajustada al ancho y ampliada, manteniendo el punto tocado en su lugar.
@@ -302,7 +302,7 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   function openFicha(link: HTMLElement, event: MouseEvent): void {
     const island = cards.get(link.dataset.productId ?? "");
     // Con modificadores o sin diálogo, el enlace abre la imagen como siempre.
-    if (!island || !fichaDialog || !fichaBody || !isPlainClick(event)) {
+    if (!island?.product.images.ficha || !fichaDialog || !fichaBody || !isPlainClick(event)) {
       return;
     }
     event.preventDefault();
