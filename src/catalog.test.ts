@@ -45,6 +45,7 @@ const expectedPrices: Record<string, number> = {
   "bitacoras-bitacora-a6": 5000,
   "complementos-separador": 1300,
   "complementos-separador-con-iman": 1500,
+  "complementos-separadores-con-iman-x3": 3000,
   "complementos-marco-con-iman": 5500,
   "laminas-a3-plus": 7000,
   "laminas-a3": 7000,
@@ -217,10 +218,8 @@ describe("catálogo", () => {
       expect([item.id, ...(item.gallery ?? []).map((photo) => photo.image.base)]).toContain(card.base);
     }
     expect(products.filter((item) => !item.images.ficha).map((item) => item.id)).toEqual(["complementos"]);
-    expect(products.filter((item) => item.images.hero).map((item) => item.id)).toEqual([
-      "fotos",
-      "bitacoras",
-    ]);
+    // La polaroid grande del inicio es la foto del puesto; la chica, la de Fotos para guardar.
+    expect(products.filter((item) => item.images.hero).map((item) => item.id)).toEqual(["fotos"]);
     const bases = products.flatMap(({ images }) =>
       [images.card, images.ficha, images.hero].flatMap((spec) => (spec ? [spec.base] : [])),
     );

@@ -269,7 +269,7 @@ const textPairs: ContrastPair[] = [
   text("títulos de los pasos", "--ink", "--surface-soft"),
   text("sticker rosa del inicio, botón rosa, Comunidad AGS, paso rosa y tarjeta rosa de Contacto", "--blue-deep", "--pink"),
   text("sticker amarillo del inicio, paso amarillo y tarjeta amarilla de Contacto", "--green-deep", "--yellow"),
-  text("paso azul y tarjeta azul de Contacto", "--pink", "--blue-deep"),
+  text("tarjeta azul de Contacto", "--pink", "--blue-deep"),
   text("tarjeta verde de Contacto, Escribinos de Contacto y aviso de que se abre WhatsApp", "--yellow", "--green-deep"),
   text("Escribinos de Contacto al pasar y al tocar", "--yellow", "--ink"),
   text("menú del encabezado", "--blue-text", "--paper"),
@@ -324,7 +324,7 @@ const textPairs: ContrastPair[] = [
   text("etiqueta ¡Sumado! del botón de sumar", "--ink", "--surface"),
   text("nombre del uso bajo su círculo", "--ink", "--paper"),
   text("adelanto de Nosotros en la tarjeta blanca", "--ink-soft", "--surface"),
-  text("botón flotante", "--white", "--blue"),
+  text("botón flotante y paso azul", "--white", "--blue"),
   text("botón de pedidos personalizados", "--red-ink", "--yellow"),
   text("botón de pedidos personalizados al pasar y al tocar", "--red-ink", "--white"),
   text("buscador y orden del catálogo", "--ink", "--surface"),
@@ -357,7 +357,7 @@ const nonTextPairs: ContrastPair[] = [
 
 const largeTextPairs: ContrastPair[] = [
   largeText("títulos rojos sobre el papel", "--red", "--paper"),
-  largeText("título rojo de la tarjeta de Nosotros", "--red", "--surface"),
+  largeText("título azul de la tarjeta de Nosotros", "--blue", "--surface"),
   largeText("acento azul de los títulos", "--blue", "--paper"),
   largeText("título amarillo de la franja roja", "--yellow", "--red-deep"),
   largeText("frase de la mancha amarilla de la franja roja", "--red-deep", "--yellow"),

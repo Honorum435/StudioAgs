@@ -178,6 +178,38 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 - diga si le gusta cómo quedó la distribución;
 - mande reseñas reales de clientas, si quiere la tarjeta como la de la foto.
 
+## Fotos del stand, formas y textos (chat del 02/11/2026, a la noche)
+
+**Lo que pidió Aixa:**
+- **Favicon:** la carita azul con los rulos rosas.
+- **Inicio:** en el panel azul, "caritas de fondo tipo marca de agua" y una foto del puesto de la feria.
+- **Nosotros:** la foto de los dos en el puesto ("Esta para nosotros capaz").
+- **"Hecho a mano en Paraná":** en azul.
+- **"Cómo comprar":** el paso azul "no está el mismo azul".
+- **Formas:** mandó dos fondos de otros como ejemplo ("no son nuestros pero tan buenos"), para hacer algo así con los colores del studio, "dispersos en los bordes un poco".
+- **Textos:** la descripción completa de Bitácoras ("queda más completo que solo 60 hojas"), la de los separadores con "Llevá 3 por solo $3.000", la de los minijuegos y seis frases "para no repetir siempre".
+- **La carita roja:** no va repetida de fondo.
+
+**Cómo quedó:**
+- **Favicon:** la carita sobre el azul, con el trazo un poco más grueso en los tamaños chicos para que se vea en la pestaña.
+- **Panel azul del inicio:** cuatro caritas del kit en blanco suave, repetidas (`caritas.py`). En la polaroid grande va el puesto con el cartel "Diseños personalizados por encargue"; la chica sigue con Fotos para guardar. La foto de Bitácoras que estaba ahí salió del inicio.
+- **Nosotros:** la foto del equipo en el arco, recortada sin las láminas y los stickers de abajo.
+- **"Hecho a mano en Paraná":** el título en el azul del logo.
+- **Paso azul:** ahora es el mismo azul del logo y del panel del inicio. Sobre ese azul el rosa no se lee, así que la letra va en blanco.
+- **Formas:** dibujé formas propias (una mancha, un destello, un sol, un arco y una onda) en los colores del kit, sin copiar los fondos de ejemplo. Asoman del costado entre una franja y otra en Inicio, Productos, Nosotros, Preguntas frecuentes, Contacto y la página de cada producto.
+- **Bitácoras:** su página tiene el texto completo, con el vos de la página. La descripción corta dice "60 hojas de opalina de 120 g".
+- **Complementos:** el texto de los separadores y la opción "3 separadores con imán" a $ 3.000.
+- **Frases:** una distinta en el pie de cada página. Antes el pie repetía "Para que lo lindo se quede", que ya es el título de Nosotros.
+- **Un arreglo de paso:** en el celu, el botón para frenar las fotos de Preguntas frecuentes aparecía arriba de todo, encima del encabezado. Ahora va en la esquina de la foto.
+
+**Falta que Aixa:**
+- **Archivos digitales:** quiere sumar plantillas para descargar o que se mandan por archivo, capaz en otra columna del menú. Falta saber cuáles serían, el precio y el formato, para no armar una página vacía.
+- **Minijuegos:** ya está su texto (más de 15 juegos reutilizables, 2 fibrones con borrador, 11,5 × 11,5 cm, en varios colores). Falta el precio.
+- **3 separadores a $ 3.000:** confirme que la promo es de los separadores con imán, como dice el cartel de la feria.
+- **"En preguntas frecuentes y contactos se pone todo azul pero en productos nop":** no queda claro a qué se refiere. El menú y los títulos se ven iguales en las tres páginas.
+- **Tarjeta azul de Contacto:** sigue en el azul oscuro con letra rosa, como pidió el 02/11. Si la quiere en el azul del logo, la letra tendría que ir en blanco.
+- **El tramo del chat de las 7:50 a las 8:00 p.m.:** no lo llegué a leer (había una captura de Nosotros).
+
 ## Combinaciones de las tarjetas y fotos nuevas (chat del 02/11/2026)
 
 **Lo que pidió Aixa:**
@@ -216,9 +248,9 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
   - la que respondió con "Fijate de poner estos en calendario", con unos calendarios amarillos y rojos;
   - la que respondió con "Y estas, borra las q pusiste nomas", para Bitácoras.
 - **Minijuegos y DTF:** precios y opciones para sumarlos a Productos. Las fotos ya están (los minijuegos en el álbum y en Comunidad AGS; las remeras, en el zip de los videos).
-- **Complementos:** confirme los precios del cartel de la feria y si los separadores con imán x3 a $ 3.000 van como opción.
+- **Complementos:** confirme los precios del cartel de la feria. (Los 3 separadores a $ 3.000 ya van: ver arriba).
 - **Creato Light:** diga si le gusta así o si prefiere la regular.
-- **El rojo con la carita:** mandó la carita amarilla sobre el rojo del kit sin decir para qué es; preguntarle dónde la quiere.
+- **El rojo con la carita:** mandó la carita amarilla sobre el rojo del kit sin decir para qué es; preguntarle dónde la quiere. (Dijo que no va repetida de fondo).
 
 ### Ideas de la conversación con ChatGPT
 

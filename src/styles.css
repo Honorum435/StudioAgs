@@ -544,12 +544,14 @@ button:disabled {
   border-radius: 0 0 100% 0 / 0 0 100% 0;
 }
 
+/* El panel lleva las caritas del kit de marca de agua (caritas.py), como pidió la dueña. */
 .hero::after {
   top: 0;
   right: 0;
   bottom: 0;
   width: 47%;
   border-radius: 0 0 0 160px;
+  background: url("./caritas-marca-de-agua.webp") 24px 12px / 280px repeat, var(--blue);
 }
 
 .hero-copy {
@@ -1822,8 +1824,10 @@ main > .catalog-section:first-child {
   font-size: 18px;
 }
 
+/* "Hecho a mano en Paraná" en azul, como pidió la dueña. */
 .about-teaser .about-copy h2 {
   margin-top: 0;
+  color: var(--blue);
   font-size: clamp(30px, 3vw, 42px);
 }
 
@@ -2011,7 +2015,8 @@ main > .catalog-section:first-child {
 }
 
 /* Cada paso en una combinación del kit, con la carita de la combinación al revés: azul con la
-   carita rosa, amarillo con la verde y rosa con la azul. */
+   carita rosa, amarillo con la verde y rosa con la azul. El azul es el mismo del logo y del panel
+   del inicio, como pidió la dueña; sobre él, el rosa no se lee, así que la letra va en blanco. */
 .step-card {
   position: relative;
   min-height: 183px;
@@ -2021,8 +2026,8 @@ main > .catalog-section:first-child {
 }
 
 .step-card:nth-child(1) {
-  background: var(--blue-deep);
-  color: var(--pink);
+  background: var(--blue);
+  color: var(--white);
 }
 
 .step-card:nth-child(2) {
@@ -2080,6 +2085,111 @@ main > .catalog-section:first-child {
   margin: 0;
   font-size: 14px;
   line-height: 1.65;
+}
+
+/* Formas sueltas en los bordes, como pidió la dueña con dos fondos de ejemplo: "dispersos en los
+   bordes un poco". Son dibujos propios (forma-*.svg) usados de máscara, así el color sale de los
+   tokens. Asoman del costado justo donde termina una franja y empieza otra, en el espacio vacío
+   entre las dos, para no quedar debajo de ningún texto. */
+.intent-section,
+.best-section,
+.story-row,
+.catalog-section,
+.how-section,
+.process-section,
+.faq-section,
+.trust-section {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+.intent-section::before,
+.best-section::before,
+.story-row::before,
+.catalog-section::after,
+.how-section::before,
+.process-section::before,
+.faq-section::before,
+.trust-section::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.intent-section::before {
+  width: 120px;
+  top: 0;
+  left: 0;
+  background: var(--pink);
+  mask: url("./forma-mancha.svg") center / contain no-repeat;
+  transform: translate(-30%, -50%) rotate(-30deg);
+}
+
+.best-section::before {
+  width: 76px;
+  top: 0;
+  right: 0;
+  background: var(--yellow);
+  mask: url("./forma-destello.svg") center / contain no-repeat;
+  transform: translate(35%, -50%) rotate(10deg);
+}
+
+.story-row::before {
+  width: 96px;
+  top: 0;
+  left: 0;
+  background: var(--green);
+  mask: url("./forma-arco.svg") center / contain no-repeat;
+  transform: translate(-30%, -78%) rotate(-24deg);
+}
+
+.catalog-section::after {
+  width: 110px;
+  right: 0;
+  bottom: 0;
+  background: var(--pink);
+  mask: url("./forma-onda.svg") center / contain no-repeat;
+  transform: translate(38%, 50%) rotate(-10deg);
+}
+
+.how-section::before {
+  width: 110px;
+  top: 0;
+  left: 0;
+  background: var(--blue);
+  mask: url("./forma-sol.svg") center / contain no-repeat;
+  transform: translate(-40%, -50%) rotate(8deg);
+}
+
+.process-section::before {
+  width: 110px;
+  top: 0;
+  right: 0;
+  background: var(--yellow);
+  mask: url("./forma-mancha.svg") center / contain no-repeat;
+  transform: translate(40%, -50%) rotate(24deg);
+}
+
+/* Preguntas frecuentes abre la página: la forma va adentro, arriba, al costado del título. */
+.faq-section::before {
+  width: 100px;
+  top: 28px;
+  right: 0;
+  background: var(--green);
+  mask: url("./forma-arco.svg") center / contain no-repeat;
+  transform: translateX(36%) rotate(28deg);
+}
+
+.trust-section::before {
+  width: 80px;
+  top: 0;
+  left: 0;
+  background: var(--red);
+  mask: url("./forma-destello.svg") center / contain no-repeat;
+  transform: translate(-36%, -50%) rotate(-8deg);
 }
 
 /* Pie sobre el papel, como en la página de ejemplo: el logo en rojo, las páginas al medio y las
@@ -3642,8 +3752,9 @@ textarea.field-input {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* Sin pegarse al bajar, pero relativa: el botón de pausa va en su esquina, no en la de la página. */
   .faq-slideshow {
-    position: static;
+    position: relative;
     max-width: 440px;
   }
 
@@ -3966,6 +4077,25 @@ textarea.field-input {
 
   .how-section {
     padding-block: 58px 61px;
+  }
+
+  /* Las formas de los bordes, más chicas: entran en el espacio entre franjas, que acá es menor. */
+  .intent-section::before,
+  .catalog-section::after,
+  .how-section::before,
+  .process-section::before {
+    width: 64px;
+  }
+
+  .best-section::before,
+  .story-row::before,
+  .faq-section::before,
+  .trust-section::before {
+    width: 48px;
+  }
+
+  .faq-section::before {
+    top: 12px;
   }
 
   .how-heading {

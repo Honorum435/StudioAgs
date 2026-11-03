@@ -503,17 +503,21 @@ export function noscriptNote(business: BusinessInfo): string {
     </noscript>`;
 }
 
+// El puesto de la feria con sus carteles, como pidió la dueña: entero, porque es vertical como la
+// polaroid. La foto del equipo va en Nosotros.
+const standPhoto: ImageSpec = { base: "foto-stand-1", widths: [600, 960], width: 960, height: 1280 };
+const teamPhoto = squarePhoto("foto-stand-2", 896);
+const TEAM_ALT = "Las dos personas de StudioAGS sonriendo en su puesto de una feria, con láminas, stickers y calendarios";
+
 export function hero(catalog: readonly CatalogProduct[]): string {
-  // La foto más ancha va en la polaroid grande.
-  const [main, small] = catalog
+  // En la polaroid grande, el puesto; en la chica, la foto de producto más ancha.
+  const [small] = catalog
     .flatMap((product) => (product.images.hero ? [product.images.hero] : []))
     .sort((a, b) => b.width - a.width);
-  const mainPhoto = main
-    ? `<div class="hero-photo hero-photo-main">
-          ${responsiveImage(main, { alt: "", sizes: HERO_MAIN_SIZES, highPriority: true })}
+  const mainPhoto = `<div class="hero-photo hero-photo-main">
+          ${responsiveImage(standPhoto, { alt: "", sizes: HERO_MAIN_SIZES, highPriority: true })}
           <span>un mundo de ideas</span>
-        </div>`
-    : "";
+        </div>`;
   const smallPhoto = small
     ? `<div class="hero-photo hero-photo-small">
           ${responsiveImage(small, { alt: "", sizes: HERO_SMALL_SIZES })}
@@ -643,8 +647,6 @@ export function bestSellers({ business, catalog }: PageData): string {
 
 const stampPhoto = squarePhoto("foto-proceso-1");
 const STAMP_ALT = "Sello con la carita de StudioAGS junto a la almohadilla y dos tarjetas recién selladas";
-const boardPhoto = squarePhoto("foto-pizarra-orma-1");
-const BOARD_ALT = "Pizarra negra con imanes de colores que dicen ags studio, fotos, notas y fibrones";
 
 // Tarjeta blanca con la foto y una carita del kit pegada en la esquina, como la flor de la página
 // de ejemplo.
@@ -681,7 +683,7 @@ export function aboutIntro(): string {
         <p>Nos gusta que cada cosa tenga algo tuyo: un nombre, una fecha, tu logo o esa foto que te encanta. Por eso trabajamos pedido por pedido: te mandamos una muestra antes de imprimir y seguimos hasta que te guste.</p>
         <p>Después viene la parte que más disfrutamos: lo preparamos a mano, lo sellamos con nuestra carita y lo envolvemos para que llegue listo para regalar o para quedártelo.</p>
       </div>
-      ${responsiveImage(boardPhoto, { className: "about-photo", alt: BOARD_ALT, sizes: ABOUT_PHOTO_SIZES, highPriority: true })}
+      ${responsiveImage(teamPhoto, { className: "about-photo", alt: TEAM_ALT, sizes: ABOUT_PHOTO_SIZES, highPriority: true })}
     </section>`;
 }
 
@@ -1192,7 +1194,18 @@ export function faqSection({ business, catalog }: PageData): string {
 
 // Como el pie de la página de ejemplo: el logo, las páginas y las redes en una fila; abajo, dónde
 // estamos y la frase.
-export function siteFooter(business: BusinessInfo): string {
+// Frases de la dueña (chat del 02/11/2026): una distinta en el pie de cada página, para no repetir
+// siempre la misma. "Para que lo lindo se quede" ya es el título de Nosotros.
+export const footerSlogans: Record<SitePageId | "inicio" | "producto", string> = {
+  inicio: "Cosas lindas que dan ganas de usar.",
+  productos: "Tu dosis diaria de creatividad.",
+  nosotros: "Lo cotidiano, un poco más divertido.",
+  "preguntas-frecuentes": "Menos descartable, más creatividad.",
+  contacto: "Dale color a lo cotidiano.",
+  producto: "Objetos para usar, jugar y repetir.",
+};
+
+export function siteFooter(business: BusinessInfo, slogan: string): string {
   const handle = businessValue(business.instagramHandle).replace(/^@/, "");
   const email = businessValue(business.email);
   const links = sitePages.map((page) => `<a class="footer-link" href="${sitePagePath(page.id)}">${page.label}</a>`);
@@ -1208,7 +1221,7 @@ export function siteFooter(business: BusinessInfo): string {
         <a class="footer-link" href="${attr(instagramUrl(handle))}">${icon("instagram")} Instagram</a>
       </div>
       <p class="footer-info">StudioAGS · Paraná, Entre Ríos · <a class="footer-link" href="mailto:${attr(email)}">${escapeHtml(email)}</a></p>
-      <p class="footer-tagline">Para que lo lindo se quede.</p>
+      <p class="footer-tagline">${escapeHtml(slogan)}</p>
     </footer>`;
 }
 
@@ -1311,7 +1324,13 @@ function skipLink(href: string, label: string): string {
 }
 
 // Lo que comparten todas las páginas alrededor de su contenido: el pedido sigue en cada una.
-function pageShell(data: PageData, skip: string, sections: readonly string[], current?: SitePageId): string {
+function pageShell(
+  data: PageData,
+  skip: string,
+  sections: readonly string[],
+  slogan: string,
+  current?: SitePageId,
+): string {
   return [
     skip,
     announcementBar(),
@@ -1320,7 +1339,7 @@ function pageShell(data: PageData, skip: string, sections: readonly string[], cu
     '<main id="contenido">',
     ...sections,
     "</main>",
-    siteFooter(data.business),
+    siteFooter(data.business, slogan),
     fichaDialog(),
     cartDialog(),
     stickyBar(),
@@ -1330,11 +1349,12 @@ function pageShell(data: PageData, skip: string, sections: readonly string[], cu
 }
 
 export function renderProductPage(data: PageData, product: CatalogProduct): string {
-  return pageShell(data, skipLink(`${productPath(product)}#producto-detalle`, "Ir al producto"), [
-    productPage(product),
-    howToBuy(),
-    relatedProducts(data, product),
-  ]);
+  return pageShell(
+    data,
+    skipLink(`${productPath(product)}#producto-detalle`, "Ir al producto"),
+    [productPage(product), howToBuy(), relatedProducts(data, product)],
+    footerSlogans.producto,
+  );
 }
 
 const sitePageSections: Record<SitePageId, (data: PageData) => string[]> = {
@@ -1345,16 +1365,21 @@ const sitePageSections: Record<SitePageId, (data: PageData) => string[]> = {
 };
 
 export function renderSitePage(data: PageData, id: SitePageId): string {
-  return pageShell(data, skipLink(`${sitePagePath(id)}#contenido`, "Ir al contenido"), sitePageSections[id](data), id);
+  return pageShell(
+    data,
+    skipLink(`${sitePagePath(id)}#contenido`, "Ir al contenido"),
+    sitePageSections[id](data),
+    footerSlogans[id],
+    id,
+  );
 }
 
 export function renderPage(data: PageData): string {
   // En el orden de la página de ejemplo de la dueña.
-  return pageShell(data, skipLink("#contenido", "Ir al contenido"), [
-    hero(data.catalog),
-    intentCircles(data),
-    bestSellers(data),
-    storyRow(data.business),
-    customOrder(data.business),
-  ]);
+  return pageShell(
+    data,
+    skipLink("#contenido", "Ir al contenido"),
+    [hero(data.catalog), intentCircles(data), bestSellers(data), storyRow(data.business), customOrder(data.business)],
+    footerSlogans.inicio,
+  );
 }

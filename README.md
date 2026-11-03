@@ -51,7 +51,7 @@ Todo está en `src/catalog.ts`: nombre, descripción, opciones con su precio, ad
 
 El sitio tiene estas páginas, y todas se arman solas al hacer el build:
 
-- **Inicio** (`/`): armado como la página de ejemplo que mandó la dueña. Tiene el título con las fotos sobre el panel azul, los círculos por uso que abren Productos ya filtrado (`productos/?uso=regalar`) y los más vendidos, que se eligen en `featuredProducts` de `src/business.ts`. Abajo van Nosotros con Comunidad AGS al lado (pedidos ya entregados, que llevan a Instagram) y la franja roja de "¿Tenés una idea?".
+- **Inicio** (`/`): armado como la página de ejemplo que mandó la dueña. Tiene el título con las fotos sobre el panel azul (el puesto de la feria y una de Fotos para guardar, con las caritas del kit de marca de agua), los círculos por uso que abren Productos ya filtrado (`productos/?uso=regalar`) y los más vendidos, que se eligen en `featuredProducts` de `src/business.ts`. Abajo van Nosotros con Comunidad AGS al lado (pedidos ya entregados, que llevan a Instagram) y la franja roja de "¿Tenés una idea?".
 - **Productos** (`productos/`): el catálogo con los filtros, la búsqueda y el orden. El buscador del encabezado lleva acá con el texto (`productos/?q=tarjetas`).
 - **Nosotros** (`nosotros/`), **Preguntas frecuentes** (`preguntas-frecuentes/`) y **Contacto** (`contacto/`): sus textos están en `src/templates.ts` y los datos de contacto en `src/business.ts`. Las respuestas de Preguntas frecuentes salen de los mismos datos que "Antes de pedir", y al lado van pasando fotos de las galerías (`src/slideshow.ts`).
 - **Cada producto** (`producto/<id>/`, por ejemplo `producto/calendarios/`): una galería de fotos, las mismas opciones y el mismo pedido. Para sumar texto a una página, agregá párrafos en `details`; para sumar fotos, ver `fotos-album.py` más abajo.
@@ -83,6 +83,18 @@ python fotos-album.py "RUTA/AL/ALBUM_DESCOMPRIMIDO" "RUTA/A/LAS_FOTOS_DE_WHATSAP
 ```
 
 Qué fotos usa cada producto se elige al principio del script. Cada foto sale cuadrada a 1200 y 600 px, o a la medida del cuadrado si es más chico (las de WhatsApp miden 960); las marcadas para no recortar salen enteras. Después se declaran en `gallery` del producto en `src/catalog.ts`. Un producto que no estaba en el catálogo en PDF, como Complementos, no tiene ficha: su foto de tarjeta es la primera de la galería.
+
+Las dos fotos del puesto de la feria (la polaroid grande del inicio y el arco de Nosotros) salen del mismo script, en la lista `stand`.
+
+La marca de agua del panel azul (`src/caritas-marca-de-agua.webp`) la arma `caritas.py` con cuatro caras de la hoja de identidad del kit:
+
+```sh
+python caritas.py "RUTA/A/Identidad.jpg"
+```
+
+Las formas de colores que asoman en los bordes son dibujos propios (`src/forma-*.svg`) que se usan de máscara: el color sale de los tokens de `src/styles.css`. El favicon (`public/favicon-*.png` y `public/apple-touch-icon.png`) es la carita azul y rosa que mandó la dueña.
+
+Cada página tiene su propia frase en el pie, de las que eligió la dueña: están en `footerSlogans` de `src/templates.ts`.
 
 ## Antes de publicar
 

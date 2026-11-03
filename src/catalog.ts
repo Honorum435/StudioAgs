@@ -441,7 +441,7 @@ export const products: readonly CatalogProduct[] = [
   {
     id: "bitacoras",
     name: "Bitácoras",
-    description: "Bitácoras anilladas A5 o A6 con 60 hojas y tapas ilustradas.",
+    description: "Bitácoras anilladas A5 o A6, con 60 hojas de opalina de 120 g y tapas ilustradas.",
     imageAlt: "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas",
     ...singleGroup("bitacoras", { id: "formato", label: "Formato" }, [
       { id: "bitacora-a5", label: "Bitácora A5", price: 7000 },
@@ -452,13 +452,18 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["organizarte", "regalar"],
     leadTime: pendingLeadTime(),
-    // La foto principal es la que eligió la dueña; la del catálogo queda en el inicio.
+    // La foto principal es la que eligió la dueña.
     images: {
       card: albumPhoto("bitacoras", 1, "", 896).image,
       ficha: fichaImage("bitacoras"),
-      hero: heroImage("bitacoras", [400, 800], 1000),
     },
     gallery: [albumPhoto("bitacoras", 1, "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas", 896)],
+    // El texto de la dueña (chat del 02/11/2026), con el vos de la página.
+    details: [
+      "Nuestras bitácoras tienen 60 hojas de opalina de 120 g, ideales para escritura, dibujo e ilustración. Su papel permite trabajar con distintos materiales, incluidos marcadores y pinturas a base de alcohol. Van anilladas con espiral blanco, negro o transparente.",
+      "Consultá la disponibilidad de diseños, tamaños (A5 y A6) y stock al momento de hacer tu pedido.",
+      "También hacemos tapas completamente personalizadas con nombres, ilustraciones, logos o diseños exclusivos. Para coordinar este tipo de trabajo y pedir un presupuesto, escribinos por Instagram o WhatsApp.",
+    ],
   },
   // Lo que se suma a otra cosa: los separadores, que antes iban con las bitácoras, y los marcos
   // con imán, que iban con las fotos. Los precios son los del catálogo y los del cartel de la feria.
@@ -470,6 +475,7 @@ export const products: readonly CatalogProduct[] = [
     ...singleGroup("complementos", { id: "tipo", label: "Tipo" }, [
       { id: "separador", label: "Separador clásico", price: 1300 },
       { id: "separador-con-iman", label: "Separador con imán", price: 1500 },
+      { id: "separadores-con-iman-x3", label: "3 separadores con imán", price: 3000 },
       { id: "marco-con-iman", label: "Marco con imán", price: 5500 },
     ]),
     addOns: [],
@@ -487,6 +493,12 @@ export const products: readonly CatalogProduct[] = [
       albumPhoto("complementos", 1, "Separadores imantados con flores y moños, en sus tarjetas de colores", 960),
       albumPhoto("complementos", 2, "Separadores imantados con flores, cuadros y figuras en blanco y negro", 960),
       albumPhoto("complementos", 3, "Marco con imán en la heladera, con la foto de un perro"),
+    ],
+    // El texto de la dueña (chat del 02/11/2026), con el vos de la página. La promo de 3 por
+    // $3.000 es la del cartel de la feria, que está junto a los separadores con imán.
+    details: [
+      "Marcá tus lecturas con separadores ideales para acompañarte en cada libro. Prácticos y lindos, te ayudan a retomar justo donde quedaste sin doblar las páginas. Elegí tus favoritos y dale un toque especial a tus momentos de lectura.",
+      "¡Llevá 3 separadores con imán por solo $3.000!",
     ],
   },
   {

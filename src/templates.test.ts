@@ -686,7 +686,7 @@ describe("imágenes", () => {
     const priority = [...homeDoc.querySelectorAll('[fetchpriority="high"]')];
     expect(priority).toHaveLength(1);
     expect(priority[0].closest(".hero-photo-main")).not.toBeNull();
-    expect(priority[0].getAttribute("srcset")).toContain("images/hero-bitacoras-800.webp 800w");
+    expect(priority[0].getAttribute("srcset")).toContain("images/foto-stand-1-960.webp 960w");
 
     const small = homeDoc.querySelector(".hero-photo-small img")!;
     expect(small.getAttribute("srcset")).toContain("images/hero-fotos-434.webp 434w");

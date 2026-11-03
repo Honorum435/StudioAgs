@@ -101,6 +101,13 @@ GALERIAS: dict[str, list[Foto]] = {
         Foto("IMG_7287.HEIC"),
         Foto("IMG_0706.HEIC"),
     ],
+    # No es un producto: el puesto de la feria, del chat del 02/11/2026 (bajadas con estos nombres).
+    # Los carteles van enteros en la polaroid del inicio; el equipo, en el arco de Nosotros, sin
+    # las láminas y los stickers de abajo.
+    "stand": [
+        Foto("stand-carteles.jpg", recortar=False),
+        Foto("stand-equipo.jpg", (0.0, 0.08, 1.0, 0.78)),
+    ],
 }
 
 
