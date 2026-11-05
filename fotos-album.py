@@ -131,7 +131,6 @@ GALERIAS: dict[str, list[Foto]] = {
 
 # Producto sin fotos → (fondo, logo), como las combinaciones de las tarjetas de la marca.
 PROVISORIAS: dict[str, tuple[str, str]] = {
-    "archivo-bajonero": ("#eca2c8", "#3d77bc"),
     "gran-formato": ("#ffd812", "#2eaa54"),
 }
 

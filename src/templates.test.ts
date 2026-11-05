@@ -108,8 +108,8 @@ const filledCart: CartSummary = (() => {
 })();
 
 describe("página prerenderizada", () => {
-  it("muestra los 13 productos con nombre, precio inicial con unidad, plazo y marca de personalizable", () => {
-    expect(doc.querySelectorAll("article.product-card")).toHaveLength(13);
+  it("muestra los 12 productos con nombre, precio inicial con unidad, plazo y marca de personalizable", () => {
+    expect(doc.querySelectorAll("article.product-card")).toHaveLength(12);
 
     for (const item of products) {
       const element = card(item.id);
@@ -591,10 +591,10 @@ describe("sin estilos en línea", () => {
 describe("controles antes de hidratar", () => {
   it("cada botón de sumar tiene un nombre distinto con el producto y viene deshabilitado", () => {
     const buttons = [...doc.querySelectorAll<HTMLButtonElement>('button[data-action="add"]')];
-    expect(buttons).toHaveLength(13);
+    expect(buttons).toHaveLength(12);
 
     const names = buttons.map(accessibleName);
-    expect(new Set(names).size).toBe(13);
+    expect(new Set(names).size).toBe(12);
     for (const [index, item] of products.entries()) {
       const button = buttons[index];
       expect(button.dataset.productId).toBe(item.id);

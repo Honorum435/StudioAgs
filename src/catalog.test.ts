@@ -54,7 +54,6 @@ const expectedPrices: Record<string, number> = {
   "gran-formato-blueback": 20900,
   "gran-formato-blueback-laca": 25200,
   "dtf-textil": 22500,
-  "archivo-bajonero": 13000,
   "minijuegos-naranja": 15000,
   "minijuegos-rosa": 15000,
   "minijuegos-celeste": 15000,
@@ -103,7 +102,7 @@ const allCombinations = products.flatMap((item) => item.combinations);
 const allAddOns = products.flatMap((item) => item.addOns);
 
 describe("catálogo", () => {
-  it("tiene los 13 productos con IDs únicos", () => {
+  it("tiene los 12 productos con IDs únicos", () => {
     const ids = products.map((item) => item.id);
     expect(ids).toEqual([
       "calendarios",
@@ -115,7 +114,6 @@ describe("catálogo", () => {
       "dtf-textil",
       "tarjetas",
       "bitacoras",
-      "archivo-bajonero",
       "complementos",
       "laminas",
       "minijuegos",
@@ -142,7 +140,6 @@ describe("catálogo", () => {
       "dtf-textil": [],
       tarjetas: ["cantidad", "faz", "terminacion"],
       bitacoras: ["formato", "hojas"],
-      "archivo-bajonero": [],
       complementos: ["tipo"],
       laminas: ["tamano"],
       minijuegos: ["color"],
@@ -258,7 +255,6 @@ describe("catálogo", () => {
     expect(products.filter((item) => !item.images.ficha).map((item) => item.id)).toEqual([
       "gran-formato",
       "dtf-textil",
-      "archivo-bajonero",
       "complementos",
       "minijuegos",
     ]);

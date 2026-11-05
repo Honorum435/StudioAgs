@@ -232,7 +232,7 @@ describe("cantidad", () => {
 });
 
 describe("filtros y búsqueda", () => {
-  it("'Para tu emprendimiento' muestra solo sus productos y queda presionado; 'Todo' vuelve a los 13", () => {
+  it("'Para tu emprendimiento' muestra solo sus productos y queda presionado; 'Todo' vuelve a los 12", () => {
     mount();
     chip("marca").click();
 
@@ -242,7 +242,7 @@ describe("filtros y búsqueda", () => {
     expect(chip("todo").getAttribute("aria-pressed")).toBe("false");
 
     chip("todo").click();
-    expect(visibleIds()).toHaveLength(13);
+    expect(visibleIds()).toHaveLength(12);
     expect(emptyState().hidden).toBe(true);
   });
 
@@ -297,7 +297,7 @@ describe("filtros y búsqueda", () => {
     window.history.replaceState(null, "", "?uso=cualquiera");
     mount();
 
-    expect(visibleIds()).toHaveLength(13);
+    expect(visibleIds()).toHaveLength(12);
     expect(chip("todo").getAttribute("aria-pressed")).toBe("true");
   });
 
@@ -329,7 +329,7 @@ describe("filtros y búsqueda", () => {
     search("lam");
     search("laminas");
     vi.advanceTimersByTime(RESULT_COUNT_DELAY - 1);
-    expect(squash(count.textContent)).toBe("13 productos");
+    expect(squash(count.textContent)).toBe("12 productos");
 
     vi.advanceTimersByTime(1);
     expect(squash(count.textContent)).toBe("1 producto");
@@ -362,7 +362,7 @@ describe("filtros y búsqueda", () => {
 
     root.querySelector<HTMLButtonElement>('[data-action="clear-filters"]')!.click();
     expect(input.value).toBe("");
-    expect(visibleIds()).toHaveLength(13);
+    expect(visibleIds()).toHaveLength(12);
     expect(document.activeElement).toBe(chip("todo"));
   });
 

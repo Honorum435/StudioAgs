@@ -575,22 +575,6 @@ export const products: readonly CatalogProduct[] = [
       "También hacemos tapas completamente personalizadas con nombres, ilustraciones, logos o diseños exclusivos. Para coordinar este tipo de trabajo y pedir un presupuesto, escribinos por Instagram o WhatsApp.",
     ],
   },
-  // De la lista de la dueña (05/11/2026), en "encuadernados". Todavía no hay fotos ni texto: la
-  // tarjeta lleva la imagen provisoria de fotos-album.py.
-  {
-    id: "archivo-bajonero",
-    name: "Archivo bajonero + alfajor",
-    description: "Nuestro encuadernado bajonero, que viene con un alfajor.",
-    imageAlt: "Logo de StudioAGS en azul sobre rosa, mientras llegan las fotos del Archivo bajonero",
-    groups: [],
-    combinations: combine("archivo-bajonero", [], () => ({ price: 13000, unit: "por unidad" })),
-    addOns: [],
-    personalizable: false,
-    needsPhotos: false,
-    intents: ["regalar"],
-    leadTime: pendingLeadTime(),
-    images: { card: cardImage("archivo-bajonero", [400, 800], 800) },
-  },
   // Lo que se suma a otra cosa: los separadores, que antes iban con las bitácoras, y los marcos
   // con imán, que iban con las fotos. Los precios son los del catálogo y los del cartel de la feria.
   {

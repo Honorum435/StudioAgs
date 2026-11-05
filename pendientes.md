@@ -195,14 +195,13 @@ La fecha de precios pasó a ser el 5 de noviembre de 2026 y ya no es de ejemplo.
 - **Minijuegos ($ 15.000):** el texto que mandó el 02/11 (más de 15 juegos reutilizables, 2 fibrones con borrador, 11,5 × 11,5 cm) y "Color": Naranja, Rosa, Celeste, Verde y Amarillo, sin cambiar el precio. Cuatro fotos del álbum: todos los colores (IMG_0052, la principal), el abanico en la mano (IMG_0149), la búsqueda de objetos sobre las piedras (IMG_1136) y el naranja en las piedras (IMG_1146). Salió la del laberinto porque tiene un dibujito que no sé si es de ellos.
 - **DTF textil ($ 22.500 por m²):** "Estampado DTF para remeras o cualquier tela, con tu logo o tu diseño" y la nota "El precio es por metro cuadrado de estampado". Fotos: la remera de StudioAGS con el mate (sin la cara) y dos cuadros de los videos de la remera "Campeón mundial".
 - **Gran formato (por m²):** un producto aparte con "Material" y las 10 opciones de la lista: vinilo blanco y transparente (sin laca, laca sectorizada, laca completa), lona frontlight 13 oz y blueback 150 g mate (con y sin laca). Va aparte para no cambiar Vinilos, que es por pliego. La nota dice que el vinilo de corte se cotiza aparte, porque en la lista no tiene precio.
-- **Archivo bajonero + alfajor ($ 13.000):** "Nuestro encuadernado bajonero, que viene con un alfajor."
-- Gran formato y Archivo bajonero no tienen fotos todavía: llevan una imagen provisoria con el logo (amarillo con verde y rosa con azul), que arma `fotos-album.py`.
+- **Archivo bajonero + alfajor ($ 13.000):** estuvo un rato y lo sacamos (el primo lo pidió el 05/11). Si vuelve, faltan fotos y saber qué es.
+- Gran formato no tiene fotos todavía: lleva una imagen provisoria con el logo (verde sobre amarillo), que arma `fotos-album.py`.
 - Los cuatro tienen el plazo de ejemplo (de 3 a 5 días hábiles), como los demás que no lo informan.
 
 **Falta que Aixa:**
-- **Revise los productos nuevos** y diga qué está mal: nombres, textos, en qué filtro va cada uno y si son personalizables (hoy: DTF y Gran formato sí; Minijuegos y Archivo bajonero no).
-- **Fotos:** de Gran formato (lonas, banners, vidrieras) y del Archivo bajonero.
-- **Archivo bajonero:** qué es (hojas, tamaño, si se personaliza) para escribir el texto.
+- **Revise los productos nuevos** y diga qué está mal: nombres, textos, en qué filtro va cada uno y si son personalizables (hoy: DTF y Gran formato sí; Minijuegos no).
+- **Fotos:** de Gran formato (lonas, banners, vidrieras).
 - **DTF:** si la remera va incluida o solo el estampado, y si hay medidas fijas (por ejemplo A4 o A3) en lugar del metro cuadrado.
 - **Gran formato:** si se puede pedir menos de un metro o con decimales. Hoy la cantidad va de 1 en 1, como metros enteros.
 - **Vinilo de corte:** el precio.
