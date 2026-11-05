@@ -42,6 +42,24 @@ const expectedPrices: Record<string, number> = {
   "laminas-a4": 5000,
   "laminas-a5": 4000,
   "laminas-a6": 3000,
+  // La lista por metro cuadrado y los productos nuevos de la lista del 05/11/2026.
+  "gran-formato-vinilo-blanco": 33300,
+  "gran-formato-vinilo-blanco-laca-sectorizada": 38300,
+  "gran-formato-vinilo-blanco-laca-completa": 42200,
+  "gran-formato-vinilo-transparente": 36700,
+  "gran-formato-vinilo-transparente-laca-sectorizada": 40000,
+  "gran-formato-vinilo-transparente-laca-completa": 43300,
+  "gran-formato-lona-frontlight": 27000,
+  "gran-formato-lona-frontlight-laca": 32400,
+  "gran-formato-blueback": 20900,
+  "gran-formato-blueback-laca": 25200,
+  "dtf-textil": 22500,
+  "archivo-bajonero": 13000,
+  "minijuegos-naranja": 15000,
+  "minijuegos-rosa": 15000,
+  "minijuegos-celeste": 15000,
+  "minijuegos-verde": 15000,
+  "minijuegos-amarillo": 15000,
 };
 
 const cardMatrix: Record<string, readonly number[]> = {
@@ -85,7 +103,7 @@ const allCombinations = products.flatMap((item) => item.combinations);
 const allAddOns = products.flatMap((item) => item.addOns);
 
 describe("catálogo", () => {
-  it("tiene los 9 productos con IDs únicos", () => {
+  it("tiene los 13 productos con IDs únicos", () => {
     const ids = products.map((item) => item.id);
     expect(ids).toEqual([
       "calendarios",
@@ -93,10 +111,14 @@ describe("catálogo", () => {
       "pizarra-orma",
       "entre-flores",
       "vinilos",
+      "gran-formato",
+      "dtf-textil",
       "tarjetas",
       "bitacoras",
+      "archivo-bajonero",
       "complementos",
       "laminas",
+      "minijuegos",
     ]);
     expect(new Set(ids).size).toBe(ids.length);
   });
@@ -116,10 +138,14 @@ describe("catálogo", () => {
       "pizarra-orma": ["color"],
       "entre-flores": [],
       vinilos: ["material", "laca"],
+      "gran-formato": ["material"],
+      "dtf-textil": [],
       tarjetas: ["cantidad", "faz", "terminacion"],
       bitacoras: ["formato", "hojas"],
+      "archivo-bajonero": [],
       complementos: ["tipo"],
       laminas: ["tamano"],
+      minijuegos: ["color"],
     });
   });
 
@@ -229,7 +255,13 @@ describe("catálogo", () => {
       // La foto de la tarjeta es la del catálogo o una de la galería.
       expect([item.id, ...(item.gallery ?? []).map((photo) => photo.image.base)]).toContain(card.base);
     }
-    expect(products.filter((item) => !item.images.ficha).map((item) => item.id)).toEqual(["complementos"]);
+    expect(products.filter((item) => !item.images.ficha).map((item) => item.id)).toEqual([
+      "gran-formato",
+      "dtf-textil",
+      "archivo-bajonero",
+      "complementos",
+      "minijuegos",
+    ]);
     const bases = products.flatMap(({ images }) =>
       [images.card, images.ficha].flatMap((spec) => (spec ? [spec.base] : [])),
     );

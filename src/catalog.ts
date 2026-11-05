@@ -301,6 +301,19 @@ const vinylCombinations = combine("vinilos", vinylGroups, ([material, lacquer]) 
   unit: "por pliego",
 }));
 
+// Los colores que nombró la dueña (chat del 02/11/2026). No cambian el precio.
+const minigameColors: OptionGroup = {
+  id: "color",
+  label: "Color",
+  options: [
+    { id: "naranja", label: "Naranja" },
+    { id: "rosa", label: "Rosa" },
+    { id: "celeste", label: "Celeste" },
+    { id: "verde", label: "Verde" },
+    { id: "amarillo", label: "Amarillo" },
+  ],
+};
+
 // Reparto inicial de intenciones y personalizables: revisar con la dueña. Los precios son los de
 // la lista que mandó la dueña el 05/11/2026; las promos del cartel de la feria no están en ella.
 export const products: readonly CatalogProduct[] = [
@@ -443,6 +456,60 @@ export const products: readonly CatalogProduct[] = [
     images: { card: cardImage("vinilos", [369], 277), ficha: fichaImage("vinilos") },
     gallery: [albumPhoto("vinilos", 1, "Planchas de stickers redondos con el logo de Maika", 960)],
   },
+  // La lista por metro cuadrado de la dueña (05/11/2026). Todavía no hay fotos: la tarjeta lleva
+  // la imagen provisoria de fotos-album.py. El vinilo de corte no tiene precio en la lista.
+  {
+    id: "gran-formato",
+    name: "Gran formato",
+    description: "Vinilo, lona frontlight y blueback por metro cuadrado, para carteles, banners y vidrieras.",
+    imageAlt: "Logo de StudioAGS en verde sobre amarillo, mientras llegan las fotos de Gran formato",
+    note: "El vinilo de corte, para vidrieras y stickers, se cotiza aparte: consultanos.",
+    ...singleGroup(
+      "gran-formato",
+      { id: "material", label: "Material" },
+      [
+        { id: "vinilo-blanco", label: "Vinilo blanco", price: 33300 },
+        { id: "vinilo-blanco-laca-sectorizada", label: "Vinilo blanco con laca sectorizada", price: 38300 },
+        { id: "vinilo-blanco-laca-completa", label: "Vinilo blanco con laca completa", price: 42200 },
+        { id: "vinilo-transparente", label: "Vinilo transparente", price: 36700 },
+        { id: "vinilo-transparente-laca-sectorizada", label: "Vinilo transparente con laca sectorizada", price: 40000 },
+        { id: "vinilo-transparente-laca-completa", label: "Vinilo transparente con laca completa", price: 43300 },
+        { id: "lona-frontlight", label: "Lona frontlight 13 oz", price: 27000 },
+        { id: "lona-frontlight-laca", label: "Lona frontlight 13 oz con laca", price: 32400 },
+        { id: "blueback", label: "Blueback 150 g mate", price: 20900 },
+        { id: "blueback-laca", label: "Blueback 150 g mate con laca", price: 25200 },
+      ],
+      "por m²",
+    ),
+    addOns: [],
+    personalizable: true,
+    needsPhotos: false,
+    intents: ["marca", "decorar"],
+    leadTime: pendingLeadTime(),
+    images: { card: cardImage("gran-formato", [400, 800], 800) },
+  },
+  // Las fotos son la remera de StudioAGS y dos cuadros de los videos de las remeras que mandó la
+  // dueña (02/11/2026). El precio, de la lista por metro cuadrado.
+  {
+    id: "dtf-textil",
+    name: "DTF textil",
+    description: "Estampado DTF para remeras o cualquier tela, con tu logo o tu diseño.",
+    imageAlt: "Remera negra con el logo de StudioAGS estampado en blanco",
+    note: "El precio es por metro cuadrado de estampado.",
+    groups: [],
+    combinations: combine("dtf-textil", [], () => ({ price: 22500, unit: "por m²" })),
+    addOns: [],
+    personalizable: true,
+    needsPhotos: false,
+    intents: ["marca", "regalar"],
+    leadTime: pendingLeadTime(),
+    images: { card: albumPhoto("dtf-textil", 1, "").image },
+    gallery: [
+      albumPhoto("dtf-textil", 1, "Remera negra con el logo de StudioAGS estampado en blanco, con un mate en la mano"),
+      albumPhoto("dtf-textil", 2, "Remera negra en una percha con el estampado Campeón mundial", 720),
+      albumPhoto("dtf-textil", 3, "De cerca, el estampado Campeón mundial en blanco sobre la tela negra", 720),
+    ],
+  },
   {
     id: "tarjetas",
     name: "Tarjetas personales",
@@ -508,6 +575,22 @@ export const products: readonly CatalogProduct[] = [
       "También hacemos tapas completamente personalizadas con nombres, ilustraciones, logos o diseños exclusivos. Para coordinar este tipo de trabajo y pedir un presupuesto, escribinos por Instagram o WhatsApp.",
     ],
   },
+  // De la lista de la dueña (05/11/2026), en "encuadernados". Todavía no hay fotos ni texto: la
+  // tarjeta lleva la imagen provisoria de fotos-album.py.
+  {
+    id: "archivo-bajonero",
+    name: "Archivo bajonero + alfajor",
+    description: "Nuestro encuadernado bajonero, que viene con un alfajor.",
+    imageAlt: "Logo de StudioAGS en azul sobre rosa, mientras llegan las fotos del Archivo bajonero",
+    groups: [],
+    combinations: combine("archivo-bajonero", [], () => ({ price: 13000, unit: "por unidad" })),
+    addOns: [],
+    personalizable: false,
+    needsPhotos: false,
+    intents: ["regalar"],
+    leadTime: pendingLeadTime(),
+    images: { card: cardImage("archivo-bajonero", [400, 800], 800) },
+  },
   // Lo que se suma a otra cosa: los separadores, que antes iban con las bitácoras, y los marcos
   // con imán, que iban con las fotos. Los precios son los del catálogo y los del cartel de la feria.
   {
@@ -565,6 +648,32 @@ export const products: readonly CatalogProduct[] = [
     leadTime: pendingLeadTime(),
     images: { card: cardImage("laminas", [400, 740], 555), ficha: fichaImage("laminas") },
     gallery: [albumPhoto("laminas", 1, "Láminas e ilustraciones de distintos artistas en un exhibidor", 960)],
+  },
+  // El texto y los colores de la dueña (chat del 02/11/2026), con el vos de la página; el precio,
+  // de la lista del 05/11/2026 ("lúdico"). "Mini juegos para el viaje" es lo que dice la tapa.
+  {
+    id: "minijuegos",
+    name: "Minijuegos",
+    description: "Mini juegos para el viaje: más de 15 juegos reutilizables y 2 fibrones con borrador.",
+    imageAlt: "Minijuegos anillados en naranja, rosa, celeste y verde",
+    groups: [minigameColors],
+    combinations: combine("minijuegos", [minigameColors], () => ({ price: 15000, unit: "por unidad" })),
+    addOns: [],
+    personalizable: false,
+    needsPhotos: false,
+    intents: ["regalar"],
+    leadTime: pendingLeadTime(),
+    images: { card: albumPhoto("minijuegos", 1, "", 1086).image },
+    gallery: [
+      albumPhoto("minijuegos", 1, "Minijuegos anillados en naranja, rosa, celeste y verde", 1086),
+      albumPhoto("minijuegos", 2, "Minijuegos de todos los colores abiertos en abanico, en la mano"),
+      albumPhoto("minijuegos", 3, "Una búsqueda de objetos a medio jugar, con el fibrón, sobre las piedras"),
+      albumPhoto("minijuegos", 4, "Minijuego naranja con la tapa Mini juegos para el viaje, sobre las piedras"),
+    ],
+    details: [
+      "Jugás, borrás y volvés a empezar. Cada uno mide 11,5 × 11,5 cm y va anillado, así entra en cualquier mochila.",
+      "Elegí el tuyo en naranja, rosa, celeste, verde o amarillo.",
+    ],
   },
 ];
 

@@ -21,7 +21,7 @@ describe("normalizeText", () => {
 
 describe("filtro por intención", () => {
   it("'Para tu emprendimiento' devuelve los productos que la incluyen, en el orden del catálogo", () => {
-    expect(visible({ intent: "marca" })).toEqual(["calendarios", "vinilos", "tarjetas"]);
+    expect(visible({ intent: "marca" })).toEqual(["calendarios", "vinilos", "gran-formato", "dtf-textil", "tarjetas"]);
   });
 
   it("un producto puede aparecer en más de una intención", () => {
@@ -29,8 +29,8 @@ describe("filtro por intención", () => {
     expect(visible({ intent: "organizarte" })).toContain("calendarios");
   });
 
-  it("'Todo' devuelve los 9 productos", () => {
-    expect(visible({ intent: ALL_INTENTS })).toHaveLength(9);
+  it("'Todo' devuelve los 13 productos", () => {
+    expect(visible({ intent: ALL_INTENTS })).toHaveLength(13);
     expect(visible({})).toEqual(products.map((product) => product.id));
   });
 
@@ -61,7 +61,7 @@ describe("búsqueda", () => {
   });
 
   it("una búsqueda vacía o solo con espacios no filtra", () => {
-    expect(visible({ query: "   " })).toHaveLength(9);
+    expect(visible({ query: "   " })).toHaveLength(13);
   });
 
   it("filtro y búsqueda sin coincidencias devuelve vacío", () => {

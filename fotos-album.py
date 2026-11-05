@@ -13,6 +13,9 @@ Cada foto sale cuadrada, como el cuadro de la galería, a 1200 y 600 px en WebP,
 nunca: si el cuadrado mide menos de 1200 (las de WhatsApp miden 960), el archivo mayor tiene
 esa medida. Las fotos marcadas para no recortar salen enteras, con el mismo ancho. Al terminar
 imprime lo que hay que declarar en `gallery` de src/catalog.ts.
+
+Los productos que todavía no tienen fotos llevan una imagen provisoria con el logo, en una
+combinación del kit, a 800 y 400 px (PROVISORIAS).
 """
 
 import shutil
@@ -83,6 +86,21 @@ GALERIAS: dict[str, list[Foto]] = {
     "laminas": [
         whatsapp("10.41.16 AM"),
     ],
+    # Todos los colores, el abanico en la mano, la búsqueda de objetos a medio jugar y el naranja
+    # en las piedras.
+    "minijuegos": [
+        Foto("IMG_0052.PNG"),
+        Foto("IMG_0149.HEIC"),
+        Foto("IMG_1136.HEIC", (0.0, 0.15, 1.0, 0.85)),
+        Foto("IMG_1146.HEIC", (0.2, 0.5, 1.0, 1.0)),
+    ],
+    # La remera de StudioAGS, sin la cara, y la de "Campeón mundial": dos cuadros de los videos
+    # de las remeras del 02/11/2026, bajados con estos nombres.
+    "dtf-textil": [
+        whatsapp("10.45.55 AM (1)", (0.0, 0.28, 1.0, 0.88)),
+        Foto("remera-campeon-perchero.jpg", (0.0, 0.2, 1.0, 0.85)),
+        Foto("remera-campeon-detalle.jpg"),
+    ],
     # No es un producto: las fotos de "Así preparamos tu pedido", en el orden de los pasos.
     "proceso": [
         Foto("IMG_5911.HEIC"),
@@ -109,6 +127,22 @@ GALERIAS: dict[str, list[Foto]] = {
         Foto("stand-equipo.jpg", (0.0, 0.08, 1.0, 0.78)),
     ],
 }
+
+
+# Producto sin fotos → (fondo, logo), como las combinaciones de las tarjetas de la marca.
+PROVISORIAS: dict[str, tuple[str, str]] = {
+    "archivo-bajonero": ("#eca2c8", "#3d77bc"),
+    "gran-formato": ("#ffd812", "#2eaa54"),
+}
+
+
+def provisoria(fondo: str, color: str, logo: Image.Image) -> Image.Image:
+    imagen = Image.new("RGB", (800, 800), fondo)
+    marca = logo.copy()
+    marca.thumbnail((440, 440))
+    tinta = Image.new("RGB", marca.size, color)
+    imagen.paste(tinta, ((800 - marca.width) // 2, (800 - marca.height) // 2), marca.getchannel("A"))
+    return imagen
 
 
 def buscar(carpetas: list[Path], archivo: str) -> Path:
@@ -167,6 +201,13 @@ def main() -> None:
                         salida / f"{base}-{ancho}.webp", quality=80, method=6
                     )
                 print(f"  {base}: anchos {anchos}, {recorte.width} × {recorte.height}")
+
+    logo = Image.open(Path(__file__).parent / "src" / "logo-studioags.png").convert("RGBA")
+    for producto, (fondo, color) in PROVISORIAS.items():
+        imagen = provisoria(fondo, color, logo)
+        for ancho in (400, 800):
+            imagen.resize((ancho, ancho), Image.LANCZOS).save(salida / f"{producto}-{ancho}.webp", quality=80, method=6)
+        print(f"{producto}: provisoria, anchos [400, 800], 800 × 800")
 
 
 if __name__ == "__main__":

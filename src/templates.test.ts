@@ -108,8 +108,8 @@ const filledCart: CartSummary = (() => {
 })();
 
 describe("página prerenderizada", () => {
-  it("muestra los 9 productos con nombre, precio inicial con unidad, plazo y marca de personalizable", () => {
-    expect(doc.querySelectorAll("article.product-card")).toHaveLength(9);
+  it("muestra los 13 productos con nombre, precio inicial con unidad, plazo y marca de personalizable", () => {
+    expect(doc.querySelectorAll("article.product-card")).toHaveLength(13);
 
     for (const item of products) {
       const element = card(item.id);
@@ -519,7 +519,7 @@ describe("página de un producto", () => {
   it("ofrece los tres productos que siguen en el catálogo, dando la vuelta al final", () => {
     const related = [...productDoc.querySelectorAll<HTMLElement>(".related-section .product-card")];
     expect(related.map((card) => card.dataset.productId)).toEqual(["fotos", "pizarra-orma", "entre-flores"]);
-    const last = parse(renderProductPage({ business, catalog: products }, product("laminas")));
+    const last = parse(renderProductPage({ business, catalog: products }, product("minijuegos")));
     expect(
       [...last.querySelectorAll<HTMLElement>(".related-section .product-card")].map((card) => card.dataset.productId),
     ).toEqual(["calendarios", "fotos", "pizarra-orma"]);
@@ -591,10 +591,10 @@ describe("sin estilos en línea", () => {
 describe("controles antes de hidratar", () => {
   it("cada botón de sumar tiene un nombre distinto con el producto y viene deshabilitado", () => {
     const buttons = [...doc.querySelectorAll<HTMLButtonElement>('button[data-action="add"]')];
-    expect(buttons).toHaveLength(9);
+    expect(buttons).toHaveLength(13);
 
     const names = buttons.map(accessibleName);
-    expect(new Set(names).size).toBe(9);
+    expect(new Set(names).size).toBe(13);
     for (const [index, item] of products.entries()) {
       const button = buttons[index];
       expect(button.dataset.productId).toBe(item.id);

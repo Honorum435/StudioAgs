@@ -232,17 +232,17 @@ describe("cantidad", () => {
 });
 
 describe("filtros y búsqueda", () => {
-  it("'Para tu emprendimiento' muestra solo sus productos y queda presionado; 'Todo' vuelve a los 9", () => {
+  it("'Para tu emprendimiento' muestra solo sus productos y queda presionado; 'Todo' vuelve a los 13", () => {
     mount();
     chip("marca").click();
 
-    expect(visibleIds()).toEqual(["calendarios", "vinilos", "tarjetas"]);
+    expect(visibleIds()).toEqual(["calendarios", "vinilos", "gran-formato", "dtf-textil", "tarjetas"]);
     expect(chip("marca").getAttribute("aria-pressed")).toBe("true");
     expect(chip("marca").classList.contains("is-active")).toBe(true);
     expect(chip("todo").getAttribute("aria-pressed")).toBe("false");
 
     chip("todo").click();
-    expect(visibleIds()).toHaveLength(9);
+    expect(visibleIds()).toHaveLength(13);
     expect(emptyState().hidden).toBe(true);
   });
 
@@ -250,7 +250,7 @@ describe("filtros y búsqueda", () => {
     window.history.replaceState(null, "", "?uso=marca");
     mount();
 
-    expect(visibleIds()).toEqual(["calendarios", "vinilos", "tarjetas"]);
+    expect(visibleIds()).toEqual(["calendarios", "vinilos", "gran-formato", "dtf-textil", "tarjetas"]);
     expect(chip("marca").getAttribute("aria-pressed")).toBe("true");
     expect(chip("todo").getAttribute("aria-pressed")).toBe("false");
   });
@@ -297,7 +297,7 @@ describe("filtros y búsqueda", () => {
     window.history.replaceState(null, "", "?uso=cualquiera");
     mount();
 
-    expect(visibleIds()).toHaveLength(9);
+    expect(visibleIds()).toHaveLength(13);
     expect(chip("todo").getAttribute("aria-pressed")).toBe("true");
   });
 
@@ -329,7 +329,7 @@ describe("filtros y búsqueda", () => {
     search("lam");
     search("laminas");
     vi.advanceTimersByTime(RESULT_COUNT_DELAY - 1);
-    expect(squash(count.textContent)).toBe("9 productos");
+    expect(squash(count.textContent)).toBe("13 productos");
 
     vi.advanceTimersByTime(1);
     expect(squash(count.textContent)).toBe("1 producto");
@@ -362,7 +362,7 @@ describe("filtros y búsqueda", () => {
 
     root.querySelector<HTMLButtonElement>('[data-action="clear-filters"]')!.click();
     expect(input.value).toBe("");
-    expect(visibleIds()).toHaveLength(9);
+    expect(visibleIds()).toHaveLength(13);
     expect(document.activeElement).toBe(chip("todo"));
   });
 

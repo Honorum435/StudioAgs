@@ -191,17 +191,22 @@ Lo demás ya estaba igual: los otros calendarios, fotos, Entre Flores, vinilos, 
 
 La fecha de precios pasó a ser el 5 de noviembre de 2026 y ya no es de ejemplo. Quien tenga un pedido guardado de antes ve "Actualizamos los precios al 5 de noviembre de 2026: revisá el subtotal".
 
+**Productos nuevos de la lista** (el primo dijo "sumá todo y que después me diga qué está mal"):
+- **Minijuegos ($ 15.000):** el texto que mandó el 02/11 (más de 15 juegos reutilizables, 2 fibrones con borrador, 11,5 × 11,5 cm) y "Color": Naranja, Rosa, Celeste, Verde y Amarillo, sin cambiar el precio. Cuatro fotos del álbum: todos los colores (IMG_0052, la principal), el abanico en la mano (IMG_0149), la búsqueda de objetos sobre las piedras (IMG_1136) y el naranja en las piedras (IMG_1146). Salió la del laberinto porque tiene un dibujito que no sé si es de ellos.
+- **DTF textil ($ 22.500 por m²):** "Estampado DTF para remeras o cualquier tela, con tu logo o tu diseño" y la nota "El precio es por metro cuadrado de estampado". Fotos: la remera de StudioAGS con el mate (sin la cara) y dos cuadros de los videos de la remera "Campeón mundial".
+- **Gran formato (por m²):** un producto aparte con "Material" y las 10 opciones de la lista: vinilo blanco y transparente (sin laca, laca sectorizada, laca completa), lona frontlight 13 oz y blueback 150 g mate (con y sin laca). Va aparte para no cambiar Vinilos, que es por pliego. La nota dice que el vinilo de corte se cotiza aparte, porque en la lista no tiene precio.
+- **Archivo bajonero + alfajor ($ 13.000):** "Nuestro encuadernado bajonero, que viene con un alfajor."
+- Gran formato y Archivo bajonero no tienen fotos todavía: llevan una imagen provisoria con el logo (amarillo con verde y rosa con azul), que arma `fotos-album.py`.
+- Los cuatro tienen el plazo de ejemplo (de 3 a 5 días hábiles), como los demás que no lo informan.
+
 **Falta que Aixa:**
+- **Revise los productos nuevos** y diga qué está mal: nombres, textos, en qué filtro va cada uno y si son personalizables (hoy: DTF y Gran formato sí; Minijuegos y Archivo bajonero no).
+- **Fotos:** de Gran formato (lonas, banners, vidrieras) y del Archivo bajonero.
+- **Archivo bajonero:** qué es (hojas, tamaño, si se personaliza) para escribir el texto.
+- **DTF:** si la remera va incluida o solo el estampado, y si hay medidas fijas (por ejemplo A4 o A3) en lugar del metro cuadrado.
+- **Gran formato:** si se puede pedir menos de un metro o con decimales. Hoy la cantidad va de 1 en 1, como metros enteros.
+- **Vinilo de corte:** el precio.
 - **3 separadores con imán a $ 3.000:** no están en la lista; siguen porque salen del cartel de la feria. Que confirme si la promo sigue.
-- **Minijuegos ($ 15.000, "lúdico"):** ya hay precio, texto y fotos, así que se pueden sumar a Productos. Falta saber si se elige el color.
-- **Archivo bajonero + alfajor ($ 13.000, "encuadernados"):** faltan fotos y texto.
-- **Precios por metro cuadrado:** faltan las fotos y saber si van como opción de Vinilos o como productos aparte (lona, blueback, DTF).
-  - Vinilo blanco: $ 33.300; con laca sectorizada, $ 38.300; con laca completa, $ 42.200.
-  - Vinilo transparente: $ 36.700; con laca sectorizada, $ 40.000; con laca completa, $ 43.300.
-  - Vinilo de corte: sin precio en la lista.
-  - Lona frontlight 13 oz: $ 27.000; con laca, $ 32.400.
-  - Blueback 150 g mate: $ 20.900; con laca, $ 25.200.
-  - DTF textil: $ 22.500.
 
 ## Colores del kit, una sola foto y cantidad (chat después de publicar el 03/11/2026)
 
@@ -225,7 +230,7 @@ La fecha de precios pasó a ser el 5 de noviembre de 2026 y ya no es de ejemplo.
 
 **Falta que Aixa:**
 - **Lista de precios en grande:** llegó el 05/11 y los precios ya están cargados (ver arriba).
-- **Productos nuevos de la lista:** Minijuegos, Archivo bajonero + alfajor y lo que va por metro cuadrado. Los precios exactos están arriba.
+- **Productos nuevos de la lista:** ya están en Productos (ver arriba).
 - **Colores de los calendarios:** si manda la foto con los colores numerados, el Único puede elegir el número del color en la página en lugar de coordinarlo por WhatsApp.
 - **Días de atención:** dijo de 8 a 20, pero no qué días.
 - **Letra sobre el verde:** va en negro porque el amarillo no se lee sobre el verde del kit. Si la prefiere amarilla, la tarjeta tendría que volver al verde oscuro.
@@ -256,7 +261,7 @@ La fecha de precios pasó a ser el 5 de noviembre de 2026 y ya no es de ejemplo.
 
 **Falta que Aixa:**
 - **Archivos digitales:** quiere sumar plantillas para descargar o que se mandan por archivo, capaz en otra columna del menú. Falta saber cuáles serían, el precio y el formato, para no armar una página vacía.
-- **Minijuegos:** ya está su texto (más de 15 juegos reutilizables, 2 fibrones con borrador, 11,5 × 11,5 cm, en varios colores). Falta el precio. (En la lista nueva figuran a $ 15.000: ver arriba).
+- **Minijuegos:** ya está su texto (más de 15 juegos reutilizables, 2 fibrones con borrador, 11,5 × 11,5 cm, en varios colores). Falta el precio. (Ya está en Productos, a $ 15.000: ver arriba).
 - **3 separadores a $ 3.000:** confirme que la promo es de los separadores con imán, como dice el cartel de la feria.
 - **"En preguntas frecuentes y contactos se pone todo azul pero en productos nop":** no queda claro a qué se refiere. El menú y los títulos se ven iguales en las tres páginas.
 - **Tarjeta azul de Contacto:** sigue en el azul oscuro con letra rosa, como pidió el 02/11. Si la quiere en el azul del logo, la letra tendría que ir en blanco. (Ya está en el azul del kit con letra blanca: ver arriba).
@@ -299,7 +304,7 @@ La fecha de precios pasó a ser el 5 de noviembre de 2026 y ya no es de ejemplo.
 - **Mande dos fotos que citó en el chat y no llegaron en los zip:**
   - la que respondió con "Fijate de poner estos en calendario", con unos calendarios amarillos y rojos;
   - la que respondió con "Y estas, borra las q pusiste nomas", para Bitácoras.
-- **Minijuegos y DTF:** precios y opciones para sumarlos a Productos. Las fotos ya están (los minijuegos en el álbum y en Comunidad AGS; las remeras, en el zip de los videos).
+- **Minijuegos y DTF:** precios y opciones para sumarlos a Productos. (Ya están, con los precios de la lista del 05/11: ver arriba).
 - **Complementos:** confirme los precios del cartel de la feria. (Los 3 separadores a $ 3.000 ya van: ver arriba).
 - **Creato Light:** diga si le gusta así o si prefiere la regular.
 - **El rojo con la carita:** mandó la carita amarilla sobre el rojo del kit sin decir para qué es; preguntarle dónde la quiere. (Dijo que no va repetida de fondo).
