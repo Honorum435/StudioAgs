@@ -51,6 +51,10 @@ function choose(id: string, group: string, value: string): void {
   input.click();
 }
 
+function cardImage(id: string): HTMLImageElement {
+  return card(id).querySelector<HTMLImageElement>(".product-image")!;
+}
+
 function addOn(id: string, value: string): HTMLInputElement {
   return Array.from(card(id).querySelectorAll<HTMLInputElement>('.addon-group input[type="checkbox"]')).find(
     (input) => input.value === value,
@@ -530,5 +534,40 @@ describe("Ver ficha", () => {
 
     expect(dialog().open).toBe(false);
     expect(window.history.state).toBeNull();
+  });
+});
+
+describe("foto de la opción", () => {
+  it("elegir el minijuego rosa cambia la foto de la tarjeta a la rosa; el amarillo, sin foto, la deja", () => {
+    mount();
+    const before = cardImage("minijuegos").getAttribute("src");
+    choose("minijuegos", "color", "rosa");
+    const image = cardImage("minijuegos");
+    expect(image.getAttribute("src")).toBe("images/foto-minijuegos-5-1200.webp");
+    expect(image.getAttribute("srcset")).toBe("images/foto-minijuegos-5-600.webp 600w, images/foto-minijuegos-5-1200.webp 1200w");
+    expect(image.getAttribute("alt")).toBe("Minijuego rosa con sus dos fibrones, en la mano");
+    expect(image.getAttribute("src")).not.toBe(before);
+
+    choose("minijuegos", "color", "amarillo");
+    expect(cardImage("minijuegos").getAttribute("src")).toBe("images/foto-minijuegos-5-1200.webp");
+  });
+
+  it("un dibujo del catálogo se ve entero y una foto vuelve a llenar el cuadro", () => {
+    mount();
+    choose("fotos", "formato", "tira");
+    expect(cardImage("fotos").getAttribute("src")).toBe("images/opcion-fotos-tira-542.webp");
+    expect(cardImage("fotos").closest(".product-image-wrap")?.classList.contains("is-contained")).toBe(true);
+
+    choose("fotos", "formato", "iman-10x10");
+    expect(cardImage("fotos").getAttribute("src")).toBe("images/foto-fotos-1-1200.webp");
+    expect(cardImage("fotos").closest(".product-image-wrap")?.classList.contains("is-contained")).toBe(false);
+  });
+
+  it("en Calendarios cambia con el formato y con el color, el último que se toca", () => {
+    mount();
+    choose("calendarios", "formato", "acrilico");
+    expect(cardImage("calendarios").getAttribute("src")).toBe("images/foto-calendarios-10-1200.webp");
+    choose("calendarios", "colores", "frio");
+    expect(cardImage("calendarios").getAttribute("src")).toBe("images/foto-calendarios-14-1200.webp");
   });
 });

@@ -2,8 +2,10 @@ import { businessValue, type BusinessInfo } from "./business";
 import type { OrderSummary, ResolvedLine, SentVia } from "./cart";
 import {
   galleryPhotos,
+  imageSrcset,
   imageUrl,
   initialSelection,
+  optionPhotos,
   intents,
   lineName,
   photoSending,
@@ -92,7 +94,7 @@ function attr(value: string | number): string {
 }
 
 function srcset(spec: ImageSpec): string {
-  return spec.widths.map((width) => `${imageUrl(spec, width)} ${width}w`).join(", ");
+  return imageSrcset(spec);
 }
 
 interface ImageOptions {
@@ -743,7 +745,7 @@ function optionGroups(product: CatalogProduct): string {
       const options = group.options
         .map(
           (option) =>
-            `<label class="option-chip"><input type="radio" name="${attr(`opcion-${product.id}-${group.id}`)}" value="${attr(option.id)}"${selection[group.id] === option.id ? " checked" : ""} disabled autocomplete="off" /><span>${escapeHtml(option.label)}</span></label>`,
+            `<label class="option-chip"><input type="radio" name="${attr(`opcion-${product.id}-${group.id}`)}" value="${attr(option.id)}"${option.photo ? ` data-photo="${attr(option.photo.image.base)}"` : ""}${selection[group.id] === option.id ? " checked" : ""} disabled autocomplete="off" /><span>${escapeHtml(option.label)}</span></label>`,
         )
         .join("");
       return `
@@ -853,13 +855,14 @@ export function productCard(product: CatalogProduct): string {
 }
 
 // Foto grande y miniaturas. Antes de hidratar se ve la primera; las demás esperan ocultas y
-// cargan recién cuando se muestran.
+// cargan recién cuando se muestran. Después de las de la galería van, sin miniatura, las fotos
+// de las opciones: aparecen al elegir la opción.
 function productGallery(product: CatalogProduct): string {
   const photos = galleryPhotos(product);
-  const slides = photos
+  const slides = [...photos, ...optionPhotos(product)]
     .map(
       (photo, index) => `
-        <figure class="gallery-photo${photo.fit === "contain" ? " is-contained" : ""}" data-gallery-photo${index === 0 ? "" : " hidden"}>
+        <figure class="gallery-photo${photo.fit === "contain" ? " is-contained" : ""}" data-gallery-photo data-photo-base="${attr(photo.image.base)}"${index === 0 ? "" : " hidden"}>
           ${responsiveImage(photo.image, {
             alt: photo.alt,
             sizes: GALLERY_SIZES,

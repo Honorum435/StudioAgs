@@ -75,6 +75,25 @@ TARJETAS: dict[str, Foto | Recorte] = {
     "laminas": Recorte(34, (303.3, 101.1, 481.1, 234.5)),
 }
 
+# Dibujos del PDF para la foto de algunas opciones, en su proporción: las medidas de cada
+# formato de Fotos, las lacas y el vinilo transparente, y el calendario de doce meses.
+OPCIONES: dict[str, Recorte] = {
+    "opcion-fotos-polaroid": Recorte(13, (375.4, 462.3, 521.0, 628.3)),
+    "opcion-fotos-tira": Recorte(13, (426.5, 145.6, 556.8, 390.8)),
+    "opcion-fotos-10x10": Recorte(13, (250.3, 178.8, 411.2, 334.6)),
+    "opcion-vinilos-sin-laca": Recorte(23, (84.3, 385.7, 178.8, 495.5)),
+    "opcion-vinilos-laca-sectorizada": Recorte(23, (429.1, 383.1, 533.8, 495.5)),
+    "opcion-vinilos-laca-completa": Recorte(23, (416.3, 498.0, 540.5, 598.7)),
+    "opcion-vinilos-transparente": Recorte(23, (212.0, 632.4, 378.0, 730.4)),
+    "opcion-calendarios-doce-meses": Recorte(8, (46.0, 342.2, 178.8, 556.8)),
+}
+
+
+def proporcion_de(recorte: Recorte) -> float:
+    x0, y0, x1, y1 = recorte.caja
+    return (x1 - x0) / (y1 - y0)
+
+
 # Página de "Ver ficha" de cada producto (las mismas que usaba la web).
 FICHAS: dict[str, int] = {
     "calendarios": 8,
@@ -290,6 +309,7 @@ def main() -> None:
         *((f"TARJETAS[{producto!r}]", origen.pagina) for producto, origen in TARJETAS.items()),
         *((f"FICHAS[{producto!r}]", pagina) for producto, pagina in FICHAS.items()),
         *((f"COMPARTIR[{indice}]", foto.pagina) for indice, foto in enumerate(COMPARTIR)),
+        *((f"OPCIONES[{base!r}]", recorte.pagina) for base, recorte in OPCIONES.items()),
     ]
     for origen, pagina in paginas:
         validar_pagina(doc, pagina, origen)
@@ -297,6 +317,9 @@ def main() -> None:
     tarjetas = {producto: generar_foto(doc, origen, 4 / 3, producto, args.salida) for producto, origen in TARJETAS.items()}
     fichas = {producto: generar_ficha(doc, producto, pagina, args.salida) for producto, pagina in FICHAS.items()}
     compartir = generar_compartir(doc, args.salida)
+    opciones = {
+        base: generar_foto(doc, recorte, proporcion_de(recorte), base, args.salida) for base, recorte in OPCIONES.items()
+    }
 
     print(f"Tarjetas (a 2× piden ~{NECESIDAD_2X} px; nunca salen de más de {ANCHO_MAXIMO} px):")
     for producto, dato in tarjetas.items():
@@ -308,11 +331,15 @@ def main() -> None:
     for producto, dato in fichas.items():
         anchos = ", ".join(f"{w}×{h}" for _, (w, h) in dato["archivos"])
         print(f"  {producto:13s} {dato['fuente']:48s} -> {anchos}")
+    print("Opciones:")
+    for base, dato in opciones.items():
+        anchos = ", ".join(f"{w}×{h}" for _, (w, h) in dato["archivos"])
+        print(f"  {base:32s} {dato['fuente']:48s} -> {anchos}")
     print(f"Compartir: {compartir.name} {COMPARTIR_TAMANO[0]}×{COMPARTIR_TAMANO[1]}, {compartir.stat().st_size / 1024:.0f} KB")
 
     total = sum(
         ruta.stat().st_size
-        for grupo in (tarjetas, fichas)
+        for grupo in (tarjetas, fichas, opciones)
         for dato in grupo.values()
         for ruta, _ in dato["archivos"]
     ) + compartir.stat().st_size

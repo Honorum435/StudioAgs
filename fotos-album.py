@@ -14,6 +14,10 @@ nunca: si el cuadrado mide menos de 1200 (las de WhatsApp miden 960), el archivo
 esa medida. Las fotos marcadas para no recortar salen enteras, con el mismo ancho. Al terminar
 imprime lo que hay que declarar en `gallery` de src/catalog.ts.
 
+Las fotos de cada opción (la que aparece al elegir, por ejemplo, el minijuego rosa) siguen la
+numeración de la galería de su producto, después de las de la galería, y se declaran en `photo`
+de la opción. Las de las capturas de colores de los calendarios salen enteras.
+
 Los productos que todavía no tienen fotos llevan una imagen provisoria con el logo, en una
 combinación del kit, a 800 y 400 px (PROVISORIAS).
 """
@@ -35,12 +39,18 @@ class Foto:
     """Foto del álbum y, si hace falta, la zona a usar (fracciones de la foto ya derecha).
 
     El cuadrado es el más grande que entra en la zona, centrado en ella. Con recortar=False
-    la foto sale entera y la zona no se usa.
+    sale la zona entera, sin cuadrar (por defecto, la foto entera).
     """
 
     archivo: str
     zona: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
     recortar: bool = True
+
+
+def captura(numero: int) -> Foto:
+    """Una de las capturas de colores de los calendarios que mandó la dueña el 30/10/2026, entera."""
+    sufijo = f" ({numero})" if numero else ""
+    return Foto(f"WhatsApp Image 2026-10-30 at 2.29.36 PM{sufijo}.jpeg", recortar=False)
 
 
 def whatsapp(hora: str, zona: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0), recortar: bool = True) -> Foto:
@@ -57,6 +67,22 @@ GALERIAS: dict[str, list[Foto]] = {
         Foto("IMG_6386.HEIC"),
         whatsapp("10.36.49 AM", (0.0, 0.0, 1.0, 0.8)),
         whatsapp("10.41.51 AM", (0.3, 0.15, 1.0, 0.55)),
+        # Las de cada formato: el clásico rojo de julio, el clásico con notas rosa, el único
+        # rosa, el semanal grande y el chico (los dos de la misma foto), el acrílico y el de
+        # imán en la heladera. El de doce meses sale del PDF (extraer-imagenes.py).
+        Foto("D57B5CDA-FFB3-45A1-8BB9-7BD967900AA7.jpg", (0.05, 0.0, 0.75, 1.0)),
+        Foto("IMG_6058.HEIC", (0.1, 0.05, 0.95, 0.95)),
+        Foto("IMG_7288.HEIC"),
+        Foto("IMG_6386.HEIC", (0.3, 0.0, 1.0, 0.5)),
+        Foto("IMG_6386.HEIC", (0.0, 0.38, 1.0, 1.0)),
+        Foto("IMG_0706.HEIC"),
+        Foto("IMG_7979.HEIC", (0.4, 0.0, 1.0, 0.55)),
+        # Las de cada color: los abanicos cálido, intenso, frío y monocromo, y la captura pastel.
+        Foto("IMG_5942.HEIC"),
+        Foto("IMG_5944.HEIC", (0.0, 0.25, 1.0, 1.0)),
+        Foto("IMG_5945.HEIC"),
+        Foto("IMG_5943.HEIC"),
+        captura(2),
     ],
     # La de la pizarra gris va entera, como pidió la dueña.
     "pizarra-orma": [
@@ -93,6 +119,15 @@ GALERIAS: dict[str, list[Foto]] = {
         Foto("IMG_0149.HEIC"),
         Foto("IMG_1136.HEIC", (0.0, 0.15, 1.0, 0.85)),
         Foto("IMG_1146.HEIC", (0.2, 0.5, 1.0, 1.0)),
+        # Las de los colores que no tienen foto propia en la galería: el rosa con sus dos
+        # fibrones y el verde, de la foto de todos los colores. Del amarillo no hay foto.
+        Foto("IMG_0105.HEIC"),
+        Foto("IMG_0052.PNG", (0.35, 0.45, 1.0, 1.0)),
+    ],
+    # No tiene galería: el imán de 10 × 10 en la heladera, para la opción. Las demás opciones
+    # salen del PDF (extraer-imagenes.py).
+    "fotos": [
+        Foto("IMG_0700.HEIC", (0.0, 0.0, 1.0, 0.5)),
     ],
     # La remera de StudioAGS, sin la cara, y la de "Campeón mundial": dos cuadros de los videos
     # de las remeras del 02/11/2026, bajados con estos nombres.
@@ -164,6 +199,17 @@ def abrir(ruta: Path, temporal: Path) -> Image.Image:
     return Image.open(png).convert("RGB")
 
 
+def zona(imagen: Image.Image, fracciones: tuple[float, float, float, float]) -> Image.Image:
+    ancho, alto = imagen.size
+    caja = (
+        round(fracciones[0] * ancho),
+        round(fracciones[1] * alto),
+        round(fracciones[2] * ancho),
+        round(fracciones[3] * alto),
+    )
+    return imagen if caja == (0, 0, ancho, alto) else imagen.crop(caja)
+
+
 def cuadrado(imagen: Image.Image, zona: tuple[float, float, float, float]) -> Image.Image:
     ancho, alto = imagen.size
     izquierda, arriba, derecha, abajo = (
@@ -191,7 +237,7 @@ def main() -> None:
             print(f"{producto}:")
             for numero, foto in enumerate(fotos, start=1):
                 imagen = abrir(buscar(carpetas, foto.archivo), temporal)
-                recorte = cuadrado(imagen, foto.zona) if foto.recortar else imagen
+                recorte = cuadrado(imagen, foto.zona) if foto.recortar else zona(imagen, foto.zona)
                 base = f"foto-{producto}-{numero}"
                 anchos = sorted({min(ancho, recorte.width) for ancho in ANCHOS})
                 for ancho in anchos:

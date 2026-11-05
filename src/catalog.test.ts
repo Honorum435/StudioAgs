@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { businessValue, example, isExample } from "./business";
 import {
@@ -5,6 +6,7 @@ import {
   initialSelection,
   intents,
   listPendingCatalogFields,
+  productPhotos,
   products,
   resolveSelection,
   type CatalogProduct,
@@ -262,6 +264,25 @@ describe("catálogo", () => {
       [images.card, images.ficha].flatMap((spec) => (spec ? [spec.base] : [])),
     );
     expect(new Set(bases).size).toBe(bases.length);
+  });
+
+  it("cada imagen declarada, también las de las opciones, existe en public/images con cada ancho", () => {
+    const specs = products.flatMap((item) => [
+      item.images.card,
+      ...(item.images.ficha ? [item.images.ficha] : []),
+      ...productPhotos(item).map((photo) => photo.image),
+    ]);
+    const missing = specs.flatMap((spec) =>
+      spec.widths.map((width) => `public/${imageUrl(spec, width)}`).filter((path) => !existsSync(path)),
+    );
+    expect(missing).toEqual([]);
+    for (const item of products) {
+      for (const option of item.groups.flatMap((group) => group.options)) {
+        if (option.photo) {
+          expect(option.photo.alt.length).toBeGreaterThan(0);
+        }
+      }
+    }
   });
 
   it("arma la ruta de cada imagen con su nombre base y su ancho", () => {

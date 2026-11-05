@@ -12,7 +12,7 @@ Lo que pidió después de ver el sitio con el kit de marca.
 - **Ficha por producto:** al tocar un producto se abre su página, con galería, descripción, opciones y precio, como en Mupe. Hecho: cada producto tiene su página en `producto/<id>/`. Falta que Aixa:
   - mire las fotos elegidas: 4 de calendarios, 1 de la pizarra negra y 1 de bitácoras, con solo las tapas propias;
   - mande textos más largos para cada producto (van en `details`).
-- **Foto por opción:** que la foto cambie al elegir una opción.
+- **Foto por opción:** que la foto cambie al elegir una opción. Hecho el 05/11 (ver "Foto por opción").
 - **Sobre nosotros:** una foto de Aixa con el negro y una biografía. La página `nosotros/` ya está, con un texto provisorio y la foto de la pizarra. Faltan la foto de ellos y su texto.
 - **Contacto:** una pestaña con el mail (elstudioags@gmail.com), el Instagram (@__studioags) y los WhatsApp de Aixa y del negro. La página `contacto/` ya tiene el mail y el Instagram. El botón "Escribinos" abre WhatsApp cuando esté el número; hasta entonces lleva a Instagram. Los números están en el chat; confirmar cuáles se publican.
 - **Pedidos personalizados:** un bloque "¿Tenés una idea? Contanos qué imaginaste y armamos algo personalizado" con un botón.
@@ -177,6 +177,29 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 **Falta que Aixa:**
 - diga si le gusta cómo quedó la distribución;
 - mande reseñas reales de clientas, si quiere la tarjeta como la de la foto.
+
+## Foto por opción (05/11/2026)
+
+**Lo que pidió el primo:** "cada vez que tocamos un sub tema en producto, ejemplo minijuegos rosa, la imagen cambia a rosa, eso con todos los productos". También sacar el Archivo bajonero.
+
+**Cómo quedó:** al elegir una opción, la tarjeta de Productos cambia su foto y la página del producto la pasa a la foto grande (sin miniatura nueva: la galería sigue igual). Una opción sin foto deja la que se estaba viendo.
+- **Calendarios, formato:** clásico (el rojo de julio), clásico con notas (el rosa de diciembre), único (el rosa), doce meses (el dibujo del catálogo), semanal grande y chico (los rojos), acrílico (el de septiembre) e imán (el lila de la heladera).
+- **Calendarios, colores:** pastel (la captura de los doce meses en pastel), intenso, cálido, frío y monocromo (los abanicos impresos).
+- **Minijuegos:** naranja, rosa (con sus dos fibrones), celeste y verde.
+- **Fotos:** polaroid, tira y foto 10 × 10 con el dibujo de sus medidas del catálogo; imán 10 × 10 con los imanes en la heladera.
+- **Pizarra OrMa:** la gris y la negra.
+- **Vinilos:** blanco (los stickers de Maika), transparente y las tres lacas (dibujos del catálogo).
+- **Complementos:** separador con imán, 3 separadores y marco con imán.
+- **Archivo bajonero:** salió.
+
+**Falta que Aixa mande fotos de:**
+- el minijuego amarillo;
+- el separador clásico (sin imán);
+- cada formato de Bitácoras (A5 y A6) y cada tipo de hoja (lisas, rayadas, cuadriculadas y punteadas);
+- cada tamaño de Láminas;
+- Gran formato (vinilo, lona y blueback);
+- las tarjetas simple y doble faz, sin laminar y laminadas, si quiere que cambien también;
+- el doce meses impreso y una foto de cada color de calendario en lugar de la captura del pastel, si las tiene.
 
 ## Lista de precios en grande (05/11/2026)
 

@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { business, businessValue } from "./business";
 import type { ResolvedLine } from "./cart";
-import { products, resolveSelection, type CatalogProduct } from "./catalog";
+import { galleryPhotos, optionPhotos, products, resolveSelection, type CatalogProduct } from "./catalog";
 import { formatPrice } from "./format";
 import {
   CARD_IMAGE_SIZES,
@@ -501,19 +501,40 @@ describe("página de un producto", () => {
 
   it("la galería muestra la primera foto y deja las demás ocultas, con una miniatura por foto", () => {
     const photos = [...detail.querySelectorAll<HTMLElement>("[data-gallery-photo]")];
-    expect(photos).toHaveLength((calendarios.gallery?.length ?? 0) + 2);
+    const gallery = galleryPhotos(calendarios);
+    expect(gallery).toHaveLength((calendarios.gallery?.length ?? 0) + 2);
+    expect(photos).toHaveLength(gallery.length + optionPhotos(calendarios).length);
     expect(photos.map((photo) => photo.hidden)).toEqual(photos.map((_photo, index) => index > 0));
     expect(photos[0].querySelector("img")?.getAttribute("fetchpriority")).toBe("high");
     expect(photos.slice(1).every((photo) => photo.querySelector("img")?.getAttribute("loading") === "lazy")).toBe(true);
-    expect(photos[photos.length - 1].classList.contains("is-contained")).toBe(true);
+    // La última de la galería es la página del catálogo, entera.
+    expect(photos[gallery.length - 1].classList.contains("is-contained")).toBe(true);
 
     const thumbs = [...detail.querySelectorAll<HTMLButtonElement>('[data-action="show-photo"]')];
-    expect(thumbs).toHaveLength(photos.length);
+    expect(thumbs).toHaveLength(gallery.length);
     expect(thumbs.every((thumb) => thumb.disabled)).toBe(true);
     expect(thumbs.map((thumb) => thumb.getAttribute("aria-pressed"))).toEqual(
       thumbs.map((_thumb, index) => String(index === 0)),
     );
-    expect(text(thumbs[1])).toBe(`Foto 2 de ${photos.length}`);
+    expect(text(thumbs[1])).toBe(`Foto 2 de ${gallery.length}`);
+  });
+
+  it("cada opción con foto la nombra y la página la deja lista, oculta y sin miniatura", () => {
+    const slides = [...detail.querySelectorAll<HTMLElement>("[data-gallery-photo]")];
+    const options = calendarios.groups.flatMap((group) => group.options);
+    expect(options.every((option) => option.photo)).toBe(true);
+    for (const option of options) {
+      const base = option.photo!.image.base;
+      expect(detail.querySelector<HTMLInputElement>(`input[value="${option.id}"]`)?.dataset.photo).toBe(base);
+      const slide = slides.find((item) => item.dataset.photoBase === base)!;
+      expect(slide.hidden).toBe(true);
+      expect(slide.classList.contains("is-contained")).toBe(option.photo!.fit === "contain");
+    }
+    const minijuegos = parse(renderProductPage({ business, catalog: products }, product("minijuegos")));
+    expect(minijuegos.querySelector<HTMLInputElement>('input[value="amarillo"]')?.hasAttribute("data-photo")).toBe(false);
+    expect(minijuegos.querySelector<HTMLInputElement>('input[value="rosa"]')?.dataset.photo).toBe("foto-minijuegos-5");
+    // El naranja ya está en la galería: no se repite.
+    expect(minijuegos.querySelectorAll('[data-photo-base="foto-minijuegos-4"]')).toHaveLength(1);
   });
 
   it("ofrece los tres productos que siguen en el catálogo, dando la vuelta al final", () => {

@@ -969,6 +969,11 @@ main > .catalog-section:first-child {
   transition: transform 500ms var(--ease-out);
 }
 
+/* Los dibujos del catálogo que aparecen al elegir una opción se ven enteros. */
+.product-image-wrap.is-contained .product-image {
+  object-fit: contain;
+}
+
 .product-category {
   position: absolute;
   right: 12px;

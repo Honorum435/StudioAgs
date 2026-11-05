@@ -1,5 +1,15 @@
 import { MAX_QUANTITY, MIN_QUANTITY, clampQuantity, type OrderStore } from "./cart";
-import { initialSelection, products, resolveSelection, type CatalogProduct, type Selection } from "./catalog";
+import {
+  imageSrcset,
+  imageUrl,
+  initialSelection,
+  productPhotos,
+  products,
+  resolveSelection,
+  type CatalogProduct,
+  type GalleryPhoto,
+  type Selection,
+} from "./catalog";
 import { announceTo, delegateActions, rememberHtml, setHtml, windowOf, type ActionHandler } from "./dom";
 import { ALL_INTENTS, isIntentFilter, visibleProductIds, type FilterState } from "./filters";
 import { popNumber, slidingIndicator, swapText, type SlidingIndicator } from "./motion";
@@ -123,6 +133,30 @@ function readQuantity({ quantity }: CardIsland): number {
   return value;
 }
 
+// La foto grande de la galería pasa a la de esa posición y las miniaturas marcan cuál es. Las
+// fotos de las opciones no tienen miniatura: con una de ellas, ninguna queda marcada.
+function showSlide(gallery: HTMLElement, index: number): void {
+  gallery.querySelectorAll<HTMLElement>("[data-gallery-photo]").forEach((photo, position) => {
+    photo.hidden = position !== index;
+  });
+  gallery.querySelectorAll<HTMLElement>('[data-action="show-photo"]').forEach((thumb) => {
+    const active = Number(thumb.dataset.photoIndex) === index;
+    thumb.classList.toggle("is-active", active);
+    thumb.setAttribute("aria-pressed", String(active));
+  });
+}
+
+// En la tarjeta, la foto pasa a la de la opción; los dibujos del catálogo se ven enteros.
+function paintCardImage(image: HTMLImageElement, photo: GalleryPhoto): void {
+  const spec = photo.image;
+  image.srcset = imageSrcset(spec);
+  image.src = imageUrl(spec, spec.width);
+  image.width = spec.width;
+  image.height = spec.height;
+  image.alt = photo.alt;
+  image.closest(".product-image-wrap")?.classList.toggle("is-contained", photo.fit === "contain");
+}
+
 function isPlainClick(event: MouseEvent): boolean {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
@@ -202,6 +236,25 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     }
     setInert(island.card.querySelector('[data-action="card-less"]'), quantity <= MIN_QUANTITY);
     setInert(island.card.querySelector('[data-action="card-more"]'), quantity >= MAX_QUANTITY);
+  }
+
+  // La opción elegida muestra su foto, como pidió la dueña: en la página del producto pasa a la
+  // foto grande y en la tarjeta reemplaza la imagen.
+  function showOptionPhoto(island: CardIsland, base: string): void {
+    const gallery = island.card.querySelector<HTMLElement>("[data-gallery]");
+    if (gallery) {
+      const slides = Array.from(gallery.querySelectorAll<HTMLElement>("[data-gallery-photo]"));
+      const index = slides.findIndex((slide) => slide.dataset.photoBase === base);
+      if (index >= 0) {
+        showSlide(gallery, index);
+      }
+      return;
+    }
+    const photo = productPhotos(island.product).find((item) => item.image.base === base);
+    const image = island.card.querySelector<HTMLImageElement>(".product-image");
+    if (photo && image) {
+      paintCardImage(image, photo);
+    }
   }
 
   function stepQuantity(element: HTMLElement, step: number): void {
@@ -432,17 +485,9 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     "show-photo"(element) {
       const gallery = element.closest<HTMLElement>("[data-gallery]");
       const index = Number(element.dataset.photoIndex);
-      if (!gallery || !Number.isInteger(index)) {
-        return;
+      if (gallery && Number.isInteger(index)) {
+        showSlide(gallery, index);
       }
-      gallery.querySelectorAll<HTMLElement>("[data-gallery-photo]").forEach((photo, position) => {
-        photo.hidden = position !== index;
-      });
-      gallery.querySelectorAll<HTMLElement>('[data-action="show-photo"]').forEach((thumb) => {
-        const active = thumb === element;
-        thumb.classList.toggle("is-active", active);
-        thumb.setAttribute("aria-pressed", String(active));
-      });
     },
   };
 
@@ -459,6 +504,9 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     const island = card ? cards.get(card.dataset.productId ?? "") : undefined;
     if (island) {
       paintCard(island, true);
+      if (target.type === "radio" && target.checked && target.dataset.photo) {
+        showOptionPhoto(island, target.dataset.photo);
+      }
       const list = target.closest<HTMLElement>(".option-list");
       if (list) {
         indicators.get(list)?.update(true);

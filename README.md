@@ -86,6 +86,8 @@ Qué fotos usa cada producto se elige al principio del script. Cada foto sale cu
 
 Las dos fotos del puesto de la feria (la polaroid del inicio y el arco de Nosotros) salen del mismo script, en la lista `stand`.
 
+**Foto por opción:** al elegir una opción (por ejemplo, el minijuego rosa), la tarjeta cambia su foto y la página del producto la pasa a la foto grande. Cada opción la declara en `photo` dentro de `src/catalog.ts`; una opción sin foto deja la que se estaba viendo. Las fotos del álbum salen de `fotos-album.py`, a continuación de la galería de su producto. Los dibujos del PDF (las medidas de Fotos, las lacas de Vinilos y el calendario de doce meses) salen de `extraer-imagenes.py`, en `OPCIONES`, y se ven enteros.
+
 La marca de agua del panel azul (`src/caritas-marca-de-agua.webp`) la arma `caritas.py` con cuatro caras de la hoja de identidad del kit:
 
 ```sh
