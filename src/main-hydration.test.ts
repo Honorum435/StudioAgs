@@ -234,7 +234,7 @@ describe("página de un producto", () => {
     overlays = null;
     loadPrerenderedPage();
     const { orderStore } = await hydrate();
-    expect(orderStore.getState().lines.map((line) => line.id)).toEqual(["calendarios-acrilico"]);
+    expect(orderStore.getState().lines.map((line) => line.id)).toEqual(["calendarios-acrilico-pastel"]);
   });
 
   it("la miniatura tocada pasa a la foto grande", async () => {

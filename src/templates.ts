@@ -49,8 +49,7 @@ export const CARD_IMAGE_SIZES =
   "(max-width: 559px) 90vw, (max-width: 767px) calc(45vw - 8px), (max-width: 1023px) calc(50vw - 47px), (max-width: 1351px) calc(33.3vw - 39px), 412px";
 // La ficha ocupa todo el ancho en celular y hasta 880 px desde 768 px (styles.css).
 export const FICHA_SIZES = "(max-width: 767px) 100vw, (max-width: 927px) calc(100vw - 48px), 880px";
-export const HERO_MAIN_SIZES = "(max-width: 680px) 208px, 260px";
-export const HERO_SMALL_SIZES = "(max-width: 680px) 127px, 160px";
+export const HERO_MAIN_SIZES = "(max-width: 767px) 240px, 320px";
 // Página del producto: la galería ocupa el ancho en celular y algo más de la mitad desde 768 px.
 export const GALLERY_SIZES = "(max-width: 767px) 92vw, (max-width: 1351px) 52vw, 680px";
 export const GALLERY_THUMB_SIZES = "72px";
@@ -177,15 +176,17 @@ export function cardPrice(resolved: ResolvedSelection): string {
   return `<span class="product-price-amount">${formatPrice(resolved.total)}</span> <span class="product-price-unit">${escapeHtml(unit)}</span>`;
 }
 
-// La etiqueta va sola en su span; producto y precio para lectores en un span oculto.
-export function addButtonContent(product: CatalogProduct, resolved: ResolvedSelection): string {
-  const price = formatPrice(resolved.total);
+// La etiqueta va sola en su span; producto y precio para lectores en un span oculto. Con más de
+// uno, el botón dice cuántos suma y el precio es el de todos.
+export function addButtonContent(product: CatalogProduct, resolved: ResolvedSelection, quantity = 1): string {
+  const price = formatPrice(resolved.total * quantity);
+  const several = quantity > 1;
   return [
     '<span class="add-button-text">',
-    '<span class="add-button-label">Sumar</span> ',
+    `<span class="add-button-label">Sumar${several ? ` ${quantity}` : ""}</span> `,
     `<span class="add-button-price" aria-hidden="true">· ${price}</span>`,
     "</span> ",
-    `<span class="visually-hidden">${escapeHtml(product.name)}, ${price}</span>`,
+    `<span class="visually-hidden">${escapeHtml(product.name)}, ${several ? `cantidad ${quantity}, ` : ""}${price}</span>`,
     icon("arrow"),
   ].join("");
 }
@@ -503,29 +504,14 @@ export function noscriptNote(business: BusinessInfo): string {
     </noscript>`;
 }
 
-// El puesto de la feria con sus carteles, como pidió la dueña: entero, porque es vertical como la
-// polaroid. La foto del equipo va en Nosotros.
+// El puesto de la feria con sus carteles, como pidió la dueña. La foto del equipo va en Nosotros.
 const standPhoto: ImageSpec = { base: "foto-stand-1", widths: [600, 960], width: 960, height: 1280 };
 const teamPhoto = squarePhoto("foto-stand-2", 896);
 const TEAM_ALT = "Las dos personas de StudioAGS sonriendo en su puesto de una feria, con láminas, stickers y calendarios";
 
-export function hero(catalog: readonly CatalogProduct[]): string {
-  // En la polaroid grande, el puesto; en la chica, la foto de producto más ancha.
-  const [small] = catalog
-    .flatMap((product) => (product.images.hero ? [product.images.hero] : []))
-    .sort((a, b) => b.width - a.width);
-  const mainPhoto = `<div class="hero-photo hero-photo-main">
-          ${responsiveImage(standPhoto, { alt: "", sizes: HERO_MAIN_SIZES, highPriority: true })}
-          <span>un mundo de ideas</span>
-        </div>`;
-  const smallPhoto = small
-    ? `<div class="hero-photo hero-photo-small">
-          ${responsiveImage(small, { alt: "", sizes: HERO_SMALL_SIZES })}
-        </div>`
-    : "";
-
-  // Como la página de ejemplo de la dueña: el título en rojo y azul a la izquierda, y las fotos
-  // sobre el panel azul de la derecha.
+export function hero(): string {
+  // Como la página de ejemplo de la dueña: el título en rojo y azul a la izquierda y, sobre el
+  // panel azul de la derecha, una sola polaroid grande con el puesto, como pidió ella.
   return `
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
@@ -538,8 +524,10 @@ export function hero(catalog: readonly CatalogProduct[]): string {
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="hero-sticker hero-sticker-top">hecho<br />con cariño</div>
-        ${mainPhoto}
-        ${smallPhoto}
+        <div class="hero-photo hero-photo-main">
+          ${responsiveImage(standPhoto, { alt: "", sizes: HERO_MAIN_SIZES, highPriority: true })}
+          <span>un mundo de ideas</span>
+        </div>
         <div class="hero-sparkle">✳</div>
         <div class="hero-sticker hero-sticker-bottom">para vos<br />o para regalar</div>
       </div>
@@ -800,6 +788,25 @@ function photoHelp(product: CatalogProduct): string {
     </details>`;
 }
 
+// Cuántos sumar de una vez, como pidió la dueña (por ejemplo, diez fotos). Tarjetas no lo lleva:
+// ya elige la cantidad en sus opciones.
+function quantityPicker(product: CatalogProduct): string {
+  if (product.groups.some((group) => group.id === "cantidad")) {
+    return "";
+  }
+  const id = attr(product.id);
+  const name = attr(product.name);
+  return `
+    <div class="card-quantity">
+      <span class="card-quantity-label" aria-hidden="true">Cantidad</span>
+      <div class="quantity-controls">
+        <button type="button" data-action="card-less" data-product-id="${id}" aria-label="Restar uno: ${name}" aria-disabled="true" disabled>${icon("minus")}</button>
+        <input class="quantity-input" type="text" inputmode="numeric" autocomplete="off" value="1" data-card-quantity aria-label="Cantidad de ${name}" disabled />
+        <button type="button" data-action="card-more" data-product-id="${id}" aria-label="Sumar uno: ${name}" disabled>${icon("plus")}</button>
+      </div>
+    </div>`;
+}
+
 // Cuando las opciones cambian el precio, el mínimo, para que se note que no es uno solo.
 function priceFrom(product: CatalogProduct): string {
   const prices = product.combinations.map((combination) => combination.price);
@@ -836,6 +843,7 @@ export function productCard(product: CatalogProduct): string {
         ${optionGroups(product)}
         ${addOnGroup(product)}
         ${photoHelp(product)}
+        ${quantityPicker(product)}
         <div class="card-actions">
           <button class="add-button" type="button" data-action="add" data-product-id="${id}" disabled>${addButtonContent(product, resolved)}</button>
           ${fichaLink(product)}
@@ -900,6 +908,7 @@ export function productPage(product: CatalogProduct): string {
         ${optionGroups(product)}
         ${addOnGroup(product)}
         ${photoHelp(product)}
+        ${quantityPicker(product)}
         <div class="card-actions">
           <button class="add-button" type="button" data-action="add" data-product-id="${id}" disabled>${addButtonContent(product, resolved)}</button>
           ${fichaLink(product)}
@@ -1379,7 +1388,7 @@ export function renderPage(data: PageData): string {
   return pageShell(
     data,
     skipLink("#contenido", "Ir al contenido"),
-    [hero(data.catalog), intentCircles(data), bestSellers(data), storyRow(data.business), customOrder(data.business)],
+    [hero(), intentCircles(data), bestSellers(data), storyRow(data.business), customOrder(data.business)],
     footerSlogans.inicio,
   );
 }

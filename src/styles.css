@@ -97,10 +97,12 @@
      va de fondo de la letra blanca y el azul más oscuro, de letra sobre el papel. */
   --red-deep: #d73e16;
   --blue-ink: #2a5f99;
-  /* Sobre un fondo de color la letra va en su pareja, nunca en negro, como en las tarjetas
-     personales de la marca. El rosa sobre el azul del kit y el amarillo sobre el verde no llegan
-     a 4,5:1: el azul y el verde de esas parejas son los de las tarjetas impresas, más oscuros.
-     El rojo más oscuro es la letra chica sobre el amarillo. */
+  /* Sobre un fondo de color la letra va en su pareja, como en las tarjetas personales de la
+     marca. Los fondos van siempre en los colores del kit, como pidió la dueña; el azul y
+     el verde de las tarjetas impresas, más oscuros, quedan solo de letra sobre el rosa y el
+     amarillo. Sobre el azul del kit la letra va en blanco y sobre el verde, en el negro del kit,
+     porque el rosa y el amarillo no llegan a 4,5:1. El rojo más oscuro es la letra chica sobre
+     el amarillo. */
   --blue-deep: #1d4687;
   --green-deep: #176b33;
   --red-ink: #b22e0c;
@@ -639,7 +641,7 @@ p {
 
 .hero-art {
   position: relative;
-  height: 440px;
+  height: 470px;
   margin-left: 6%;
 }
 
@@ -660,12 +662,13 @@ p {
   object-position: center 43%;
 }
 
+/* Una sola polaroid, grande, como pidió la dueña. */
 .hero-photo-main {
-  top: 15px;
-  right: 11%;
-  width: 280px;
-  height: 355px;
-  --photo-turn: 4deg;
+  top: 12px;
+  right: 15%;
+  width: 340px;
+  height: 445px;
+  --photo-turn: 3deg;
 }
 
 .hero-photo-main span {
@@ -680,17 +683,6 @@ p {
   font-weight: 500;
   text-align: center;
   white-space: nowrap;
-}
-
-.hero-photo-small {
-  z-index: 2;
-  right: 52%;
-  bottom: 21px;
-  width: 176px;
-  height: 218px;
-  padding: 8px 8px 30px;
-  background: var(--yellow);
-  --photo-turn: -9deg;
 }
 
 .hero-sticker {
@@ -847,11 +839,11 @@ main > .catalog-section:first-child {
   transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform var(--press-dur) ease;
 }
 
-/* Filtro activo y opción elegida: tinta llena. */
+/* Filtro activo y opción elegida: el negro del kit. */
 .filter-chip.is-active,
 .option-chip input:checked + span {
-  border-color: var(--ink);
-  background: var(--ink);
+  border-color: var(--black);
+  background: var(--black);
   color: var(--white);
 }
 
@@ -1205,6 +1197,28 @@ main > .catalog-section:first-child {
   gap: 4px;
   margin-top: auto;
   padding-top: 18px;
+}
+
+/* Cuántos sumar, pegado al botón: la leyenda como la de las opciones y los botones como los del
+   pedido. */
+.card-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.card-quantity + .card-actions {
+  margin-top: 0;
+  padding-top: 12px;
+}
+
+.card-quantity-label {
+  color: var(--ink-mid);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .add-button {
@@ -1877,8 +1891,10 @@ main > .catalog-section:first-child {
   border-radius: 28px;
 }
 
-/* Como las tarjetas personales de la marca: amarillo con verde, rosa con azul, azul con rosa y
-   verde con amarillo. Todo lo de adentro va en el color de la letra. */
+/* Como las tarjetas personales de la marca: amarillo con verde y rosa con azul. Las tarjetas azul
+   y verde van en los colores del kit, como pidió la dueña: sobre ellos el rosa y el amarillo no
+   se leen, así que la letra va en blanco sobre el azul y en el negro del kit sobre el verde.
+   Todo lo de adentro va en el color de la letra. */
 .contact-card:nth-child(1) {
   background: var(--yellow);
   color: var(--green-deep);
@@ -1890,13 +1906,13 @@ main > .catalog-section:first-child {
 }
 
 .contact-card:nth-child(3) {
-  background: var(--blue-deep);
-  color: var(--pink);
+  background: var(--blue);
+  color: var(--white);
 }
 
 .contact-card:nth-child(4) {
-  background: var(--green-deep);
-  color: var(--yellow);
+  background: var(--green);
+  color: var(--black);
 }
 
 .contact-card h2 {
@@ -1923,12 +1939,23 @@ main > .catalog-section:first-child {
   outline-color: currentColor;
 }
 
-/* El "Escribinos" va en verde nomás, para que no haya tantos colores. */
+/* El "Escribinos" va en verde nomás, para que no haya tantos colores. Al pasar y al tocar se
+   pone negro como los otros botones, con la letra amarilla. */
 .contact-card .contact-button {
   margin-top: auto;
-  border-color: var(--green-deep);
-  background: var(--green-deep);
+  border-color: var(--green);
+  background: var(--green);
+  color: var(--black);
+}
+
+.contact-card .contact-button:not(:disabled):active {
   color: var(--yellow);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact-card .contact-button:not(:disabled):hover {
+    color: var(--yellow);
+  }
 }
 
 /* Bloque de confianza: filas de dato y respuesta sobre el papel. */
@@ -3115,8 +3142,8 @@ textarea.field-input {
 .checkout-notice {
   margin: 0;
   padding: 12px 14px;
-  background: var(--green-deep);
-  color: var(--yellow);
+  background: var(--green);
+  color: var(--black);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
@@ -3361,7 +3388,7 @@ textarea.field-input {
   width: var(--pill-w, 0px);
   height: var(--pill-h, 0px);
   border-radius: 8px;
-  background: var(--ink);
+  background: var(--black);
   transform: translate(var(--pill-x, 0px), var(--pill-y, 0px));
   transition:
     transform var(--tabs-dur) var(--ease-out),
@@ -3404,8 +3431,8 @@ textarea.field-input {
   }
 
   .primary-button:not(:disabled):hover {
-    border-color: var(--ink);
-    background: var(--ink);
+    border-color: var(--black);
+    background: var(--black);
   }
 
   .soft-button:hover {
@@ -3438,8 +3465,8 @@ textarea.field-input {
   }
 
   .add-button:enabled:hover {
-    border-color: var(--ink);
-    background: var(--ink);
+    border-color: var(--black);
+    background: var(--black);
     color: var(--white);
   }
 
@@ -3543,8 +3570,8 @@ textarea.field-input {
 }
 
 .primary-button:not(:disabled):active {
-  border-color: var(--ink);
-  background: var(--ink);
+  border-color: var(--black);
+  background: var(--black);
   transition-duration: var(--press-dur);
 }
 
@@ -3558,8 +3585,8 @@ textarea.field-input {
 }
 
 .add-button:enabled:active {
-  border-color: var(--ink);
-  background: var(--ink);
+  border-color: var(--black);
+  background: var(--black);
   color: var(--white);
 }
 
@@ -3943,7 +3970,7 @@ textarea.field-input {
   .hero::after {
     top: auto;
     width: 100%;
-    height: 410px;
+    height: 440px;
     border-radius: 48px 48px 0 0;
   }
 
@@ -3962,23 +3989,16 @@ textarea.field-input {
 
   .hero-art {
     width: min(100%, 410px);
-    height: 350px;
+    height: 380px;
     margin: 56px auto 0;
     transform: none;
   }
 
   .hero-photo-main {
-    top: 5px;
-    right: 17%;
-    width: 228px;
-    height: 290px;
-  }
-
-  .hero-photo-small {
-    right: 52%;
-    bottom: 2px;
-    width: 143px;
-    height: 178px;
+    top: 8px;
+    right: calc(50% - 130px);
+    width: 260px;
+    height: 340px;
   }
 
   .hero-sticker {

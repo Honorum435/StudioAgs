@@ -87,7 +87,7 @@ describe("hidratación de las tarjetas", () => {
     mount();
 
     const controls = root.querySelectorAll<HTMLInputElement | HTMLButtonElement>(
-      '.product-card input, [data-action="add"], [data-action="filter"], [data-search]',
+      '.product-card input, .product-card button, [data-action="filter"], [data-search]',
     );
     expect(controls.length).toBeGreaterThan(20);
     controls.forEach((control) => expect(control.disabled).toBe(false));
@@ -161,6 +161,73 @@ describe("precio en vivo", () => {
     expect(region.textContent).not.toBe(first);
     expect(announcer()).toBe("Láminas sumado al pedido");
     expect(store.getState().lines[0].quantity).toBe(2);
+  });
+});
+
+describe("cantidad", () => {
+  function quantity(id: string): HTMLInputElement {
+    return card(id).querySelector<HTMLInputElement>("[data-card-quantity]")!;
+  }
+
+  function step(id: string, action: "card-less" | "card-more"): HTMLButtonElement {
+    const button = card(id).querySelector<HTMLButtonElement>(`[data-action="${action}"]`)!;
+    button.click();
+    return button;
+  }
+
+  function type(id: string, value: string, key?: string): void {
+    const input = quantity(id);
+    input.value = value;
+    if (key) {
+      input.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+    } else {
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  }
+
+  it("con + y − cambia cuántos suma el botón, con el precio de todos, y lo anuncia", () => {
+    mount();
+    const less = card("fotos").querySelector<HTMLButtonElement>('[data-action="card-less"]')!;
+    expect(less.disabled).toBe(false);
+    expect(less.getAttribute("aria-disabled")).toBe("true");
+    step("fotos", "card-less");
+    expect(quantity("fotos").value).toBe("1");
+
+    step("fotos", "card-more");
+    step("fotos", "card-more");
+    step("fotos", "card-more");
+    expect(quantity("fotos").value).toBe("4");
+    expect(less.hasAttribute("aria-disabled")).toBe(false);
+    expect(priceText("fotos")).toBe(`${formatPrice(800)} por unidad`);
+    expect(squash(addButton("fotos").textContent)).toContain(`Sumar 4 · ${formatPrice(3200)}`);
+    expect(squash(addButton("fotos").querySelector(".visually-hidden")!.textContent)).toBe(
+      `Fotos para guardar, cantidad 4, ${formatPrice(3200)}`,
+    );
+    expect(announcer()).toBe("Cantidad de Fotos para guardar: 4");
+
+    step("fotos", "card-less");
+    addButton("fotos").click();
+    expect(store.getState().lines.map((line) => [line.id, line.quantity])).toEqual([["fotos-polaroid", 3]]);
+  });
+
+  it("lo escrito queda entre 1 y 99, y Enter lo confirma", () => {
+    mount();
+    type("laminas", "250");
+    expect(quantity("laminas").value).toBe("99");
+    expect(card("laminas").querySelector('[data-action="card-more"]')!.getAttribute("aria-disabled")).toBe("true");
+
+    type("laminas", "diez");
+    expect(quantity("laminas").value).toBe("1");
+
+    type("laminas", "10", "Enter");
+    expect(squash(addButton("laminas").textContent)).toContain(`Sumar 10 · ${formatPrice(70000)}`);
+  });
+
+  it("Tarjetas no la lleva: elige la cantidad en sus opciones", () => {
+    mount();
+    expect(card("tarjetas").querySelector("[data-card-quantity]")).toBeNull();
+    addButton("tarjetas").click();
+    expect(store.getState().lines[0].quantity).toBe(1);
   });
 });
 

@@ -366,9 +366,6 @@ describe("inclinación de las polaroids", () => {
     define(area, { offsetWidth: 400, offsetHeight: 400 });
     area.getBoundingClientRect = () => new DOMRect(0, 0, 400, 400);
     define(photo, { offsetLeft: 100, offsetTop: 0, offsetWidth: 200, offsetHeight: 300 });
-    area.querySelectorAll<HTMLElement>(".hero-photo-small").forEach((small) => {
-      define(small, { offsetLeft: 0, offsetTop: 300, offsetWidth: 50, offsetHeight: 50 });
-    });
     return { area, photo };
   }
 

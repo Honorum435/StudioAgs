@@ -58,7 +58,8 @@ export const business: BusinessInfo = {
   instagramHandle: "__studioags",
   // Lo pidió la dueña para Contacto (chat del 30/10/2026).
   email: "elstudioags@gmail.com",
-  responseTime: example("Respondemos de lunes a viernes de 10 a 18 h, casi siempre en el mismo día."),
+  // El horario lo pasó la dueña (de 8 a 20); falta que diga qué días.
+  responseTime: example("Respondemos de 8 a 20 h, casi siempre en el mismo día."),
   exchangePolicy: example(
     "Antes de imprimir te mandamos una muestra para que la apruebes. Como cada pedido es personalizado, no hacemos cambios por gusto; si llega con una falla de impresión, lo reponemos sin costo.",
   ),

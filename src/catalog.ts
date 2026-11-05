@@ -73,7 +73,6 @@ export interface ProductImages {
   card: ImageSpec;
   // La página del catálogo en PDF; los productos que no estaban en el catálogo no la tienen.
   ficha?: ImageSpec;
-  hero?: ImageSpec;
 }
 
 // Una foto de la galería de la página del producto.
@@ -147,7 +146,19 @@ function singleGroup(
   options: readonly PricedOption[],
   unit = "por unidad",
 ): Pick<CatalogProduct, "groups" | "combinations"> {
-  const groups = [{ ...group, options: options.map(({ id, label }) => ({ id, label })) }];
+  return pricedByFirstGroup(productId, group, options, [], unit);
+}
+
+// Un grupo con precio y otros que no lo cambian, como los colores de los calendarios: cada
+// combinación cuesta lo que la opción elegida del primero.
+function pricedByFirstGroup(
+  productId: string,
+  group: Omit<OptionGroup, "options">,
+  options: readonly PricedOption[],
+  free: readonly OptionGroup[],
+  unit = "por unidad",
+): Pick<CatalogProduct, "groups" | "combinations"> {
+  const groups = [{ ...group, options: options.map(({ id, label }) => ({ id, label })) }, ...free];
   const priced = new Map(options.map((option) => [option.id, option]));
   const combinations = combine(productId, groups, ([option]) => {
     const { price, unit: optionUnit } = priced.get(option.id)!;
@@ -165,10 +176,6 @@ function cardImage(base: string, widths: readonly number[], height: number): Ima
 // Páginas del PDF de 613 × 860 pt, renderizadas a 300 dpi.
 function fichaImage(productId: string): ImageSpec {
   return { base: `ficha-${productId}`, widths: [1200, 1800], width: 1800, height: 2523 };
-}
-
-function heroImage(productId: string, widths: readonly number[], height: number): ImageSpec {
-  return cardImage(`hero-${productId}`, widths, height);
 }
 
 // Fotos del álbum de la dueña y de las que mandó por WhatsApp, cuadradas como las produce
@@ -302,16 +309,36 @@ export const products: readonly CatalogProduct[] = [
     description:
       "Formatos clásicos, semanales y magnéticos. Personalizalos con colores, logo o un diseño propio.",
     imageAlt: "Muestra de diseños y formatos de calendarios StudioAGS",
-    ...singleGroup("calendarios", { id: "formato", label: "Formato" }, [
-      { id: "clasico-sin-notas", label: "Clásico sin notas", price: 41500 },
-      { id: "clasico-con-notas", label: "Clásico con notas", price: 41500 },
-      { id: "unico", label: "Único", price: 28000 },
-      { id: "doce-meses", label: "Doce meses", price: 26000 },
-      { id: "semanal-grande", label: "Semanal grande", price: 26000 },
-      { id: "semanal-chico", label: "Semanal chico", price: 21000 },
-      { id: "acrilico", label: "Acrílico", price: 55000 },
-      { id: "iman", label: "Imán", price: 23000 },
-    ]),
+    // Los colores los pidió la dueña: los monocromos son los de los emprendimientos y los
+    // personalizados. No cambian el precio.
+    ...pricedByFirstGroup(
+      "calendarios",
+      { id: "formato", label: "Formato" },
+      [
+        { id: "clasico-sin-notas", label: "Clásico sin notas", price: 41500 },
+        { id: "clasico-con-notas", label: "Clásico con notas", price: 41500 },
+        { id: "unico", label: "Único", price: 28000 },
+        { id: "doce-meses", label: "Doce meses", price: 26000 },
+        { id: "semanal-grande", label: "Semanal grande", price: 26000 },
+        { id: "semanal-chico", label: "Semanal chico", price: 21000 },
+        { id: "acrilico", label: "Acrílico", price: 55000 },
+        { id: "iman", label: "Imán", price: 23000 },
+      ],
+      [
+        {
+          id: "colores",
+          label: "Colores",
+          options: [
+            { id: "pastel", label: "Pastel" },
+            { id: "intenso", label: "Intenso" },
+            { id: "calido", label: "Cálido" },
+            { id: "frio", label: "Frío" },
+            { id: "monocromo", label: "Monocromo" },
+          ],
+        },
+      ],
+    ),
+    note: "Monocromo: un solo color, para tu emprendimiento o un diseño propio. En el Único, que es una lámina, el color lo elegís por WhatsApp.",
     addOns: [{ id: "calendarios-notas-con-iman", label: "Notas con imán", price: 2500, unit: "por unidad" }],
     personalizable: true,
     needsPhotos: false,
@@ -350,7 +377,6 @@ export const products: readonly CatalogProduct[] = [
     images: {
       card: cardImage("fotos", [400, 585], 439),
       ficha: fichaImage("fotos"),
-      hero: heroImage("fotos", [400, 434], 542),
     },
   },
   {
@@ -443,10 +469,26 @@ export const products: readonly CatalogProduct[] = [
     name: "Bitácoras",
     description: "Bitácoras anilladas A5 o A6, con 60 hojas de opalina de 120 g y tapas ilustradas.",
     imageAlt: "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas",
-    ...singleGroup("bitacoras", { id: "formato", label: "Formato" }, [
-      { id: "bitacora-a5", label: "Bitácora A5", price: 7000 },
-      { id: "bitacora-a6", label: "Bitácora A6", price: 5000 },
-    ]),
+    ...pricedByFirstGroup(
+      "bitacoras",
+      { id: "formato", label: "Formato" },
+      [
+        { id: "bitacora-a5", label: "Bitácora A5", price: 7000 },
+        { id: "bitacora-a6", label: "Bitácora A6", price: 5000 },
+      ],
+      [
+        {
+          id: "hojas",
+          label: "Hojas",
+          options: [
+            { id: "lisas", label: "Lisas" },
+            { id: "rayadas", label: "Rayadas" },
+            { id: "cuadriculadas", label: "Cuadriculadas" },
+            { id: "punteadas", label: "Punteadas" },
+          ],
+        },
+      ],
+    ),
     addOns: [],
     personalizable: true,
     needsPhotos: false,

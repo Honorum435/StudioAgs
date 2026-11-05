@@ -75,14 +75,6 @@ TARJETAS: dict[str, Foto | Recorte] = {
     "laminas": Recorte(34, (303.3, 101.1, 481.1, 234.5)),
 }
 
-# Polaroids del hero, en 4:5.
-HERO: dict[str, Foto | Recorte] = {
-    # La foto de ejemplo del formato polaroid (542 px).
-    "fotos": Foto(13, 5, cx=0.56, cy=0.5),
-    # Cuatro tapas de la página 30 (naranjas, chica con plantas, limones, gato negro).
-    "bitacoras": Recorte(30, (37.6, 289, 252.6, 557.75)),
-}
-
 # Página de "Ver ficha" de cada producto (las mismas que usaba la web).
 FICHAS: dict[str, int] = {
     "calendarios": 8,
@@ -296,7 +288,6 @@ def main() -> None:
     # Antes de escribir nada: cada página de la dirección de arte tiene que existir en este PDF.
     paginas = [
         *((f"TARJETAS[{producto!r}]", origen.pagina) for producto, origen in TARJETAS.items()),
-        *((f"HERO[{producto!r}]", origen.pagina) for producto, origen in HERO.items()),
         *((f"FICHAS[{producto!r}]", pagina) for producto, pagina in FICHAS.items()),
         *((f"COMPARTIR[{indice}]", foto.pagina) for indice, foto in enumerate(COMPARTIR)),
     ]
@@ -304,7 +295,6 @@ def main() -> None:
         validar_pagina(doc, pagina, origen)
 
     tarjetas = {producto: generar_foto(doc, origen, 4 / 3, producto, args.salida) for producto, origen in TARJETAS.items()}
-    heroes = {producto: generar_foto(doc, origen, 4 / 5, f"hero-{producto}", args.salida) for producto, origen in HERO.items()}
     fichas = {producto: generar_ficha(doc, producto, pagina, args.salida) for producto, pagina in FICHAS.items()}
     compartir = generar_compartir(doc, args.salida)
 
@@ -314,10 +304,6 @@ def main() -> None:
         cubre = "cubre 2×" if nativo >= NECESIDAD_2X else f"no cubre 2× ({nativo / (NECESIDAD_2X / 2):.2f}×)"
         anchos = ", ".join(f"{w}×{h}" for _, (w, h) in dato["archivos"])
         print(f"  {producto:13s} {dato['fuente']:48s} recorte {nativo:4d} px de {NECESIDAD_2X}: {cubre:22s} -> {anchos}")
-    print("Hero (polaroid principal ~260 px CSS, chica ~160 px CSS):")
-    for producto, dato in heroes.items():
-        anchos = ", ".join(f"{w}×{h}" for _, (w, h) in dato["archivos"])
-        print(f"  {producto:13s} {dato['fuente']:48s} recorte {dato['nativo']:4d} px -> {anchos}")
     print("Fichas:")
     for producto, dato in fichas.items():
         anchos = ", ".join(f"{w}×{h}" for _, (w, h) in dato["archivos"])
@@ -326,7 +312,7 @@ def main() -> None:
 
     total = sum(
         ruta.stat().st_size
-        for grupo in (tarjetas, heroes, fichas)
+        for grupo in (tarjetas, fichas)
         for dato in grupo.values()
         for ruta, _ in dato["archivos"]
     ) + compartir.stat().st_size

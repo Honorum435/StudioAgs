@@ -178,6 +178,38 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 - diga si le gusta cómo quedó la distribución;
 - mande reseñas reales de clientas, si quiere la tarjeta como la de la foto.
 
+## Colores del kit, una sola foto y cantidad (chat después de publicar el 03/11/2026)
+
+**Lo que pidió Aixa:**
+- **Horario de atención:** "de 8 a 20".
+- **Colores:** "algunos cuadrados no son el mismo azul y verde", y el negro.
+- **Inicio:** "queda mal la foto"; a "¿Querés que ponga solo esa foto más grande?" dijo que sí.
+- **Cantidad:** poder elegir cuántos sumar ("si quieren 10 fotos, por ejemplo, ponés x10"), en Fotos, Láminas y los productos en general.
+- **Calendarios:** elegir los colores (pastel, intenso, cálido, frío, y los monocromos, que son los de los emprendimientos o los personalizados). En el Único, que es una lámina, hay que elegir un color.
+- **Bitácoras:** elegir las hojas: lisas, rayadas, cuadriculadas o punteadas.
+- Mandó la lista de precios y la de precios por metro cuadrado. De los archivos digitales todavía no tiene nada.
+
+**Cómo quedó:**
+- **Horario:** "Respondemos de 8 a 20 h, casi siempre en el mismo día", en Contacto, Antes de pedir y Preguntas frecuentes.
+- **Tarjetas de Contacto:** la azul y la verde ahora son del azul y el verde del kit, como el paso azul de "Cómo comprar". Sobre el azul la letra va en blanco y sobre el verde, en el negro del kit, porque el rosa y el amarillo no se leen ahí. Lo mismo para el "Escribinos" verde y el aviso verde del pedido. El rosa con letra azul y el amarillo con letra verde quedan como estaban.
+- **Negro:** la opción elegida, el filtro activo y los botones al pasar el mouse van en el negro del kit (#1E231F) en lugar del gris oscuro de la letra.
+- **Inicio:** una sola polaroid, más grande, con la foto del puesto. Salió la chica de Fotos para guardar (y sus imágenes `hero-fotos`).
+- **Cantidad:** cada producto tiene "Cantidad" con − y + (de 1 a 99) arriba del botón, que dice cuántos suma y el precio de todos ("Sumar 10 · $ 15.000"). Tarjetas no lo lleva, porque ya elige 100, 200, 300, 500 o 1.000.
+- **Calendarios:** "Colores": Pastel, Intenso, Cálido, Frío y Monocromo, sin cambiar el precio. La nota de la tarjeta dice que el monocromo es para emprendimientos o diseños propios y que el color del Único se elige por WhatsApp.
+- **Bitácoras:** "Hojas": Lisas, Rayadas, Cuadriculadas y Punteadas, sin cambiar el precio.
+
+**Falta que Aixa:**
+- **Lista de precios en grande:** llegó como miniatura y no se leen bien los números. Parece que cambiaron estos, pero no los toqué hasta estar seguro:
+  - Calendarios clásicos (sin y con notas): $ 40.000 en lugar de $ 41.500.
+  - Calendario de imán: $ 20.000 en lugar de $ 23.000.
+  - Notas con imán: $ 3.500 en lugar de $ 2.500.
+  - Polaroid: $ 500 en lugar de $ 800.
+  - Pizarra OrMa: $ 35.000 la gris y $ 40.000 la negra, en lugar de $ 50.000 y $ 60.000.
+- **Productos nuevos de la lista:** Minijuegos a $ 15.000, Archivo bajonero + alfajor a $ 13.000 (encuadernados) y lo que va por metro cuadrado (vinilo blanco o transparente con o sin laca, vinilo de corte, lona frontlight, blueback y DTF textil a $ 22.500). Faltan las fotos y los textos de los que no los tienen.
+- **Colores de los calendarios:** si manda la foto con los colores numerados, el Único puede elegir el número del color en la página en lugar de coordinarlo por WhatsApp.
+- **Días de atención:** dijo de 8 a 20, pero no qué días.
+- **Letra sobre el verde:** va en negro porque el amarillo no se lee sobre el verde del kit. Si la prefiere amarilla, la tarjeta tendría que volver al verde oscuro.
+
 ## Fotos del stand, formas y textos (chat del 02/11/2026, a la noche)
 
 **Lo que pidió Aixa:**
@@ -204,10 +236,10 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 
 **Falta que Aixa:**
 - **Archivos digitales:** quiere sumar plantillas para descargar o que se mandan por archivo, capaz en otra columna del menú. Falta saber cuáles serían, el precio y el formato, para no armar una página vacía.
-- **Minijuegos:** ya está su texto (más de 15 juegos reutilizables, 2 fibrones con borrador, 11,5 × 11,5 cm, en varios colores). Falta el precio.
+- **Minijuegos:** ya está su texto (más de 15 juegos reutilizables, 2 fibrones con borrador, 11,5 × 11,5 cm, en varios colores). Falta el precio. (En la lista nueva figuran a $ 15.000: ver arriba).
 - **3 separadores a $ 3.000:** confirme que la promo es de los separadores con imán, como dice el cartel de la feria.
 - **"En preguntas frecuentes y contactos se pone todo azul pero en productos nop":** no queda claro a qué se refiere. El menú y los títulos se ven iguales en las tres páginas.
-- **Tarjeta azul de Contacto:** sigue en el azul oscuro con letra rosa, como pidió el 02/11. Si la quiere en el azul del logo, la letra tendría que ir en blanco.
+- **Tarjeta azul de Contacto:** sigue en el azul oscuro con letra rosa, como pidió el 02/11. Si la quiere en el azul del logo, la letra tendría que ir en blanco. (Ya está en el azul del kit con letra blanca: ver arriba).
 - **El tramo del chat de las 7:50 a las 8:00 p.m.:** no lo llegué a leer (había una captura de Nosotros).
 
 ## Combinaciones de las tarjetas y fotos nuevas (chat del 02/11/2026)

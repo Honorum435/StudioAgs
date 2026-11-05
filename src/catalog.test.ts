@@ -20,14 +20,6 @@ function product(id: string): CatalogProduct {
 
 // Precios del catálogo del 14/7/2026 (página 5 del PDF).
 const expectedPrices: Record<string, number> = {
-  "calendarios-clasico-sin-notas": 41500,
-  "calendarios-clasico-con-notas": 41500,
-  "calendarios-unico": 28000,
-  "calendarios-doce-meses": 26000,
-  "calendarios-semanal-grande": 26000,
-  "calendarios-semanal-chico": 21000,
-  "calendarios-acrilico": 55000,
-  "calendarios-iman": 23000,
   "fotos-polaroid": 800,
   "fotos-tira": 1500,
   "fotos-foto-10x10": 1500,
@@ -41,8 +33,6 @@ const expectedPrices: Record<string, number> = {
   "vinilos-transparente-sin-laca": 16200,
   "vinilos-transparente-laca-sectorizada": 18600,
   "vinilos-transparente-laca-completa": 21000,
-  "bitacoras-bitacora-a5": 7000,
-  "bitacoras-bitacora-a6": 5000,
   "complementos-separador": 1300,
   "complementos-separador-con-iman": 1500,
   "complementos-separadores-con-iman-x3": 3000,
@@ -67,6 +57,28 @@ for (const [quantity, prices] of Object.entries(cardMatrix)) {
       expectedPrices[`tarjetas-${quantity}-${suffix}`] = prices[index];
     },
   );
+}
+
+// Los colores de los calendarios y las hojas de las bitácoras no cambian el precio.
+const calendarFormats: Record<string, number> = {
+  "clasico-sin-notas": 41500,
+  "clasico-con-notas": 41500,
+  unico: 28000,
+  "doce-meses": 26000,
+  "semanal-grande": 26000,
+  "semanal-chico": 21000,
+  acrilico: 55000,
+  iman: 23000,
+};
+for (const [format, price] of Object.entries(calendarFormats)) {
+  for (const colors of ["pastel", "intenso", "calido", "frio", "monocromo"]) {
+    expectedPrices[`calendarios-${format}-${colors}`] = price;
+  }
+}
+for (const [format, price] of Object.entries({ "bitacora-a5": 7000, "bitacora-a6": 5000 })) {
+  for (const sheets of ["lisas", "rayadas", "cuadriculadas", "punteadas"]) {
+    expectedPrices[`bitacoras-${format}-${sheets}`] = price;
+  }
 }
 
 const allCombinations = products.flatMap((item) => item.combinations);
@@ -99,13 +111,13 @@ describe("catálogo", () => {
       products.map((item) => [item.id, item.groups.map((group) => group.id)]),
     );
     expect(groups).toEqual({
-      calendarios: ["formato"],
+      calendarios: ["formato", "colores"],
       fotos: ["formato"],
       "pizarra-orma": ["color"],
       "entre-flores": [],
       vinilos: ["material", "laca"],
       tarjetas: ["cantidad", "faz", "terminacion"],
-      bitacoras: ["formato"],
+      bitacoras: ["formato", "hojas"],
       complementos: ["tipo"],
       laminas: ["tamano"],
     });
@@ -146,7 +158,7 @@ describe("catálogo", () => {
       }
     }
     expect(product("vinilos").combinations).toHaveLength(6);
-    expect(product("calendarios").combinations).toHaveLength(8);
+    expect(product("calendarios").combinations).toHaveLength(40);
     expect(product("vinilos").addOns.map((addOn) => [addOn.id, addOn.price, addOn.unit])).toEqual([
       ["vinilos-maqueta", 2500, "cada 5 diseños"],
       ["vinilos-corte-individual", 2500, "por pliego"],
@@ -206,8 +218,8 @@ describe("catálogo", () => {
 
   it("declara sus imágenes con anchos, ancho y alto", () => {
     for (const item of products) {
-      const { card, ficha, hero } = item.images;
-      for (const spec of [card, ...(ficha ? [ficha] : []), ...(hero ? [hero] : [])]) {
+      const { card, ficha } = item.images;
+      for (const spec of [card, ...(ficha ? [ficha] : [])]) {
         expect(spec.base.length).toBeGreaterThan(0);
         expect(spec.widths.length).toBeGreaterThan(0);
         expect([...spec.widths].sort((a, b) => a - b)).toEqual(spec.widths);
@@ -218,10 +230,8 @@ describe("catálogo", () => {
       expect([item.id, ...(item.gallery ?? []).map((photo) => photo.image.base)]).toContain(card.base);
     }
     expect(products.filter((item) => !item.images.ficha).map((item) => item.id)).toEqual(["complementos"]);
-    // La polaroid grande del inicio es la foto del puesto; la chica, la de Fotos para guardar.
-    expect(products.filter((item) => item.images.hero).map((item) => item.id)).toEqual(["fotos"]);
     const bases = products.flatMap(({ images }) =>
-      [images.card, images.ficha, images.hero].flatMap((spec) => (spec ? [spec.base] : [])),
+      [images.card, images.ficha].flatMap((spec) => (spec ? [spec.base] : [])),
     );
     expect(new Set(bases).size).toBe(bases.length);
   });

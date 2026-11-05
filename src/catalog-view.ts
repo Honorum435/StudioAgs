@@ -1,4 +1,4 @@
-import type { OrderStore } from "./cart";
+import { MAX_QUANTITY, MIN_QUANTITY, clampQuantity, type OrderStore } from "./cart";
 import { initialSelection, products, resolveSelection, type CatalogProduct, type Selection } from "./catalog";
 import { announceTo, delegateActions, rememberHtml, setHtml, windowOf, type ActionHandler } from "./dom";
 import { ALL_INTENTS, isIntentFilter, visibleProductIds, type FilterState } from "./filters";
@@ -39,6 +39,8 @@ interface CardIsland {
   card: HTMLElement;
   price: HTMLElement | null;
   button: HTMLButtonElement | null;
+  // Cuántos suma el botón; Tarjetas no lo tiene porque elige la cantidad en sus opciones.
+  quantity: HTMLInputElement | null;
 }
 
 interface Choice {
@@ -98,6 +100,29 @@ function readChoice({ card, product }: CardIsland): Choice {
   return { selection, addOnIds };
 }
 
+// En el tope, el botón de la cantidad sigue en el orden del teclado pero no hace nada.
+function setInert(button: Element | null, inert: boolean): void {
+  if (inert) {
+    button?.setAttribute("aria-disabled", "true");
+  } else {
+    button?.removeAttribute("aria-disabled");
+  }
+}
+
+// Lo escrito en la cantidad, entre 1 y 99; si no es un número, vuelve a 1. Deja el campo como
+// quedó, así se ve lo que se va a sumar.
+function readQuantity({ quantity }: CardIsland): number {
+  if (!quantity) {
+    return MIN_QUANTITY;
+  }
+  const raw = quantity.value.trim();
+  const value = /^\d+$/.test(raw) ? clampQuantity(Number(raw)) : MIN_QUANTITY;
+  if (quantity.value !== String(value)) {
+    quantity.value = String(value);
+  }
+  return value;
+}
+
 function isPlainClick(event: MouseEvent): boolean {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
@@ -134,6 +159,7 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
       card,
       price: card.querySelector<HTMLElement>("[data-card-price]"),
       button: card.querySelector<HTMLButtonElement>('[data-action="add"]'),
+      quantity: card.querySelector<HTMLInputElement>("[data-card-quantity]"),
     };
     // El prerender pintó la primera opción: si sigue elegida, hidratar no reescribe nada.
     const initial = resolveSelection(product, initialSelection(product));
@@ -170,9 +196,22 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
         popNumber(amount, amount.textContent ?? "");
       }
     }
+    const quantity = readQuantity(island);
     if (island.button) {
-      setHtml(island.button, addButtonContent(island.product, resolved));
+      setHtml(island.button, addButtonContent(island.product, resolved, quantity));
     }
+    setInert(island.card.querySelector('[data-action="card-less"]'), quantity <= MIN_QUANTITY);
+    setInert(island.card.querySelector('[data-action="card-more"]'), quantity >= MAX_QUANTITY);
+  }
+
+  function stepQuantity(element: HTMLElement, step: number): void {
+    const island = cards.get(element.dataset.productId ?? "");
+    if (!island?.quantity || element.getAttribute("aria-disabled") === "true") {
+      return;
+    }
+    island.quantity.value = String(clampQuantity(readQuantity(island) + step));
+    paintCard(island, true);
+    announce(`Cantidad de ${island.product.name}: ${island.quantity.value}`);
   }
 
   function announce(message: string): void {
@@ -351,13 +390,19 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
         return;
       }
       const { selection, addOnIds } = readChoice(island);
-      if (store.add(island.product.id, selection, addOnIds)) {
+      if (store.add(island.product.id, selection, addOnIds, readQuantity(island))) {
         announce(`${island.product.name} sumado al pedido`);
         const label = island.button?.querySelector<HTMLElement>(".add-button-label");
         if (label) {
           swapText(label, ADDED_LABEL);
         }
       }
+    },
+    "card-less"(element) {
+      stepQuantity(element, -1);
+    },
+    "card-more"(element) {
+      stepQuantity(element, 1);
     },
     filter(element) {
       const intent = element.dataset.intent ?? "";
@@ -428,7 +473,18 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   }
 
   function onKeyDown(event: KeyboardEvent): void {
-    if (event.key === "Enter" && fichaBody && event.target === fichaBody && ficha?.ready) {
+    const target = event.target;
+    // Enter en la cantidad la confirma sin esperar a que el campo pierda el foco.
+    if (event.key === "Enter" && target instanceof HTMLInputElement && target.hasAttribute("data-card-quantity")) {
+      event.preventDefault();
+      const card = target.closest<HTMLElement>("[data-product-island]");
+      const island = card ? cards.get(card.dataset.productId ?? "") : undefined;
+      if (island) {
+        paintCard(island, true);
+      }
+      return;
+    }
+    if (event.key === "Enter" && fichaBody && target === fichaBody && ficha?.ready) {
       event.preventDefault();
       toggleZoom();
     }
@@ -449,9 +505,9 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     island.card.querySelectorAll<HTMLInputElement>("input").forEach((input) => {
       input.disabled = false;
     });
-    if (island.button) {
-      island.button.disabled = false;
-    }
+    island.card.querySelectorAll<HTMLButtonElement>("button").forEach((button) => {
+      button.disabled = false;
+    });
   });
   cards.forEach((island) => {
     island.card.querySelectorAll<HTMLElement>(".option-list").forEach((list) => {
