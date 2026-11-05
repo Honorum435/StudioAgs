@@ -18,14 +18,14 @@ function product(id: string): CatalogProduct {
   return found;
 }
 
-// Precios del catálogo del 14/7/2026 (página 5 del PDF).
+// Precios de la lista que mandó la dueña el 05/11/2026.
 const expectedPrices: Record<string, number> = {
-  "fotos-polaroid": 800,
+  "fotos-polaroid": 500,
   "fotos-tira": 1500,
   "fotos-foto-10x10": 1500,
   "fotos-iman-10x10": 4000,
-  "pizarra-orma-gris-galvanizada": 50000,
-  "pizarra-orma-negro-mate": 60000,
+  "pizarra-orma-gris-galvanizada": 35000,
+  "pizarra-orma-negro-mate": 40000,
   "entre-flores": 35000,
   "vinilos-blanco-sin-laca": 14500,
   "vinilos-blanco-laca-sectorizada": 16600,
@@ -61,14 +61,14 @@ for (const [quantity, prices] of Object.entries(cardMatrix)) {
 
 // Los colores de los calendarios y las hojas de las bitácoras no cambian el precio.
 const calendarFormats: Record<string, number> = {
-  "clasico-sin-notas": 41500,
-  "clasico-con-notas": 41500,
+  "clasico-sin-notas": 40000,
+  "clasico-con-notas": 40000,
   unico: 28000,
   "doce-meses": 26000,
   "semanal-grande": 26000,
   "semanal-chico": 21000,
   acrilico: 55000,
-  iman: 23000,
+  iman: 20000,
 };
 for (const [format, price] of Object.entries(calendarFormats)) {
   for (const colors of ["pastel", "intenso", "calido", "frio", "monocromo"]) {
@@ -164,7 +164,7 @@ describe("catálogo", () => {
       ["vinilos-corte-individual", 2500, "por pliego"],
     ]);
     expect(product("calendarios").addOns.map((addOn) => [addOn.id, addOn.price])).toEqual([
-      ["calendarios-notas-con-iman", 2500],
+      ["calendarios-notas-con-iman", 3500],
     ]);
   });
 

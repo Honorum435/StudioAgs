@@ -63,6 +63,7 @@ export const business: BusinessInfo = {
   exchangePolicy: example(
     "Antes de imprimir te mandamos una muestra para que la apruebes. Como cada pedido es personalizado, no hacemos cambios por gusto; si llega con una falla de impresión, lo reponemos sin costo.",
   ),
-  pricesUpdatedAt: example({ year: 2026, month: 7, day: 14 }),
+  // El día que se cargó la lista de precios que mandó la dueña.
+  pricesUpdatedAt: { year: 2026, month: 11, day: 5 },
   featuredProducts: example(["calendarios", "fotos", "bitacoras", "laminas"]),
 };

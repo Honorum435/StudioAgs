@@ -178,6 +178,31 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 - diga si le gusta cómo quedó la distribución;
 - mande reseñas reales de clientas, si quiere la tarjeta como la de la foto.
 
+## Lista de precios en grande (05/11/2026)
+
+**Cómo quedó:** comparé la lista con el sitio, precio por precio. Cambiaron estos:
+- **Calendarios clásicos** (sin y con notas): de $ 41.500 a $ 40.000.
+- **Calendario de imán:** de $ 23.000 a $ 20.000. Ahora es el más barato, así que Calendarios dice "Desde $ 20.000".
+- **Notas con imán** (el adicional de Calendarios): de $ 2.500 a $ 3.500.
+- **Polaroid:** de $ 800 a $ 500.
+- **Pizarra OrMa:** la gris de $ 50.000 a $ 35.000 y la negra de $ 60.000 a $ 40.000.
+
+Lo demás ya estaba igual: los otros calendarios, fotos, Entre Flores, vinilos, maqueta y corte, toda la tabla de Tarjetas, Bitácoras, separadores, marco con imán y Láminas. En Láminas sumé a la nota "Encuadrado a medida, por encargue", como dice la lista.
+
+La fecha de precios pasó a ser el 5 de noviembre de 2026 y ya no es de ejemplo. Quien tenga un pedido guardado de antes ve "Actualizamos los precios al 5 de noviembre de 2026: revisá el subtotal".
+
+**Falta que Aixa:**
+- **3 separadores con imán a $ 3.000:** no están en la lista; siguen porque salen del cartel de la feria. Que confirme si la promo sigue.
+- **Minijuegos ($ 15.000, "lúdico"):** ya hay precio, texto y fotos, así que se pueden sumar a Productos. Falta saber si se elige el color.
+- **Archivo bajonero + alfajor ($ 13.000, "encuadernados"):** faltan fotos y texto.
+- **Precios por metro cuadrado:** faltan las fotos y saber si van como opción de Vinilos o como productos aparte (lona, blueback, DTF).
+  - Vinilo blanco: $ 33.300; con laca sectorizada, $ 38.300; con laca completa, $ 42.200.
+  - Vinilo transparente: $ 36.700; con laca sectorizada, $ 40.000; con laca completa, $ 43.300.
+  - Vinilo de corte: sin precio en la lista.
+  - Lona frontlight 13 oz: $ 27.000; con laca, $ 32.400.
+  - Blueback 150 g mate: $ 20.900; con laca, $ 25.200.
+  - DTF textil: $ 22.500.
+
 ## Colores del kit, una sola foto y cantidad (chat después de publicar el 03/11/2026)
 
 **Lo que pidió Aixa:**
@@ -199,13 +224,8 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 - **Bitácoras:** "Hojas": Lisas, Rayadas, Cuadriculadas y Punteadas, sin cambiar el precio.
 
 **Falta que Aixa:**
-- **Lista de precios en grande:** llegó como miniatura y no se leen bien los números. Parece que cambiaron estos, pero no los toqué hasta estar seguro:
-  - Calendarios clásicos (sin y con notas): $ 40.000 en lugar de $ 41.500.
-  - Calendario de imán: $ 20.000 en lugar de $ 23.000.
-  - Notas con imán: $ 3.500 en lugar de $ 2.500.
-  - Polaroid: $ 500 en lugar de $ 800.
-  - Pizarra OrMa: $ 35.000 la gris y $ 40.000 la negra, en lugar de $ 50.000 y $ 60.000.
-- **Productos nuevos de la lista:** Minijuegos a $ 15.000, Archivo bajonero + alfajor a $ 13.000 (encuadernados) y lo que va por metro cuadrado (vinilo blanco o transparente con o sin laca, vinilo de corte, lona frontlight, blueback y DTF textil a $ 22.500). Faltan las fotos y los textos de los que no los tienen.
+- **Lista de precios en grande:** llegó el 05/11 y los precios ya están cargados (ver arriba).
+- **Productos nuevos de la lista:** Minijuegos, Archivo bajonero + alfajor y lo que va por metro cuadrado. Los precios exactos están arriba.
 - **Colores de los calendarios:** si manda la foto con los colores numerados, el Único puede elegir el número del color en la página en lugar de coordinarlo por WhatsApp.
 - **Días de atención:** dijo de 8 a 20, pero no qué días.
 - **Letra sobre el verde:** va en negro porque el amarillo no se lee sobre el verde del kit. Si la prefiere amarilla, la tarjeta tendría que volver al verde oscuro.
@@ -295,7 +315,7 @@ Revisó la página de antes de los cambios del 30/10: varias cosas ya están hec
 - **Precio "desde"** en las tarjetas, para que se note que cambia con las opciones. Hecho: "Desde $ X, según la opción" en las tarjetas y en cada página, solo cuando el precio cambia.
 - **Foto en las líneas del pedido** y un **botón de WhatsApp** siempre visible (este necesita el número).
 - **Instagram:** algunas fotos fijas que lleven al perfil. Un feed en vivo necesita código de Instagram, que la CSP no deja cargar.
-- **Fecha de precios:** la del 14 de julio de 2026 es de ejemplo; Aixa tiene que confirmarla.
+- **Fecha de precios:** hecho, es el 5 de noviembre de 2026, el día que se cargó la lista nueva.
 
 Lo que no conviene seguir: la paleta "lila, violeta, celeste" y la "tipografía gruesa y redondeada", que no son las de la hoja de identidad.
 
@@ -397,7 +417,7 @@ Falta antes de pasarla a `main`:
 ## Antes de publicar (los responde la dueña)
 
 - Número de WhatsApp y URL del sitio en `.env` (ver `.env.example`).
-- Datos del negocio en `src/business.ts`: zona de retiro, envíos, medios de pago, Instagram, tiempo de respuesta, política de cambios y fecha de precios. Al confirmar cada uno, sacarle el `example(...)`.
+- Datos del negocio en `src/business.ts`: zona de retiro, envíos, medios de pago, Instagram, tiempo de respuesta y política de cambios. Al confirmar cada uno, sacarle el `example(...)`.
 - Plazos de producción en `src/catalog.ts` para Calendarios, Pizarra OrMa, Entre Flores, Tarjetas, Bitácoras y Láminas (marcados con `pendingLeadTime()`).
 - Qué productos son personalizables y en qué intención va cada uno (hoy hay un reparto por defecto).
 - Extras de Tarjetas que aparecen en el PDF (puntas redondeadas, agujereado) y la cantidad de fotos que trae la Pizarra OrMa.

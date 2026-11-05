@@ -301,7 +301,8 @@ const vinylCombinations = combine("vinilos", vinylGroups, ([material, lacquer]) 
   unit: "por pliego",
 }));
 
-// Reparto inicial de intenciones y personalizables: revisar con la dueña.
+// Reparto inicial de intenciones y personalizables: revisar con la dueña. Los precios son los de
+// la lista que mandó la dueña el 05/11/2026; las promos del cartel de la feria no están en ella.
 export const products: readonly CatalogProduct[] = [
   {
     id: "calendarios",
@@ -315,14 +316,14 @@ export const products: readonly CatalogProduct[] = [
       "calendarios",
       { id: "formato", label: "Formato" },
       [
-        { id: "clasico-sin-notas", label: "Clásico sin notas", price: 41500 },
-        { id: "clasico-con-notas", label: "Clásico con notas", price: 41500 },
+        { id: "clasico-sin-notas", label: "Clásico sin notas", price: 40000 },
+        { id: "clasico-con-notas", label: "Clásico con notas", price: 40000 },
         { id: "unico", label: "Único", price: 28000 },
         { id: "doce-meses", label: "Doce meses", price: 26000 },
         { id: "semanal-grande", label: "Semanal grande", price: 26000 },
         { id: "semanal-chico", label: "Semanal chico", price: 21000 },
         { id: "acrilico", label: "Acrílico", price: 55000 },
-        { id: "iman", label: "Imán", price: 23000 },
+        { id: "iman", label: "Imán", price: 20000 },
       ],
       [
         {
@@ -339,7 +340,7 @@ export const products: readonly CatalogProduct[] = [
       ],
     ),
     note: "Monocromo: un solo color, para tu emprendimiento o un diseño propio. En el Único, que es una lámina, el color lo elegís por WhatsApp.",
-    addOns: [{ id: "calendarios-notas-con-iman", label: "Notas con imán", price: 2500, unit: "por unidad" }],
+    addOns: [{ id: "calendarios-notas-con-iman", label: "Notas con imán", price: 3500, unit: "por unidad" }],
     personalizable: true,
     needsPhotos: false,
     intents: ["organizarte", "regalar", "marca"],
@@ -359,7 +360,7 @@ export const products: readonly CatalogProduct[] = [
       "Tus recuerdos en formatos Polaroid, tiras, fotos cuadradas o imanes para la heladera.",
     imageAlt: "Ejemplos de formatos para imprimir fotos",
     ...singleGroup("fotos", { id: "formato", label: "Formato" }, [
-      { id: "polaroid", label: "Polaroid 8 × 6,5", price: 800 },
+      { id: "polaroid", label: "Polaroid 8 × 6,5", price: 500 },
       { id: "tira", label: "Tira de fotos", price: 1500, unit: "por tira" },
       { id: "foto-10x10", label: "Foto 10 × 10", price: 1500 },
       { id: "iman-10x10", label: "Imán 10 × 10", price: 4000 },
@@ -386,8 +387,8 @@ export const products: readonly CatalogProduct[] = [
       "Pizarra magnética de 50 × 50 cm con fotos, polaroids, tira de fotos y pinzas imantadas.",
     imageAlt: "Pizarra OrMa con fotos, notas y accesorios magnéticos",
     ...singleGroup("pizarra-orma", { id: "color", label: "Color" }, [
-      { id: "gris-galvanizada", label: "Gris galvanizada", price: 50000 },
-      { id: "negro-mate", label: "Negro mate", price: 60000 },
+      { id: "gris-galvanizada", label: "Gris galvanizada", price: 35000 },
+      { id: "negro-mate", label: "Negro mate", price: 40000 },
     ]),
     addOns: [],
     personalizable: true,
@@ -549,7 +550,7 @@ export const products: readonly CatalogProduct[] = [
     description:
       "Ilustraciones y gráficas de distintos artistas, en formatos para decorar tus espacios.",
     imageAlt: "Selección de ilustraciones y láminas decorativas",
-    note: "Diseños y disponibilidad pueden variar.",
+    note: "Diseños y disponibilidad pueden variar. Encuadrado a medida, por encargue.",
     ...singleGroup("laminas", { id: "tamano", label: "Tamaño" }, [
       { id: "a3-plus", label: "A3+ (SA3)", price: 7000 },
       { id: "a3", label: "A3", price: 7000 },

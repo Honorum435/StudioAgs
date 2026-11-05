@@ -124,8 +124,8 @@ describe("líneas del pedido", () => {
 
     const summary = store.getSummary();
     expect(summary.lines[0].total).toBe(26300);
-    expect(summary.lines[1].total).toBe(2400);
-    expect(summary.subtotal).toBe(28700);
+    expect(summary.lines[1].total).toBe(1500);
+    expect(summary.subtotal).toBe(27800);
     expect(summary.quantity).toBe(4);
   });
 

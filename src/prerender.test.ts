@@ -209,7 +209,7 @@ describe("renderDocument e injectApp", () => {
     expect(home.match(/<a class="best-card"/g)).toHaveLength(4);
     const catalog = renderSitePageDocument("productos");
     expect(catalog.match(/<article class="product-card"/g)).toHaveLength(9);
-    expect(catalog).toContain("Precios actualizados al 14 de julio de 2026");
+    expect(catalog).toContain("Precios actualizados al 5 de noviembre de 2026");
   });
 
   it("usa el catálogo y los datos que recibe", () => {

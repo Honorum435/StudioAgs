@@ -135,7 +135,7 @@ describe("página prerenderizada", () => {
     expect(items).toEqual([
       "Producción: de 1 a 5 días hábiles, según el producto",
       "Te mandamos una muestra antes de imprimir",
-      "Precios actualizados al 14 de julio de 2026",
+      "Precios actualizados al 5 de noviembre de 2026",
     ]);
     expect(strip.compareDocumentPosition(catalog.querySelector(".section-heading")!)).toBe(
       Node.DOCUMENT_POSITION_PRECEDING,
@@ -352,7 +352,7 @@ describe("inicio", () => {
     const cards = [...homeDoc.querySelectorAll<HTMLAnchorElement>(".best-card")];
     expect(cards.map((card) => card.getAttribute("href"))).toEqual(featured.map((id) => `producto/${id}/`));
     expect(text(cards[0].querySelector(".best-name"))).toBe("Calendarios");
-    expect(text(cards[0].querySelector(".best-price"))).toBe(`Desde ${squash(formatPrice(21000))}`);
+    expect(text(cards[0].querySelector(".best-price"))).toBe(`Desde ${squash(formatPrice(20000))}`);
     const single = parse(
       renderPage({ business: { ...business, featuredProducts: ["entre-flores"] }, catalog: products }),
     );
@@ -468,7 +468,7 @@ describe("precio desde", () => {
         expect(text(note)).toBe(`Desde ${squash(formatPrice(Math.min(...prices)))}, según la opción`);
       }
     }
-    expect(text(card("calendarios").querySelector(".product-from"))).toBe(`Desde ${squash(formatPrice(21000))}, según la opción`);
+    expect(text(card("calendarios").querySelector(".product-from"))).toBe(`Desde ${squash(formatPrice(20000))}, según la opción`);
     expect(card("entre-flores").querySelector(".product-from")).toBeNull();
   });
 });

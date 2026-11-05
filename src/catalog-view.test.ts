@@ -114,7 +114,7 @@ describe("hidratación de las tarjetas", () => {
 
     const first = card("fotos").querySelector<HTMLInputElement>('input[type="radio"]')!;
     expect(first.checked).toBe(true);
-    expect(priceText("fotos")).toBe(`${formatPrice(800)} por unidad`);
+    expect(priceText("fotos")).toBe(`${formatPrice(500)} por unidad`);
   });
 });
 
@@ -198,10 +198,10 @@ describe("cantidad", () => {
     step("fotos", "card-more");
     expect(quantity("fotos").value).toBe("4");
     expect(less.hasAttribute("aria-disabled")).toBe(false);
-    expect(priceText("fotos")).toBe(`${formatPrice(800)} por unidad`);
-    expect(squash(addButton("fotos").textContent)).toContain(`Sumar 4 · ${formatPrice(3200)}`);
+    expect(priceText("fotos")).toBe(`${formatPrice(500)} por unidad`);
+    expect(squash(addButton("fotos").textContent)).toContain(`Sumar 4 · ${formatPrice(2000)}`);
     expect(squash(addButton("fotos").querySelector(".visually-hidden")!.textContent)).toBe(
-      `Fotos para guardar, cantidad 4, ${formatPrice(3200)}`,
+      `Fotos para guardar, cantidad 4, ${formatPrice(2000)}`,
     );
     expect(announcer()).toBe("Cantidad de Fotos para guardar: 4");
 
