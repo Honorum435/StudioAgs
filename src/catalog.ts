@@ -356,7 +356,27 @@ const extrasPhotos = [
   albumPhoto("complementos", 1, "Separadores imantados con flores y moños, en sus tarjetas de colores", 960),
   albumPhoto("complementos", 2, "Separadores imantados con flores, cuadros y figuras en blanco y negro", 960),
   albumPhoto("complementos", 3, "Marco con imán en la heladera, con la foto de un perro"),
+  // Los marcos que mandó la dueña el 05/11/2026.
+  uncroppedPhoto("complementos", 4, "Marcos con imán para polaroid: rojo, amarillo con limones, cuadrillé verde y rosa con flores", 1200, 588),
+  uncroppedPhoto("complementos", 5, "Marcos con imán para fotos cuadradas: lila, blanco con dibujos, blanco y negro, y verde", 1200, 600),
+  uncroppedPhoto("complementos", 6, "Marcos con imán para tiras de fotos: bordó con flores, lila, blanco y negro, y dorado", 1200, 771),
 ];
+
+// Las bitácoras A5 en stock que mandó la dueña el 05/11/2026.
+const notebookStock = [
+  uncroppedPhoto("bitacoras", 2, "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro", 1080, 1280),
+  uncroppedPhoto("bitacoras", 3, "Más bitácoras A5 en stock con el sol de la bandera, flores, rayos y cuadrillé verde", 1080, 1280),
+  uncroppedPhoto("bitacoras", 4, "Tapas A5 en stock: ajíes, arándanos, patitos, perros salchicha, sardinas y formas lilas", 1200, 414),
+  uncroppedPhoto("bitacoras", 5, "Bitácoras A5 anilladas: formas bordó, una chica con flores, limones y un gato en la bañera", 1104, 456),
+];
+
+// El Archivo bajonero: la tapa y la página del top, las dos que eligió la dueña (05/11/2026).
+const bajoneroCover = uncroppedPhoto("archivo-bajonero", 1, "Tapa azul del Archivo bajonero, con un alfajor desarmado en capas", 912, 1504);
+const bajoneroTop: GalleryPhoto = {
+  image: cardImage("foto-archivo-bajonero-2", [558], 848),
+  alt: "Página del top del Archivo bajonero, con 34 puestos para anotar los mejores alfajores",
+  fit: "contain",
+};
 
 // Los colores que nombró la dueña (chat del 02/11/2026). No cambian el precio.
 const minigamePhotos = [
@@ -641,7 +661,7 @@ export const products: readonly CatalogProduct[] = [
       "bitacoras",
       { id: "formato", label: "Formato" },
       [
-        { id: "bitacora-a5", label: "Bitácora A5", price: 7000 },
+        { id: "bitacora-a5", label: "Bitácora A5", price: 7000, photo: notebookStock[0] },
         { id: "bitacora-a6", label: "Bitácora A6", price: 5000 },
       ],
       [
@@ -667,12 +687,33 @@ export const products: readonly CatalogProduct[] = [
       card: albumPhoto("bitacoras", 1, "", 896).image,
       ficha: fichaImage("bitacoras"),
     },
-    gallery: [albumPhoto("bitacoras", 1, "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas", 896)],
+    gallery: [albumPhoto("bitacoras", 1, "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas", 896), ...notebookStock],
     // El texto de la dueña (chat del 02/11/2026), con el vos de la página.
     details: [
       "Nuestras bitácoras tienen 60 hojas de opalina de 120 g, ideales para escritura, dibujo e ilustración. Su papel permite trabajar con distintos materiales, incluidos marcadores y pinturas a base de alcohol. Van anilladas con espiral blanco, negro o transparente.",
       "Consultá la disponibilidad de diseños, tamaños (A5 y A6) y stock al momento de hacer tu pedido.",
       "También hacemos tapas completamente personalizadas con nombres, ilustraciones, logos o diseños exclusivos. Para coordinar este tipo de trabajo y pedir un presupuesto, escribinos por Instagram o WhatsApp.",
+    ],
+  },
+  // De la lista de la dueña (05/11/2026), en "encuadernados". El texto sale de lo que dicen sus
+  // páginas en las fotos: es una colaboración con Paraná Bajoneros.
+  {
+    id: "archivo-bajonero",
+    name: "Archivo bajonero + alfajor",
+    description: "Un cuadernillo para registrar cada alfajor que probás: marca, sabor, puntaje y tu top. Viene con un alfajor.",
+    imageAlt: "Tapa azul del Archivo bajonero, con un alfajor desarmado en capas",
+    groups: [],
+    combinations: combine("archivo-bajonero", [], () => ({ price: 13000, unit: "por unidad" })),
+    addOns: [],
+    personalizable: false,
+    needsPhotos: false,
+    intents: ["regalar"],
+    leadTime: pendingLeadTime(),
+    images: { card: bajoneroCover.image },
+    gallery: [bajoneroCover, bajoneroTop],
+    details: [
+      "En cada página anotás un bajón: marca, sabor, precio y fecha, guardás un pedacito del envoltorio y le ponés puntaje a las tapitas, el relleno y la cobertura. Al final armás tu top 34 y, si querés, lo compartís en Instagram.",
+      "Trae también una breve historia del alfajor. Es una colaboración entre Paraná Bajoneros y StudioAGS.",
     ],
   },
   // Lo que se suma a otra cosa: los separadores, que antes iban con las bitácoras, y los marcos
@@ -687,7 +728,7 @@ export const products: readonly CatalogProduct[] = [
       { id: "separador", label: "Separador clásico", price: 1300 },
       { id: "separador-con-iman", label: "Separador con imán", price: 1500, photo: extrasPhotos[0] },
       { id: "separadores-con-iman-x3", label: "3 separadores con imán", price: 3000, photo: extrasPhotos[1] },
-      { id: "marco-con-iman", label: "Marco con imán", price: 5500, photo: extrasPhotos[2] },
+      { id: "marco-con-iman", label: "Marco con imán", price: 5500, photo: extrasPhotos[3] },
     ]),
     addOns: [],
     personalizable: true,

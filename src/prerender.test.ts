@@ -93,14 +93,14 @@ describe("página de un producto", () => {
 });
 
 describe("jsonLd", () => {
-  it("es JSON válido con la tienda y los 12 productos en ARS", () => {
+  it("es JSON válido con la tienda y los 13 productos en ARS", () => {
     const { store, list, items } = graph(jsonLd({ siteUrl, business: completeBusiness }));
 
     expect(store.name).toBe("StudioAGS");
     expect(store.currenciesAccepted).toBe("ARS");
     expect(store.paymentAccepted).toBe("Transferencia bancaria, Efectivo");
     expect(store.sameAs).toEqual(["https://www.instagram.com/studioags/"]);
-    expect(list.numberOfItems).toBe(12);
+    expect(list.numberOfItems).toBe(13);
     expect(items.map((item) => item.name)).toEqual(products.map((product) => product.name));
     for (const item of items) {
       expect(item["@type"]).toBe("Product");
@@ -159,7 +159,7 @@ describe("headTags", () => {
 
     const script = tags.find((tag) => tag.tag === "script")!;
     expect(script.attrs?.type).toBe("application/ld+json");
-    expect(graph(script.children!).list.numberOfItems).toBe(12);
+    expect(graph(script.children!).list.numberOfItems).toBe(13);
   });
 
   it("usa la URL que recibe, también la de la vista previa local", () => {
@@ -203,12 +203,12 @@ describe("Productos, Nosotros y Contacto", () => {
 });
 
 describe("renderDocument e injectApp", () => {
-  it("el inicio trae los más vendidos y Productos los 12 productos, con los datos reales por defecto", () => {
+  it("el inicio trae los más vendidos y Productos los 13 productos, con los datos reales por defecto", () => {
     const home = renderDocument();
     expect(home.match(/<article class="product-card"/g)).toBeNull();
     expect(home.match(/<a class="best-card"/g)).toHaveLength(4);
     const catalog = renderSitePageDocument("productos");
-    expect(catalog.match(/<article class="product-card"/g)).toHaveLength(12);
+    expect(catalog.match(/<article class="product-card"/g)).toHaveLength(13);
     expect(catalog).toContain("Precios actualizados al 5 de noviembre de 2026");
   });
 

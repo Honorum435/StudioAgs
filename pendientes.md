@@ -178,6 +178,20 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 - diga si le gusta cómo quedó la distribución;
 - mande reseñas reales de clientas, si quiere la tarjeta como la de la foto.
 
+## Bajonero, marcos, imanes y A5 en stock (zip del 05/11/2026)
+
+**Lo que mandó Aixa:** cuatro zip (Album Bajonero, Marco de Fotos, Imanes y A5 en Stock) y una foto más de A5 por el chat. Del bajonero: "solo poné el que dice top sacándole el dedo y la tapa".
+
+**Cómo quedó:**
+- **Archivo bajonero + alfajor ($ 13.000):** volvió, con la tapa y la página del top (sin la de al lado, que tenía el dedo encima). El texto sale de lo que dicen sus páginas: cada página es un bajón (marca, sabor, precio, fecha, un pedacito del envoltorio y el puntaje de tapitas, relleno y cobertura), el top 34 y una breve historia del alfajor. Es una colaboración entre Paraná Bajoneros y StudioAGS.
+- **Complementos:** las tres fotos de marcos con imán (para polaroid, para foto cuadrada y para tira). Al elegir "Marco con imán" aparece la de los marcos para polaroid.
+- **Bitácoras:** cuatro fotos de A5 en stock en la galería; al elegir "Bitácora A5" aparece la de las celestes y crema con el sol. De la foto de las tapas sueltas va solo la fila de arriba (en la de abajo hay una tapa con Bugs Bunny) y de la que mandó por el chat, solo la fila del medio (arriba está Miffy y abajo otras tapas con personajes de otros).
+
+**Falta que Aixa:**
+- **Imanes:** el precio (en la lista no están) y si van como producto aparte, con opciones (estrellas, flores, letras, caritas). Las siete fotos están en el zip "Imanes" de Descargas.
+- **Archivo bajonero:** que revise el texto.
+- **Bitácora A6:** una foto, para que la opción también cambie la imagen.
+
 ## Foto por opción (05/11/2026)
 
 **Lo que pidió el primo:** "cada vez que tocamos un sub tema en producto, ejemplo minijuegos rosa, la imagen cambia a rosa, eso con todos los productos". También sacar el Archivo bajonero.

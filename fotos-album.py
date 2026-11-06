@@ -53,6 +53,12 @@ def captura(numero: int) -> Foto:
     return Foto(f"WhatsApp Image 2026-10-30 at 2.29.36 PM{sufijo}.jpeg", recortar=False)
 
 
+def del_05_11(hora: str, zona: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0), recortar: bool = False) -> Foto:
+    """Foto de los zip que mandó la dueña el 05/11/2026 (bajonero, marcos y A5 en stock), entera
+    dentro de la zona: son fotos apaisadas o con el producto lejos de los bordes."""
+    return Foto(f"WhatsApp Image 2026-11-05 at {hora}.jpeg", zona, recortar)
+
+
 def whatsapp(hora: str, zona: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0), recortar: bool = True) -> Foto:
     """Foto que mandó la dueña por WhatsApp el 02/11/2026, por la hora del nombre."""
     return Foto(f"WhatsApp Image 2026-11-02 at {hora}.jpeg", zona, recortar)
@@ -92,11 +98,28 @@ GALERIAS: dict[str, list[Foto]] = {
     # La foto principal: los cuadernos, sin la tapa de arriba que tiene un personaje ajeno.
     "bitacoras": [
         whatsapp("10.39.04 AM", (0.0, 0.3, 1.0, 1.0)),
+        # A5 en stock (05/11/2026): las anilladas con el sol y las de dibujos, las tapas de la fila
+        # de arriba (la de abajo tiene una tapa con un personaje ajeno) y, de la foto que mandó por
+        # el chat, solo la fila del medio (arriba y abajo hay personajes ajenos).
+        del_05_11("4.44.48 PM", (0.05, 0.12, 0.95, 0.92)),
+        del_05_11("4.44.47 PM (1)", (0.05, 0.12, 0.95, 0.92)),
+        del_05_11("4.44.47 PM", (0.0, 0.03, 1.0, 0.49)),
+        Foto("a5-en-stock-chat.jpg", (0.05, 0.325, 0.97, 0.61), recortar=False),
     ],
     "complementos": [
         whatsapp("10.37.34 AM"),
         whatsapp("10.37.47 AM"),
         Foto("IMG_0701.HEIC"),
+        # Los marcos con imán (05/11/2026): para polaroid, para foto cuadrada y para tira.
+        del_05_11("4.57.44 PM (1)"),
+        del_05_11("4.57.44 PM"),
+        del_05_11("4.57.45 PM"),
+    ],
+    # El Archivo bajonero (05/11/2026): solo la tapa y la página del top, sin la de al lado,
+    # que tiene el dedo encima, como pidió la dueña.
+    "archivo-bajonero": [
+        del_05_11("4.47.49 PM", (0.12, 0.04, 0.88, 0.98)),
+        del_05_11("4.47.48 PM (1)", (0.04, 0.17, 0.505, 0.70)),
     ],
     # Tarjetería para emprendimientos: Maika, las tarjetas de StudioAGS, Aura, Las Reinas y Luz Sosa.
     "tarjetas": [
