@@ -82,7 +82,7 @@ Las fotos de la galería de cada página, las de Comunidad AGS y las de "Así pr
 python fotos-album.py "RUTA/AL/ALBUM_DESCOMPRIMIDO" "RUTA/A/LAS_FOTOS_DE_WHATSAPP"
 ```
 
-Qué fotos usa cada producto se elige al principio del script. Cada foto sale cuadrada a 1200 y 600 px, o a la medida del cuadrado si es más chico (las de WhatsApp miden 960); las marcadas para no recortar salen enteras. Después se declaran en `gallery` del producto en `src/catalog.ts`. Un producto que no estaba en el catálogo en PDF, como Complementos, no tiene ficha: su foto de tarjeta es la primera de la galería. Los que todavía no tienen fotos (Gran formato) llevan una imagen provisoria con el logo, que arma el mismo script (`PROVISORIAS`); cuando lleguen las fotos, se sacan de ahí y se suman a `GALERIAS`.
+Qué fotos usa cada producto se elige al principio del script. Cada foto sale cuadrada a 1200 y 600 px, o a la medida del cuadrado si es más chico (las de WhatsApp miden 960); las marcadas para no recortar salen enteras, y una que vino de costado o cabeza abajo se endereza con `girar`. Después se declaran en `gallery` del producto en `src/catalog.ts`. Un producto que no estaba en el catálogo en PDF, como Complementos, no tiene ficha: su foto de tarjeta es la primera de la galería. Uno que todavía no tenga fotos puede llevar una imagen provisoria con el logo, que arma el mismo script (`PROVISORIAS`); cuando lleguen las fotos, se saca de ahí y se suma a `GALERIAS`. Hoy no hay ninguno.
 
 Las dos fotos del puesto de la feria (la polaroid del inicio y el arco de Nosotros) salen del mismo script, en la lista `stand`.
 

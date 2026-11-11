@@ -74,6 +74,9 @@ export interface ImageSpec {
 
 export interface ProductImages {
   card: ImageSpec;
+  // La foto de la tarjeta es un recorte de una de la galería: no se suma a la galería, para
+  // no mostrar dos veces lo mismo.
+  cardOnly?: boolean;
   // La página del catálogo en PDF; los productos que no estaban en el catálogo no la tienen.
   ficha?: ImageSpec;
 }
@@ -219,7 +222,9 @@ export function galleryPhotos(product: CatalogProduct): GalleryPhoto[] {
   const { card, ficha } = product.images;
   return [
     ...gallery,
-    ...(gallery.some((photo) => photo.image.base === card.base) ? [] : [{ image: card, alt: product.imageAlt }]),
+    ...(product.images.cardOnly || gallery.some((photo) => photo.image.base === card.base)
+      ? []
+      : [{ image: card, alt: product.imageAlt }]),
     ...(ficha ? [{ image: ficha, alt: `Página del catálogo de ${product.name}`, fit: "contain" as const }] : []),
   ];
 }
@@ -365,9 +370,18 @@ const extrasPhotos = [
 // Las bitácoras A5 en stock que mandó la dueña el 05/11/2026.
 const notebookStock = [
   uncroppedPhoto("bitacoras", 2, "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro", 1080, 1280),
-  uncroppedPhoto("bitacoras", 3, "Más bitácoras A5 en stock con el sol de la bandera, flores, rayos y cuadrillé verde", 1080, 1280),
-  uncroppedPhoto("bitacoras", 4, "Tapas A5 en stock: ajíes, arándanos, patitos, perros salchicha, sardinas y formas lilas", 1200, 414),
-  uncroppedPhoto("bitacoras", 5, "Bitácoras A5 anilladas: formas bordó, una chica con flores, limones y un gato en la bañera", 1104, 456),
+  uncroppedPhoto("bitacoras", 3, "Tapas A5 en stock: formas lilas, sardinas, perros salchicha, patitos, arándanos y ajíes", 1200, 414),
+];
+// Las A6 en stock, de la foto "A6 en stock" que mandó el mismo día.
+const notebookA6 = uncroppedPhoto("bitacoras", 4, "Bitácoras A6 en stock: formas bordó, una chica con flores, limones y un gato en la bañera", 1104, 456);
+
+// Gran formato: las fotos que pidió la dueña (07/11/2026), colocando vinilo en una vidriera y
+// en una pared. La de la pared terminada sale de un video, a 1080 px.
+const largeFormatPhotos = [
+  albumPhoto("gran-formato", 1, "Vinilo con el logo de La Verdu en una vidriera, mientras lo colocan"),
+  albumPhoto("gran-formato", 2, "Colocación de un vinilo blanco con el logo de Kriba Arquitectura en una pared azul"),
+  albumPhoto("gran-formato", 3, "Vinilo blanco con el logo de Kriba Arquitectura, ya colocado en la pared", 1080),
+  albumPhoto("gran-formato", 4, "Puerta de vidrio de La Verdu vista desde la calle, con el vinilo ya colocado"),
 ];
 
 // El Archivo bajonero: la tapa y la página del top, las dos que eligió la dueña (05/11/2026).
@@ -377,6 +391,8 @@ const bajoneroTop: GalleryPhoto = {
   alt: "Página del top del Archivo bajonero, con 34 puestos para anotar los mejores alfajores",
   fit: "contain",
 };
+// Los alfajores, de la foto que mandó la dueña el 07/11/2026.
+const bajoneroAlfajores = uncroppedPhoto("archivo-bajonero", 3, "Tres alfajores Juana la Loca: uno dorado, uno blanco y uno con merengue", 1200, 712);
 
 // Los colores que nombró la dueña (chat del 02/11/2026). No cambian el precio.
 const minigamePhotos = [
@@ -426,7 +442,7 @@ export const products: readonly CatalogProduct[] = [
           price: 40000,
           photo: albumPhoto("calendarios", 6, "Calendario clásico rosa de diciembre, todo escrito, con las notas abajo"),
         },
-        { id: "unico", label: "Único", price: 28000, photo: albumPhoto("calendarios", 7, "Calendario único rosa sobre la mesa, con un fibrón") },
+        { id: "unico", label: "Único", price: 28000, photo: albumPhoto("calendarios", 7, "Calendario único rosa sobre la mesa, junto a un florero") },
         {
           id: "doce-meses",
           label: "Doce meses",
@@ -437,9 +453,9 @@ export const products: readonly CatalogProduct[] = [
           id: "semanal-grande",
           label: "Semanal grande",
           price: 26000,
-          photo: albumPhoto("calendarios", 8, "Calendario semanal grande rojo, con fibrones y un borrador"),
+          photo: albumPhoto("calendarios", 9, "Calendario semanal grande rojo, con fibrones"),
         },
-        { id: "semanal-chico", label: "Semanal chico", price: 21000, photo: albumPhoto("calendarios", 9, "Calendario semanal chico rojo, con fibrones") },
+        { id: "semanal-chico", label: "Semanal chico", price: 21000, photo: albumPhoto("calendarios", 8, "Calendario semanal chico rojo, con fibrones y un borrador") },
         { id: "acrilico", label: "Acrílico", price: 55000, photo: albumPhoto("calendarios", 10, "Calendario de acrílico de septiembre, apoyado en la pared") },
         { id: "iman", label: "Imán", price: 20000, photo: albumPhoto("calendarios", 11, "Calendario de imán lila en la heladera, con fibrones") },
       ],
@@ -447,13 +463,14 @@ export const products: readonly CatalogProduct[] = [
         {
           id: "colores",
           label: "Colores",
-          // Los abanicos son calendarios impresos; la de pastel, una de las capturas de la dueña.
+          // Las capturas de los doce meses que mandó la dueña, una por paleta: las pidió todas
+          // del mismo tipo, con los números (07/11/2026). La monocroma es la azul, de ejemplo.
           options: [
             { id: "pastel", label: "Pastel", photo: uncroppedPhoto("calendarios", 16, "Los doce meses en colores pastel", 1200, 461) },
-            { id: "intenso", label: "Intenso", photo: albumPhoto("calendarios", 13, "Calendarios en colores intensos, abiertos en abanico") },
-            { id: "calido", label: "Cálido", photo: albumPhoto("calendarios", 12, "Calendarios en colores cálidos, abiertos en abanico") },
-            { id: "frio", label: "Frío", photo: albumPhoto("calendarios", 14, "Calendarios en colores fríos, abiertos en abanico") },
-            { id: "monocromo", label: "Monocromo", photo: albumPhoto("calendarios", 15, "Calendarios monocromos en gris, negro y lila") },
+            { id: "intenso", label: "Intenso", photo: uncroppedPhoto("calendarios", 13, "Los doce meses en colores intensos", 1200, 466) },
+            { id: "calido", label: "Cálido", photo: uncroppedPhoto("calendarios", 12, "Los doce meses en colores cálidos, del verde lima al rojo", 1200, 459) },
+            { id: "frio", label: "Frío", photo: uncroppedPhoto("calendarios", 14, "Los doce meses en colores fríos, del rosa al verde", 1200, 458) },
+            { id: "monocromo", label: "Monocromo", photo: uncroppedPhoto("calendarios", 15, "Los doce meses en un solo color; de ejemplo, azul", 1200, 473) },
           ],
         },
       ],
@@ -537,7 +554,8 @@ export const products: readonly CatalogProduct[] = [
       quality: photoQuality,
       howToSend: photoSending,
     },
-    images: { card: cardImage("pizarra-orma", [400, 617], 463), ficha: fichaImage("pizarra-orma") },
+    // La de la tarjeta es un recorte de la misma foto de la pizarra gris.
+    images: { card: cardImage("pizarra-orma", [400, 617], 463), cardOnly: true, ficha: fichaImage("pizarra-orma") },
     gallery: boardPhotos,
   },
   {
@@ -576,13 +594,13 @@ export const products: readonly CatalogProduct[] = [
     images: { card: cardImage("vinilos", [369], 277), ficha: fichaImage("vinilos") },
     gallery: [vinylStickers],
   },
-  // La lista por metro cuadrado de la dueña (05/11/2026). Todavía no hay fotos: la tarjeta lleva
-  // la imagen provisoria de fotos-album.py. El vinilo de corte no tiene precio en la lista.
+  // La lista por metro cuadrado de la dueña (05/11/2026). El vinilo de corte, que es el de las
+  // fotos, no tiene precio en la lista.
   {
     id: "gran-formato",
     name: "Gran formato",
     description: "Vinilo, lona frontlight y blueback por metro cuadrado, para carteles, banners y vidrieras.",
-    imageAlt: "Logo de StudioAGS en verde sobre amarillo, mientras llegan las fotos de Gran formato",
+    imageAlt: "Vinilo con el logo de La Verdu en una vidriera, mientras lo colocan",
     note: "El vinilo de corte, para vidrieras y stickers, se cotiza aparte: consultanos.",
     ...singleGroup(
       "gran-formato",
@@ -606,7 +624,8 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["marca", "decorar"],
     leadTime: pendingLeadTime(),
-    images: { card: cardImage("gran-formato", [400, 800], 800) },
+    images: { card: largeFormatPhotos[0].image },
+    gallery: largeFormatPhotos,
   },
   // Las fotos son la remera de StudioAGS y dos cuadros de los videos de las remeras que mandó la
   // dueña (02/11/2026). El precio, de la lista por metro cuadrado.
@@ -662,7 +681,7 @@ export const products: readonly CatalogProduct[] = [
       { id: "formato", label: "Formato" },
       [
         { id: "bitacora-a5", label: "Bitácora A5", price: 7000, photo: notebookStock[0] },
-        { id: "bitacora-a6", label: "Bitácora A6", price: 5000 },
+        { id: "bitacora-a6", label: "Bitácora A6", price: 5000, photo: notebookA6 },
       ],
       [
         {
@@ -682,12 +701,10 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["organizarte", "regalar"],
     leadTime: pendingLeadTime(),
-    // La foto principal es la que eligió la dueña.
-    images: {
-      card: albumPhoto("bitacoras", 1, "", 896).image,
-      ficha: fichaImage("bitacoras"),
-    },
-    gallery: [albumPhoto("bitacoras", 1, "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas", 896), ...notebookStock],
+    // La foto principal es la que eligió la dueña. No lleva la página de diseños del catálogo:
+    // pidió sacarla (07/11/2026).
+    images: { card: albumPhoto("bitacoras", 1, "", 896).image },
+    gallery: [albumPhoto("bitacoras", 1, "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas", 896), ...notebookStock, notebookA6],
     // El texto de la dueña (chat del 02/11/2026), con el vos de la página.
     details: [
       "Nuestras bitácoras tienen 60 hojas de opalina de 120 g, ideales para escritura, dibujo e ilustración. Su papel permite trabajar con distintos materiales, incluidos marcadores y pinturas a base de alcohol. Van anilladas con espiral blanco, negro o transparente.",
@@ -710,7 +727,7 @@ export const products: readonly CatalogProduct[] = [
     intents: ["regalar"],
     leadTime: pendingLeadTime(),
     images: { card: bajoneroCover.image },
-    gallery: [bajoneroCover, bajoneroTop],
+    gallery: [bajoneroCover, bajoneroTop, bajoneroAlfajores],
     details: [
       "En cada página anotás un bajón: marca, sabor, precio y fecha, guardás un pedacito del envoltorio y le ponés puntaje a las tapitas, el relleno y la cobertura. Al final armás tu top 34 y, si querés, lo compartís en Instagram.",
       "Trae también una breve historia del alfajor. Es una colaboración entre Paraná Bajoneros y StudioAGS.",

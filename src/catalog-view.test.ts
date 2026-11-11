@@ -570,4 +570,24 @@ describe("foto de la opción", () => {
     choose("calendarios", "colores", "frio");
     expect(cardImage("calendarios").getAttribute("src")).toBe("images/foto-calendarios-14-1200.webp");
   });
+
+  it("cada paleta de Calendarios muestra su lámina de los doce meses, entera", () => {
+    mount();
+    // Pastel viene elegido: va al final, para que elegirlo sea un cambio.
+    for (const [color, number] of [["intenso", 13], ["calido", 12], ["frio", 14], ["monocromo", 15], ["pastel", 16]] as const) {
+      choose("calendarios", "colores", color);
+      expect(cardImage("calendarios").getAttribute("src")).toBe(`images/foto-calendarios-${number}-1200.webp`);
+      expect(cardImage("calendarios").getAttribute("alt")).toMatch(/^Los doce meses /);
+      expect(cardImage("calendarios").closest(".product-image-wrap")?.classList.contains("is-contained")).toBe(true);
+    }
+  });
+
+  it("en Bitácoras la A6 muestra las A6 en stock y la A5, las A5", () => {
+    mount();
+    choose("bitacoras", "formato", "bitacora-a6");
+    expect(cardImage("bitacoras").getAttribute("src")).toBe("images/foto-bitacoras-4-1104.webp");
+    expect(cardImage("bitacoras").getAttribute("alt")).toMatch(/^Bitácoras A6 /);
+    choose("bitacoras", "formato", "bitacora-a5");
+    expect(cardImage("bitacoras").getAttribute("src")).toBe("images/foto-bitacoras-2-1080.webp");
+  });
 });

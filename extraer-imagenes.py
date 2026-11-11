@@ -68,9 +68,6 @@ TARJETAS: dict[str, Foto | Recorte] = {
     "vinilos": Foto(23, 1, cy=0.5),
     # Tarjeta amarilla de StudioAGS sobre otras de colores (679 px).
     "tarjetas": Foto(26, 1, cy=0.5),
-    # Las tapas no son fotos sueltas sino un mosaico sin juntas: dos filas de diseños de
-    # la página 29 renderizadas a la densidad de las tapas (~299 dpi).
-    "bitacoras": Recorte(29, (37.6, 136.4, 443.5, 440.85)),
     # Cada foto mide 364 px: recorte más amplio con dos fotos juntas de la página 34.
     "laminas": Recorte(34, (303.3, 101.1, 481.1, 234.5)),
 }
@@ -102,7 +99,6 @@ FICHAS: dict[str, int] = {
     "entre-flores": 20,
     "vinilos": 23,
     "tarjetas": 26,
-    "bitacoras": 29,
     "laminas": 34,
 }
 

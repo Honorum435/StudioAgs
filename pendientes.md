@@ -178,6 +178,35 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 - diga si le gusta cómo quedó la distribución;
 - mande reseñas reales de clientas, si quiere la tarjeta como la de la foto.
 
+## Arreglos que pidió Aixa (chat del 07/11/2026)
+
+**Lo que dijo:**
+- **Gran formato:** "en estas poné las que te mandé que está poniendo en la vidriera y en una pared".
+- **Bitácoras**, sobre la página de diseños del catálogo: "esta no la pongas, y hay fotos que están al revés y repetidas".
+- **Calendarios:** "¿por qué hay distinta foto? Si ponés el que tiene números como el pastel, ponelo en todos".
+- Mandó además una foto de tres alfajores Juana la Loca, sin texto.
+
+**Cómo quedó:**
+- **Gran formato:** cuatro fotos del álbum en lugar del logo provisorio. Son el vinilo de La Verdu en la vidriera (colocándolo, IMG_1671, y terminado desde la calle, IMG_1673) y el de Kriba Arquitectura en la pared (colocándolo, IMG_1680, y terminado, un cuadro del video IMG_1682). La primera es la de la tarjeta y deja afuera la cara de quien lo coloca; en la de la pared se lo ve de perfil.
+- **Calendarios, colores:** las cinco paletas muestran la lámina de los doce meses con sus números: pastel, intenso, cálido, frío y monocromo (la azul, de ejemplo). Salen de las capturas del 30/10. A tres les saqué la raya y el recuadro de selección que había dejado el programa.
+- **Bitácoras:**
+  - Salió la página de diseños del catálogo: la ficha y la tarjeta vieja, que salía de esa página.
+  - Salió la segunda foto de las anilladas con el sol: era la misma, de costado.
+  - La de las tapas sueltas estaba cabeza abajo y quedó derecha.
+  - La foto de las anilladas chicas era de las A6 (el archivo se llama "A6 en stock"), no de las A5. Ahora aparece al elegir "Bitácora A6".
+- **Fotos al revés en otros productos** (salieron de revisar todas las fotos publicadas):
+  - Giré los stickers de Maika (Vinilos), la de todos los minijuegos, la del minijuego verde y el abanico de calendarios, que ahora tiene los números derechos.
+  - El calendario Único usa otra toma de la misma mesa, en la que el título se lee derecho (IMG_7287).
+  - El semanal grande y el chico estaban cruzados: el grande es el de abajo de la foto y el chico, el de arriba, que además quedó girado para leerse.
+- **Pizarra OrMa:** la galería mostraba dos veces la pizarra gris (la foto entera y el recorte de la tarjeta). El recorte quedó solo para la tarjeta de Productos.
+- **Archivo bajonero:** la foto de los alfajores va tercera en la galería.
+
+**Falta que Aixa diga:**
+- **Alfajores:** si la foto era para el Archivo bajonero y si se elige el alfajor (dorado, blanco o con merengue). El texto dice solo "Viene con un alfajor".
+- **Gran formato:** las fotos son de vinilo de corte, que no tiene precio en la lista; con el precio se suma como opción. También si le parece bien que se vean las marcas de los clientes (La Verdu y Kriba) y a quien coloca, de perfil.
+- **Monocromo:** si prefiere otro color de ejemplo. Hay capturas en verde, rosa, blanco, gris, amarillo, negro y rojo.
+- **Fotos que se repiten entre Comunidad AGS y los productos:** el acrílico de septiembre y el único rosa (Calendarios), la remera con el mate (DTF textil) y el minijuego en las piedras. Quedaron como estaban. Lo mismo los imanes en la heladera, que están en Fotos y en Complementos en dos tomas casi iguales.
+
 ## Bajonero, marcos, imanes y A5 en stock (zip del 05/11/2026)
 
 **Lo que mandó Aixa:** cuatro zip (Album Bajonero, Marco de Fotos, Imanes y A5 en Stock) y una foto más de A5 por el chat. Del bajonero: "solo poné el que dice top sacándole el dedo y la tapa".
@@ -190,7 +219,6 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 **Falta que Aixa:**
 - **Imanes:** el precio (en la lista no están) y si van como producto aparte, con opciones (estrellas, flores, letras, caritas). Las siete fotos están en el zip "Imanes" de Descargas.
 - **Archivo bajonero:** que revise el texto.
-- **Bitácora A6:** una foto, para que la opción también cambie la imagen.
 
 ## Foto por opción (05/11/2026)
 
@@ -198,7 +226,7 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 
 **Cómo quedó:** al elegir una opción, la tarjeta de Productos cambia su foto y la página del producto la pasa a la foto grande (sin miniatura nueva: la galería sigue igual). Una opción sin foto deja la que se estaba viendo.
 - **Calendarios, formato:** clásico (el rojo de julio), clásico con notas (el rosa de diciembre), único (el rosa), doce meses (el dibujo del catálogo), semanal grande y chico (los rojos), acrílico (el de septiembre) e imán (el lila de la heladera).
-- **Calendarios, colores:** pastel (la captura de los doce meses en pastel), intenso, cálido, frío y monocromo (los abanicos impresos).
+- **Calendarios, colores:** pastel, intenso, cálido, frío y monocromo, las cinco con la captura de los doce meses (desde el 07/11; antes, menos la pastel, eran los abanicos impresos).
 - **Minijuegos:** naranja, rosa (con sus dos fibrones), celeste y verde.
 - **Fotos:** polaroid, tira y foto 10 × 10 con el dibujo de sus medidas del catálogo; imán 10 × 10 con los imanes en la heladera.
 - **Pizarra OrMa:** la gris y la negra.
@@ -209,11 +237,11 @@ Mandó una página de papelería de ejemplo, con círculos de categorías, más 
 **Falta que Aixa mande fotos de:**
 - el minijuego amarillo;
 - el separador clásico (sin imán);
-- cada formato de Bitácoras (A5 y A6) y cada tipo de hoja (lisas, rayadas, cuadriculadas y punteadas);
+- cada tipo de hoja de Bitácoras (lisas, rayadas, cuadriculadas y punteadas);
 - cada tamaño de Láminas;
-- Gran formato (vinilo, lona y blueback);
+- lonas y banners para Gran formato (tiene las del vinilo en la vidriera y en la pared);
 - las tarjetas simple y doble faz, sin laminar y laminadas, si quiere que cambien también;
-- el doce meses impreso y una foto de cada color de calendario en lugar de la captura del pastel, si las tiene.
+- el doce meses impreso.
 
 ## Lista de precios en grande (05/11/2026)
 
@@ -233,12 +261,11 @@ La fecha de precios pasó a ser el 5 de noviembre de 2026 y ya no es de ejemplo.
 - **DTF textil ($ 22.500 por m²):** "Estampado DTF para remeras o cualquier tela, con tu logo o tu diseño" y la nota "El precio es por metro cuadrado de estampado". Fotos: la remera de StudioAGS con el mate (sin la cara) y dos cuadros de los videos de la remera "Campeón mundial".
 - **Gran formato (por m²):** un producto aparte con "Material" y las 10 opciones de la lista: vinilo blanco y transparente (sin laca, laca sectorizada, laca completa), lona frontlight 13 oz y blueback 150 g mate (con y sin laca). Va aparte para no cambiar Vinilos, que es por pliego. La nota dice que el vinilo de corte se cotiza aparte, porque en la lista no tiene precio.
 - **Archivo bajonero + alfajor ($ 13.000):** estuvo un rato y lo sacamos (el primo lo pidió el 05/11). Si vuelve, faltan fotos y saber qué es.
-- Gran formato no tiene fotos todavía: lleva una imagen provisoria con el logo (verde sobre amarillo), que arma `fotos-album.py`.
+- Gran formato tuvo una imagen provisoria con el logo hasta el 07/11, cuando Aixa dijo qué fotos poner.
 - Los cuatro tienen el plazo de ejemplo (de 3 a 5 días hábiles), como los demás que no lo informan.
 
 **Falta que Aixa:**
 - **Revise los productos nuevos** y diga qué está mal: nombres, textos, en qué filtro va cada uno y si son personalizables (hoy: DTF y Gran formato sí; Minijuegos no).
-- **Fotos:** de Gran formato (lonas, banners, vidrieras).
 - **DTF:** si la remera va incluida o solo el estampado, y si hay medidas fijas (por ejemplo A4 o A3) en lugar del metro cuadrado.
 - **Gran formato:** si se puede pedir menos de un metro o con decimales. Hoy la cantidad va de 1 en 1, como metros enteros.
 - **Vinilo de corte:** el precio.
@@ -379,7 +406,7 @@ Son 345 fotos (casi todas HEIC de iPhone) y 138 videos. Para la web hay que pasa
 | Bitácoras y cuadernos A5 | IMG_8570 a 8574, IMG_9315, 9317 |
 | Stickers | IMG_0198, 0199 (fotos), IMG_0702 a 0705 (en un termo), IMG_1858 a 1860 (logo studio ags) |
 | Remeras (DTF textil) | IMG_1768 a 1770, IMG_7225 a 7227 |
-| Vinilo de corte | IMG_1668 a 1680 (vidriera de La Verdu) |
+| Vinilo de corte | IMG_1668 a 1673 (vidriera de La Verdu); IMG_1674 a 1680 y los videos 1675 a 1677 y 1682 (pared de Kriba Arquitectura) |
 | Tarjetas personales | IMG_1741 |
 | Packaging y armado | IMG_5875 a 5911 (sello de la carita), IMG_5914 a 5941 (kraft), IMG_7009 a 7043 (regalos con moño y bolsas) |
 | Feria y taller (para "Sobre nosotros") | IMG_0204 a 0206, IMG_9323 a 9325, IMG_5599 a 5602, IMG_7341 a 7374 |

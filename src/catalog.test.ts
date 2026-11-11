@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { businessValue, example, isExample } from "./business";
 import {
+  galleryPhotos,
   imageUrl,
   initialSelection,
   intents,
@@ -260,6 +261,7 @@ describe("catálogo", () => {
     expect(products.filter((item) => !item.images.ficha).map((item) => item.id)).toEqual([
       "gran-formato",
       "dtf-textil",
+      "bitacoras",
       "archivo-bajonero",
       "complementos",
       "minijuegos",
@@ -287,6 +289,35 @@ describe("catálogo", () => {
         }
       }
     }
+  });
+
+  it("Gran formato lleva las fotos de la vidriera y la pared, y la primera es la de la tarjeta", () => {
+    const item = product("gran-formato");
+    expect(item.gallery?.map((photo) => photo.image.base)).toEqual([
+      "foto-gran-formato-1",
+      "foto-gran-formato-2",
+      "foto-gran-formato-3",
+      "foto-gran-formato-4",
+    ]);
+    expect(item.images.card.base).toBe("foto-gran-formato-1");
+    expect(item.imageAlt).toBe(item.gallery![0].alt);
+  });
+
+  it("la galería de Bitácoras no lleva la página del catálogo ni dos veces lo mismo", () => {
+    expect(galleryPhotos(product("bitacoras")).map((photo) => photo.image.base)).toEqual([
+      "foto-bitacoras-1",
+      "foto-bitacoras-2",
+      "foto-bitacoras-3",
+      "foto-bitacoras-4",
+    ]);
+  });
+
+  it("la galería de la Pizarra no suma la foto de la tarjeta, que es un recorte de la gris", () => {
+    expect(galleryPhotos(product("pizarra-orma")).map((photo) => photo.image.base)).toEqual([
+      "foto-pizarra-orma-2",
+      "foto-pizarra-orma-1",
+      "ficha-pizarra-orma",
+    ]);
   });
 
   it("arma la ruta de cada imagen con su nombre base y su ancho", () => {
