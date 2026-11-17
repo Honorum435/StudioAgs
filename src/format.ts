@@ -20,26 +20,6 @@ export function formatPrice(value: number): string {
   return `${sign}$ ${digits}`;
 }
 
-const monthNames = [
-  "enero",
-  "febrero",
-  "marzo",
-  "abril",
-  "mayo",
-  "junio",
-  "julio",
-  "agosto",
-  "septiembre",
-  "octubre",
-  "noviembre",
-  "diciembre",
-];
-
-// "14 de julio de 2026", también sin Intl.
-export function formatLongDate({ year, month, day }: CalendarDate): string {
-  return `${day} de ${monthNames[month - 1]} de ${year}`;
-}
-
 // Fechas: siempre año, mes y día literales en hora local; nunca se parsea "AAAA-MM-DD" con Date.
 
 function daysInMonth(year: number, month: number): number {

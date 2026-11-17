@@ -29,10 +29,10 @@ if (!root.hasAttribute("data-prerendered")) {
 // localStorage si el navegador lo deja; si no, el pedido queda en memoria.
 export const orderStore = createOrderStore({ createCode: createOrderCode });
 
-// Un solo coordinador de capas para la ficha y el panel del pedido.
+// Un solo coordinador de capas para el panel del pedido.
 export const overlays = createOverlays();
 
-mountCatalogView({ root, store: orderStore, overlays });
+mountCatalogView({ root, store: orderStore });
 mountCartView({ root, store: orderStore, overlays, whatsappNumber: WHATSAPP_NUMBER });
 
 // Con número de WhatsApp, "Contanos tu idea", el "Escribinos" de Contacto y el botón flotante

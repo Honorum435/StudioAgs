@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { example, type CalendarDate } from "./business";
+import { example } from "./business";
 import {
   DRAFT_LIFETIME,
   IDEA_MAX_LENGTH,
@@ -19,7 +19,6 @@ import { ORDER_CODE_PATTERN } from "./validation";
 import { createOrderCode } from "./whatsapp";
 
 const HOUR = 60 * 60 * 1000;
-const PRICES_DATE: CalendarDate = { year: 2026, month: 7, day: 14 };
 const CODES = ["AGS-K7QX", "AGS-M3RT", "AGS-P9WZ", "AGS-H2DC"];
 
 const tarjetas200 = { cantidad: "200", faz: "doble-faz", terminacion: "laminado" };
@@ -56,7 +55,6 @@ function harness(overrides: Partial<OrderStoreOptions> = {}) {
     createOrderStore({
       storage: env.storage,
       now: () => env.now,
-      pricesUpdatedAt: PRICES_DATE,
       createCode: () => {
         const code = CODES[env.issued.length % CODES.length];
         env.issued.push(code);
@@ -631,12 +629,11 @@ describe("persistencia", () => {
     expect(open().getSummary().lines[0].addOns.map((addOn) => addOn.id)).toEqual(["vinilos-corte-individual"]);
   });
 
-  it("guarda con versión y fecha de precios", () => {
+  it("guarda con versión y fecha de guardado", () => {
     const { store, env } = confirmedStore();
     const data = stored(env.storage);
 
     expect(data.version).toBe(STORAGE_VERSION);
-    expect(data.pricesUpdatedAt).toEqual(PRICES_DATE);
     expect(data.savedAt).toBe(env.now.getTime());
     expect(store.getState().status).toBe("confirmado");
   });
@@ -797,30 +794,27 @@ describe("persistencia", () => {
     expect(noticeMessage(after.getState().notices[0])).toContain("Troquel de Vinilos impresos");
   });
 
-  it("restaurar un pedido confirmado con otra fecha de precios avisa y lo vuelve a borrador", () => {
-    const { open } = confirmedStore();
-    const current = { year: 2026, month: 11, day: 1 };
+  it("un pedido guardado por la versión anterior, con fecha de precios y su aviso, se restaura igual y sin avisos", () => {
+    const { open, env } = confirmedStore();
+    const date = { year: 2026, month: 7, day: 14 };
+    const old = { ...stored(env.storage), pricesUpdatedAt: date, notices: [{ kind: "prices", previous: date, current: date }] };
+    env.storage.setItem(STORAGE_KEY, JSON.stringify(old));
 
-    const after = open({ pricesUpdatedAt: current });
-    expect(after.getState()).toMatchObject({ status: "borrador", code: null });
-    expect(after.getState().lines).toHaveLength(2);
-    expect(after.getState().notices).toEqual([{ kind: "prices", previous: PRICES_DATE, current }]);
-    expect(noticeMessage(after.getState().notices[0])).toBe(
-      "Actualizamos los precios al 1/11/2026: revisá el subtotal.",
-    );
-  });
-
-  it("con la misma fecha de precios y todo disponible no hay avisos", () => {
-    const { open } = confirmedStore();
-    expect(open().getState().notices).toEqual([]);
+    expect(open().getState()).toMatchObject({ status: "confirmado", notices: [] });
+    expect(open().getState().lines).toHaveLength(2);
   });
 
   it("los avisos de restauración siguen pendientes al recargar hasta tocar Entendido", () => {
-    const { open } = confirmedStore();
-    const current = { year: 2026, month: 11, day: 1 };
-    open({ pricesUpdatedAt: current });
+    const oldCatalog = products.map((item) =>
+      item.id === "vinilos"
+        ? { ...item, addOns: [...item.addOns, { id: "vinilos-troquel", label: "Troquel", price: 3000, unit: "por pliego" }] }
+        : item,
+    );
+    const { open } = harness();
+    open({ catalog: oldCatalog }).add("vinilos", vinilosBlanco, ["vinilos-maqueta", "vinilos-troquel"]);
+    open();
 
-    const reloaded = open({ pricesUpdatedAt: current });
+    const reloaded = open();
     expect(reloaded.getState().notices).toHaveLength(1);
 
     const listener = vi.fn();
@@ -828,7 +822,7 @@ describe("persistencia", () => {
     reloaded.acknowledgeNotices();
     expect(reloaded.getState().notices).toEqual([]);
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(open({ pricesUpdatedAt: current }).getState().notices).toEqual([]);
+    expect(open().getState().notices).toEqual([]);
   });
 
   it("si todo lo guardado se descartó, el pedido queda vacío pero conserva el aviso", () => {

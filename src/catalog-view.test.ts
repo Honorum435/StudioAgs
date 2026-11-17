@@ -2,20 +2,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createOrderStore, type OrderStore } from "./cart";
 import { products } from "./catalog";
-import { FICHA_LAYER, RESULT_COUNT_DELAY, mountCatalogView, type CatalogView } from "./catalog-view";
+import { RESULT_COUNT_DELAY, mountCatalogView, type CatalogView } from "./catalog-view";
 import { formatPrice } from "./format";
-import { LAYER_STATE_KEY, createOverlays, type Overlays } from "./overlays";
-import { mountShell, nextPopState, squash } from "./test-utils";
+import { mountShell, squash } from "./test-utils";
 
 let root: HTMLElement;
 let store: OrderStore;
-let overlays: Overlays;
 let view: CatalogView;
 
 function mount(): void {
   store = createOrderStore({ createCode: () => "AGS-TEST", storage: null });
-  overlays = createOverlays();
-  view = mountCatalogView({ root, store, overlays });
+  view = mountCatalogView({ root, store });
 }
 
 beforeEach(() => {
@@ -25,11 +22,9 @@ beforeEach(() => {
 
 afterEach(() => {
   view?.destroy();
-  overlays?.destroy();
   window.history.replaceState(null, "", window.location.pathname);
   vi.useRealTimers();
   vi.restoreAllMocks();
-  delete document.documentElement.dataset.layer;
 });
 
 function card(id: string): HTMLElement {
@@ -394,146 +389,6 @@ describe("filtros y búsqueda", () => {
     search("doble faz");
 
     expect(scrollTo).toHaveBeenCalledWith({ top: window.scrollY - 100, behavior: "instant" });
-  });
-});
-
-describe("Ver ficha", () => {
-  function fichaLink(id: string): HTMLAnchorElement {
-    return card(id).querySelector<HTMLAnchorElement>('[data-action="open-ficha"]')!;
-  }
-
-  function dialog(): HTMLDialogElement {
-    return root.querySelector<HTMLDialogElement>("#ficha-dialog")!;
-  }
-
-  function body(): HTMLElement {
-    return root.querySelector<HTMLElement>("[data-ficha-body]")!;
-  }
-
-  // Devuelve si la vista interceptó el enlace; después frena la navegación de happy-dom.
-  function clickLink(link: HTMLAnchorElement, init: MouseEventInit = {}): boolean {
-    let intercepted = false;
-    const record = (event: Event) => {
-      intercepted = event.defaultPrevented;
-      event.preventDefault();
-    };
-    window.addEventListener("click", record, { once: true });
-    link.focus();
-    link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0, ...init }));
-    return intercepted;
-  }
-
-  it("intercepta el enlace y abre el diálogo con la foto de la tarjeta mientras carga la página", () => {
-    mount();
-    const link = fichaLink("tarjetas");
-
-    expect(clickLink(link)).toBe(true);
-    expect(dialog().open).toBe(true);
-    expect(overlays.current()).toBe(FICHA_LAYER);
-    expect((window.history.state as Record<string, unknown>)[LAYER_STATE_KEY]).toBe(FICHA_LAYER);
-    expect(squash(root.querySelector("[data-ficha-title]")!.textContent)).toBe("Ficha de Tarjetas personales");
-
-    const image = body().querySelector<HTMLImageElement>("[data-ficha-image]")!;
-    const placeholder = body().querySelector<HTMLImageElement>("[data-ficha-placeholder]")!;
-    expect(image.getAttribute("alt")).toBe("Página del catálogo de Tarjetas personales, con sus formatos y precios");
-    expect(image.getAttribute("src")).toBe("images/ficha-tarjetas-1800.webp");
-    expect(image.hidden).toBe(true);
-    expect(placeholder.hidden).toBe(false);
-    expect(placeholder.getAttribute("alt")).toBe("");
-    expect(body().getAttribute("aria-busy")).toBe("true");
-    expect(document.activeElement).toBe(body());
-    expect(body().getAttribute("tabindex")).toBe("0");
-  });
-
-  it("cuando carga la página la muestra; tocarla o Enter alternan entre ajustada y ampliada", () => {
-    mount();
-    clickLink(fichaLink("vinilos"));
-    const image = body().querySelector<HTMLImageElement>("[data-ficha-image]")!;
-    const frame = body().querySelector<HTMLElement>(".ficha-frame")!;
-    image.dispatchEvent(new Event("load"));
-
-    expect(image.hidden).toBe(false);
-    expect(body().querySelector<HTMLElement>("[data-ficha-placeholder]")!.hidden).toBe(true);
-    expect(body().hasAttribute("aria-busy")).toBe(false);
-
-    image.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: 10, clientY: 10 }));
-    expect(frame.classList.contains("is-zoomed")).toBe(true);
-    expect(frame.style.getPropertyValue("--ficha-zoom-width")).toMatch(/^\d+px$/);
-    expect(image.getAttribute("sizes")).toMatch(/^\d+px$/);
-
-    body().dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
-    expect(frame.classList.contains("is-zoomed")).toBe(false);
-    expect(frame.style.getPropertyValue("--ficha-zoom-width")).toBe("");
-  });
-
-  it("si la página no carga, muestra un mensaje y no se puede ampliar", () => {
-    mount();
-    clickLink(fichaLink("fotos"));
-    const image = body().querySelector<HTMLImageElement>("[data-ficha-image]")!;
-    image.dispatchEvent(new Event("error"));
-
-    expect(body().querySelector<HTMLElement>("[data-ficha-error]")!.hidden).toBe(false);
-    expect(image.hidden).toBe(true);
-    body().dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
-    expect(body().querySelector(".ficha-frame")!.classList.contains("is-zoomed")).toBe(false);
-  });
-
-  // El anunciador de afuera queda inerte con el diálogo modal abierto: el aviso va como alerta adentro.
-  it("el mensaje de error de la ficha se anuncia como alerta dentro del diálogo", () => {
-    mount();
-    clickLink(fichaLink("tarjetas"));
-    body().querySelector<HTMLImageElement>("[data-ficha-image]")!.dispatchEvent(new Event("error"));
-
-    const error = body().querySelector<HTMLElement>("[data-ficha-error]")!;
-    expect(error.hidden).toBe(false);
-    expect(error.getAttribute("role")).toBe("alert");
-    expect(dialog().contains(error)).toBe(true);
-    expect(squash(error.textContent)).toBe("No pudimos cargar la ficha. Revisá tu conexión y volvé a abrirla.");
-  });
-
-  it("con Ctrl o Cmd el enlace abre la imagen como siempre", () => {
-    mount();
-
-    expect(clickLink(fichaLink("tarjetas"), { ctrlKey: true })).toBe(false);
-    expect(dialog().open).toBe(false);
-  });
-
-  it("Atrás cierra la ficha y devuelve el foco a 'Ver ficha'", async () => {
-    mount();
-    const link = fichaLink("laminas");
-    clickLink(link);
-    const back = vi.spyOn(window.history, "back");
-    const popped = nextPopState();
-    window.history.back();
-    await popped;
-
-    expect(dialog().open).toBe(false);
-    expect(back).toHaveBeenCalledTimes(1);
-    expect(document.activeElement).toBe(link);
-    expect(body().innerHTML).toBe("");
-  });
-
-  it("el botón de cerrar retrocede el historial una sola vez", async () => {
-    mount();
-    const link = fichaLink("calendarios");
-    clickLink(link);
-    const back = vi.spyOn(window.history, "back");
-    const popped = nextPopState();
-    root.querySelector<HTMLButtonElement>('[data-action="close-ficha"]')!.click();
-    await popped;
-
-    expect(dialog().open).toBe(false);
-    expect(back).toHaveBeenCalledTimes(1);
-    expect((window.history.state as Record<string, unknown> | null)?.[LAYER_STATE_KEY]).toBeUndefined();
-    expect(document.activeElement).toBe(link);
-  });
-
-  it("cargar la página con un estado de ficha abierta no la reabre", () => {
-    window.history.replaceState({ [LAYER_STATE_KEY]: FICHA_LAYER }, "");
-    mount();
-
-    expect(dialog().open).toBe(false);
-    expect(window.history.state).toBeNull();
   });
 });
 

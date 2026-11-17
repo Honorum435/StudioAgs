@@ -18,7 +18,6 @@ function newStore() {
   return createOrderStore({
     storage: null,
     now: () => new Date(2026, 9, 14, 10, 0),
-    pricesUpdatedAt: { year: 2026, month: 7, day: 14 },
     createCode: () => "AGS-K7QX",
   });
 }

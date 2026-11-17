@@ -13,29 +13,23 @@ import {
 import { announceTo, delegateActions, rememberHtml, setHtml, windowOf, type ActionHandler } from "./dom";
 import { ALL_INTENTS, isIntentFilter, visibleProductIds, type FilterState } from "./filters";
 import { popNumber, slidingIndicator, swapText, type SlidingIndicator } from "./motion";
-import type { Overlays } from "./overlays";
 import {
-  FICHA_SIZES,
   addButtonContent,
   cardPrice,
-  fichaContent,
-  fichaTitle,
   resultCount,
   sortOptions,
   type SortId,
 } from "./templates";
 
-// Islas de las tarjetas, filtros, búsqueda y ficha. Se engancha al HTML prerenderizado sin
+// Islas de las tarjetas, filtros y búsqueda. Se engancha al HTML prerenderizado sin
 // volver a pintarlo: solo actualiza precio y botón de cada tarjeta y muestra u oculta tarjetas.
 
-export const FICHA_LAYER = "ficha";
 export const RESULT_COUNT_DELAY = 500;
 export const ADDED_LABEL = "¡Sumado!";
 
 export interface CatalogViewOptions {
   root: HTMLElement;
   store: Pick<OrderStore, "add">;
-  overlays: Overlays;
   catalog?: readonly CatalogProduct[];
   countDelay?: number;
 }
@@ -56,14 +50,6 @@ interface CardIsland {
 interface Choice {
   selection: Selection;
   addOnIds: string[];
-}
-
-interface OpenFicha {
-  product: CatalogProduct;
-  frame: HTMLElement;
-  image: HTMLImageElement;
-  ready: boolean;
-  zoomed: boolean;
 }
 
 function lowestPrice(product: CatalogProduct): number {
@@ -157,12 +143,8 @@ function paintCardImage(image: HTMLImageElement, photo: GalleryPhoto): void {
   image.closest(".product-image-wrap")?.classList.toggle("is-contained", photo.fit === "contain");
 }
 
-function isPlainClick(event: MouseEvent): boolean {
-  return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
-}
-
 export function mountCatalogView(options: CatalogViewOptions): CatalogView {
-  const { root, store, overlays } = options;
+  const { root, store } = options;
   const catalog = options.catalog ?? products;
   const countDelay = options.countDelay ?? RESULT_COUNT_DELAY;
   const doc = root.ownerDocument;
@@ -177,9 +159,6 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
   const sortSelect = root.querySelector<HTMLSelectElement>("[data-sort]");
   const resultCountElement = root.querySelector<HTMLElement>("[data-result-count]");
   const announcer = root.querySelector<HTMLElement>("[data-announcer]");
-  const fichaDialog = root.querySelector<HTMLDialogElement>("dialog#ficha-dialog");
-  const fichaBody = fichaDialog?.querySelector<HTMLElement>("[data-ficha-body]") ?? null;
-  const fichaHeading = fichaDialog?.querySelector<HTMLElement>("[data-ficha-title]") ?? null;
 
   const cards = new Map<string, CardIsland>();
   // Islas: las tarjetas del catálogo y el detalle de la página de un producto.
@@ -208,7 +187,6 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
 
   let filters: FilterState = { intent: ALL_INTENTS, query: searchInput?.value ?? "" };
   let countTimer: ReturnType<typeof setTimeout> | null = null;
-  let ficha: OpenFicha | null = null;
   const indicators = new Map<HTMLElement, SlidingIndicator>();
 
   // Única función de actualización de la isla de la tarjeta: la usan la hidratación y los cambios.
@@ -343,98 +321,6 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
     announce(`Productos ordenados por ${sortOptions.find((option) => option.id === sort)?.label.toLocaleLowerCase("es")}.`);
   }
 
-  function zoomWidth(fitWidth: number, product: CatalogProduct): number {
-    const density = win.devicePixelRatio || 1;
-    return Math.round(Math.max(fitWidth * 2, (product.images.ficha?.width ?? 0) / density));
-  }
-
-  // Alterna entre la página ajustada al ancho y ampliada, manteniendo el punto tocado en su lugar.
-  function toggleZoom(point?: { x: number; y: number }): void {
-    if (!ficha?.ready || !fichaBody) {
-      return;
-    }
-    const { frame, image, product } = ficha;
-    const box = fichaBody.getBoundingClientRect();
-    const rect = image.getBoundingClientRect();
-    const x = point?.x ?? box.left + box.width / 2;
-    const y = point?.y ?? box.top + box.height / 2;
-    const ratioX = rect.width > 0 ? (x - rect.left) / rect.width : 0;
-    const ratioY = rect.height > 0 ? (y - rect.top) / rect.height : 0;
-
-    ficha.zoomed = !ficha.zoomed;
-    frame.classList.toggle("is-zoomed", ficha.zoomed);
-    if (ficha.zoomed) {
-      const width = zoomWidth(fichaBody.clientWidth, product);
-      frame.style.setProperty("--ficha-zoom-width", `${width}px`);
-      image.sizes = `${width}px`;
-    } else {
-      frame.style.removeProperty("--ficha-zoom-width");
-      image.sizes = FICHA_SIZES;
-    }
-
-    const next = image.getBoundingClientRect();
-    fichaBody.scrollLeft += next.left + ratioX * next.width - x;
-    fichaBody.scrollTop += next.top + ratioY * next.height - y;
-  }
-
-  function settleFicha(state: OpenFicha, loaded: boolean): void {
-    if (ficha !== state || state.ready || !fichaBody) {
-      return;
-    }
-    fichaBody.removeAttribute("aria-busy");
-    if (loaded) {
-      state.ready = true;
-      state.image.hidden = false;
-      fichaBody.querySelector<HTMLElement>("[data-ficha-placeholder]")?.setAttribute("hidden", "");
-    } else {
-      fichaBody.querySelector<HTMLElement>("[data-ficha-error]")?.removeAttribute("hidden");
-    }
-  }
-
-  function openFicha(link: HTMLElement, event: MouseEvent): void {
-    const island = cards.get(link.dataset.productId ?? "");
-    // Con modificadores o sin diálogo, el enlace abre la imagen como siempre.
-    if (!island?.product.images.ficha || !fichaDialog || !fichaBody || !isPlainClick(event)) {
-      return;
-    }
-    event.preventDefault();
-    if (overlays.current()) {
-      return;
-    }
-    const { product } = island;
-    const cardImage = island.card.querySelector<HTMLImageElement>("img.product-image");
-    if (fichaHeading) {
-      fichaHeading.textContent = fichaTitle(product);
-    }
-    fichaBody.innerHTML = fichaContent(product, cardImage?.currentSrc || undefined);
-    fichaBody.setAttribute("aria-busy", "true");
-
-    const frame = fichaBody.querySelector<HTMLElement>(".ficha-frame")!;
-    const image = fichaBody.querySelector<HTMLImageElement>("[data-ficha-image]")!;
-    const state: OpenFicha = { product, frame, image, ready: false, zoomed: false };
-    ficha = state;
-    image.addEventListener("load", () => settleFicha(state, true), { once: true });
-    image.addEventListener("error", () => settleFicha(state, false), { once: true });
-    if (image.complete && image.naturalWidth > 0) {
-      settleFicha(state, true);
-    }
-
-    if (overlays.open(FICHA_LAYER, { opener: link })) {
-      // Recién con el diálogo a la vista: cerrado conserva el desplazamiento de la vez anterior.
-      fichaBody.scrollTop = 0;
-      fichaBody.scrollLeft = 0;
-      fichaBody.focus({ preventScroll: true });
-    }
-  }
-
-  function clearFicha(): void {
-    ficha = null;
-    if (fichaBody) {
-      fichaBody.innerHTML = "";
-      fichaBody.removeAttribute("aria-busy");
-    }
-  }
-
   // Un manejador por data-action.
   const actions: Record<string, ActionHandler> = {
     add(element) {
@@ -473,13 +359,6 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
       }
       applyFilters({ intent: ALL_INTENTS, query: "" });
       chips.find((chip) => chip.dataset.intent === ALL_INTENTS)?.focus({ preventScroll: true });
-    },
-    "open-ficha": openFicha,
-    "close-ficha"() {
-      void overlays.close(FICHA_LAYER);
-    },
-    "zoom-ficha"(_element, event) {
-      toggleZoom({ x: event.clientX, y: event.clientY });
     },
     // Galería de la página del producto: la miniatura tocada pasa a la foto grande.
     "show-photo"(element) {
@@ -530,17 +409,9 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
       if (island) {
         paintCard(island, true);
       }
-      return;
-    }
-    if (event.key === "Enter" && fichaBody && target === fichaBody && ficha?.ready) {
-      event.preventDefault();
-      toggleZoom();
     }
   }
 
-  if (fichaDialog) {
-    overlays.register(FICHA_LAYER, fichaDialog, { onClose: clearFicha });
-  }
   const removeActions = delegateActions(root, actions);
   root.addEventListener("change", onChange);
   root.addEventListener("input", onInput);

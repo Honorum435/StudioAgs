@@ -76,7 +76,7 @@ describe("hidratación completa", () => {
     expect(orderStore.getState().lines).toHaveLength(2);
     expect(Array.from(document.querySelectorAll(".product-card"))).toEqual(cards);
     expect($("#cart-dialog")).toBe(dialog);
-    for (const selector of ["#app", "#cart-dialog", "#ficha-dialog", "[data-sticky-bar]", ".site-header", ".cart-items"]) {
+    for (const selector of ["#app", "#cart-dialog", "[data-sticky-bar]", ".site-header", ".cart-items"]) {
       expect(document.querySelectorAll(selector)).toHaveLength(1);
     }
 

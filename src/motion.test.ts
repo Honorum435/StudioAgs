@@ -54,7 +54,7 @@ function createStore(storage: StorageLike | null = null): OrderStore {
 function mount(storage: StorageLike | null = null): void {
   store = createStore(storage);
   overlays = createOverlays();
-  catalogView = mountCatalogView({ root, store, overlays });
+  catalogView = mountCatalogView({ root, store });
   cartView = mountCartView({ root, store, overlays, whatsappNumber: "5491123456789" });
 }
 

@@ -25,14 +25,14 @@ let back: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   window.history.replaceState(null, "");
   document.body.innerHTML = `
-    <button type="button" id="opener">Ver ficha</button>
-    <dialog id="ficha"><p>Ficha</p><button type="button" id="inside">Cerrar</button></dialog>
+    <button type="button" id="opener">Abrir panel</button>
+    <dialog id="panel"><p>Panel</p><button type="button" id="inside">Cerrar</button></dialog>
     <dialog id="pedido"><p>Pedido</p></dialog>`;
-  dialog = document.querySelector<HTMLDialogElement>("#ficha")!;
+  dialog = document.querySelector<HTMLDialogElement>("#panel")!;
   opener = document.querySelector<HTMLButtonElement>("#opener")!;
   back = vi.spyOn(window.history, "back");
   overlays = createOverlays();
-  overlays.register("ficha", dialog);
+  overlays.register("panel", dialog);
 });
 
 afterEach(() => {
@@ -41,28 +41,28 @@ afterEach(() => {
   delete document.documentElement.dataset.layer;
 });
 
-function openFicha(): void {
+function openPanel(): void {
   opener.focus();
-  expect(overlays.open("ficha")).toBe(true);
+  expect(overlays.open("panel")).toBe(true);
 }
 
 describe("abrir", () => {
   it("agrega una entrada al historial que marca la capa y bloquea el desplazamiento", () => {
     const before = window.history.length;
-    openFicha();
+    openPanel();
 
     expect(dialog.open).toBe(true);
     expect(window.history.length).toBe(before + 1);
-    expect(markedLayer()).toBe("ficha");
-    expect(document.documentElement.dataset.layer).toBe("ficha");
-    expect(overlays.current()).toBe("ficha");
+    expect(markedLayer()).toBe("panel");
+    expect(document.documentElement.dataset.layer).toBe("panel");
+    expect(overlays.current()).toBe("panel");
   });
 
   it("no abre una segunda capa encima ni la misma dos veces", () => {
     overlays.register("pedido", document.querySelector<HTMLDialogElement>("#pedido")!);
-    openFicha();
+    openPanel();
 
-    expect(overlays.open("ficha")).toBe(false);
+    expect(overlays.open("panel")).toBe(false);
     expect(overlays.open("pedido")).toBe(false);
     expect(overlays.open("otra")).toBe(false);
   });
@@ -70,18 +70,18 @@ describe("abrir", () => {
   it("avisa a quien se suscribe cuando cambia la capa abierta", async () => {
     const seen: Array<string | null> = [];
     overlays.subscribe((current) => seen.push(current));
-    openFicha();
-    await overlays.close("ficha");
+    openPanel();
+    await overlays.close("panel");
 
-    expect(seen).toEqual(["ficha", null]);
+    expect(seen).toEqual(["panel", null]);
   });
 });
 
 describe("cerrar", () => {
   it("con el botón retrocede el historial una sola vez y devuelve el foco", async () => {
-    openFicha();
+    openPanel();
     document.querySelector<HTMLButtonElement>("#inside")!.focus();
-    await overlays.close("ficha");
+    await overlays.close("panel");
 
     expect(dialog.open).toBe(false);
     expect(back).toHaveBeenCalledTimes(1);
@@ -92,15 +92,15 @@ describe("cerrar", () => {
 
   it("close() se resuelve recién después del popstate, para poder desplazar la página", async () => {
     const order: string[] = [];
-    openFicha();
+    openPanel();
     window.addEventListener("popstate", () => order.push("popstate"), { once: true });
-    await overlays.close("ficha").then(() => order.push("cerrado"));
+    await overlays.close("panel").then(() => order.push("cerrado"));
 
     expect(order).toEqual(["popstate", "cerrado"]);
   });
 
   it("con Escape (cancel y close del navegador) retrocede una sola vez", async () => {
-    openFicha();
+    openPanel();
     const popped = nextPopState();
     dialog.dispatchEvent(new Event("cancel", { cancelable: true }));
     dialog.close();
@@ -112,7 +112,7 @@ describe("cerrar", () => {
   });
 
   it("tocando el fondo cierra y retrocede una sola vez", async () => {
-    openFicha();
+    openPanel();
     const popped = nextPopState();
     backdropEvent("pointerdown", dialog);
     backdropEvent("click", dialog);
@@ -123,9 +123,9 @@ describe("cerrar", () => {
     expect(markedLayer()).toBeNull();
   });
 
-  it("un toque dentro de la ficha o un arrastre que termina en el fondo no la cierran", () => {
-    openFicha();
-    const inside = document.querySelector("#ficha p")!;
+  it("un toque dentro del panel o un arrastre que termina en el fondo no lo cierran", () => {
+    openPanel();
+    const inside = document.querySelector("#panel p")!;
     inside.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: 500, clientY: 500 }));
     backdropEvent("pointerdown", inside);
     backdropEvent("click", dialog);
@@ -135,7 +135,7 @@ describe("cerrar", () => {
   });
 
   it("Atrás del navegador la cierra sin volver a retroceder y devuelve el foco", async () => {
-    openFicha();
+    openPanel();
     const popped = nextPopState();
     window.history.back();
     await popped;
@@ -148,7 +148,7 @@ describe("cerrar", () => {
 
   it("cerrar sin popstate (gesto Atrás de Android) no deja una entrada colgada", async () => {
     const before = window.history.length;
-    openFicha();
+    openPanel();
     const popped = nextPopState();
     dialog.dispatchEvent(new Event("cancel", { cancelable: true }));
     dialog.close();
@@ -157,43 +157,32 @@ describe("cerrar", () => {
     expect(back).toHaveBeenCalledTimes(1);
     expect(markedLayer()).toBeNull();
     // Volver a abrir reemplaza la entrada de adelante en lugar de apilar otra.
-    openFicha();
+    openPanel();
     expect(window.history.length).toBe(before + 1);
   });
 
-  it("llama a onClose después de devolver el foco", async () => {
-    overlays.destroy();
-    overlays = createOverlays();
-    const focusOnClose: Array<Element | null> = [];
-    overlays.register("ficha", dialog, { onClose: () => focusOnClose.push(document.activeElement) });
-    openFicha();
-    await overlays.close("ficha");
-
-    expect(focusOnClose).toEqual([opener]);
-  });
-
   it("cerrar una capa que no está abierta no toca el historial", async () => {
-    await overlays.close("ficha");
+    await overlays.close("panel");
 
     expect(back).not.toHaveBeenCalled();
   });
 });
 
 describe("recargar y navegar", () => {
-  it("cargar con un estado de ficha abierta no la reabre y limpia la marca", () => {
+  it("cargar con un estado de panel abierto no lo reabre y limpia la marca", () => {
     overlays.destroy();
-    window.history.replaceState({ [LAYER_STATE_KEY]: "ficha", otro: 1 }, "");
+    window.history.replaceState({ [LAYER_STATE_KEY]: "panel", otro: 1 }, "");
     overlays = createOverlays();
-    overlays.register("ficha", dialog);
+    overlays.register("panel", dialog);
 
     expect(dialog.open).toBe(false);
     expect(markedLayer()).toBeNull();
     expect(window.history.state).toEqual({ otro: 1 });
   });
 
-  it("volver con Adelante a una entrada marcada no reabre la ficha", async () => {
-    openFicha();
-    await overlays.close("ficha");
+  it("volver con Adelante a una entrada marcada no reabre el panel", async () => {
+    openPanel();
+    await overlays.close("panel");
     const popped = nextPopState();
     window.history.forward();
     await popped;

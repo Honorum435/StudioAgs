@@ -28,7 +28,6 @@ const completeBusiness: BusinessInfo = {
   email: "hola@studioags.com.ar",
   responseTime: "Respondemos en el día.",
   exchangePolicy: "Te mandamos una muestra antes de imprimir.",
-  pricesUpdatedAt: { year: 2026, month: 7, day: 14 },
   featuredProducts: ["calendarios", "tarjetas"],
 };
 
@@ -209,7 +208,6 @@ describe("renderDocument e injectApp", () => {
     expect(home.match(/<a class="best-card"/g)).toHaveLength(4);
     const catalog = renderSitePageDocument("productos");
     expect(catalog.match(/<article class="product-card"/g)).toHaveLength(13);
-    expect(catalog).toContain("Precios actualizados al 5 de noviembre de 2026");
   });
 
   it("usa el catálogo y los datos que recibe", () => {

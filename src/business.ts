@@ -22,7 +22,6 @@ export interface BusinessInfo {
   email: BusinessField<string>;
   responseTime: BusinessField<string>;
   exchangePolicy: BusinessField<string>;
-  pricesUpdatedAt: BusinessField<CalendarDate>;
   // Ids de los productos de "Los más vendidos" del inicio, en orden.
   featuredProducts: BusinessField<readonly string[]>;
 }
@@ -63,7 +62,5 @@ export const business: BusinessInfo = {
   exchangePolicy: example(
     "Antes de imprimir te mandamos una muestra para que la apruebes. Como cada pedido es personalizado, no hacemos cambios por gusto; si llega con una falla de impresión, lo reponemos sin costo.",
   ),
-  // El día que se cargó la lista de precios que mandó la dueña.
-  pricesUpdatedAt: { year: 2026, month: 11, day: 5 },
   featuredProducts: example(["calendarios", "fotos", "bitacoras", "laminas"]),
 };

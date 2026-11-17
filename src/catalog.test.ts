@@ -247,35 +247,22 @@ describe("catálogo", () => {
 
   it("declara sus imágenes con anchos, ancho y alto", () => {
     for (const item of products) {
-      const { card, ficha } = item.images;
-      for (const spec of [card, ...(ficha ? [ficha] : [])]) {
-        expect(spec.base.length).toBeGreaterThan(0);
-        expect(spec.widths.length).toBeGreaterThan(0);
-        expect([...spec.widths].sort((a, b) => a - b)).toEqual(spec.widths);
-        expect(spec.width).toBe(Math.max(...spec.widths));
-        expect(spec.height).toBeGreaterThan(0);
-      }
+      const { card } = item.images;
+      expect(card.base.length).toBeGreaterThan(0);
+      expect(card.widths.length).toBeGreaterThan(0);
+      expect([...card.widths].sort((a, b) => a - b)).toEqual(card.widths);
+      expect(card.width).toBe(Math.max(...card.widths));
+      expect(card.height).toBeGreaterThan(0);
       // La foto de la tarjeta es la del catálogo o una de la galería.
       expect([item.id, ...(item.gallery ?? []).map((photo) => photo.image.base)]).toContain(card.base);
     }
-    expect(products.filter((item) => !item.images.ficha).map((item) => item.id)).toEqual([
-      "gran-formato",
-      "dtf-textil",
-      "bitacoras",
-      "archivo-bajonero",
-      "complementos",
-      "minijuegos",
-    ]);
-    const bases = products.flatMap(({ images }) =>
-      [images.card, images.ficha].flatMap((spec) => (spec ? [spec.base] : [])),
-    );
+    const bases = products.map(({ images }) => images.card.base);
     expect(new Set(bases).size).toBe(bases.length);
   });
 
   it("cada imagen declarada, también las de las opciones, existe en public/images con cada ancho", () => {
     const specs = products.flatMap((item) => [
       item.images.card,
-      ...(item.images.ficha ? [item.images.ficha] : []),
       ...productPhotos(item).map((photo) => photo.image),
     ]);
     const missing = specs.flatMap((spec) =>
@@ -303,7 +290,7 @@ describe("catálogo", () => {
     expect(item.imageAlt).toBe(item.gallery![0].alt);
   });
 
-  it("la galería de Bitácoras no lleva la página del catálogo ni dos veces lo mismo", () => {
+  it("la galería de Bitácoras no repite la foto de la tarjeta", () => {
     expect(galleryPhotos(product("bitacoras")).map((photo) => photo.image.base)).toEqual([
       "foto-bitacoras-1",
       "foto-bitacoras-2",
@@ -316,13 +303,11 @@ describe("catálogo", () => {
     expect(galleryPhotos(product("pizarra-orma")).map((photo) => photo.image.base)).toEqual([
       "foto-pizarra-orma-2",
       "foto-pizarra-orma-1",
-      "ficha-pizarra-orma",
     ]);
   });
 
   it("arma la ruta de cada imagen con su nombre base y su ancho", () => {
     expect(imageUrl(product("tarjetas").images.card, 400)).toBe("images/tarjetas-400.webp");
-    expect(imageUrl(product("tarjetas").images.ficha!, 1800)).toBe("images/ficha-tarjetas-1800.webp");
   });
 });
 

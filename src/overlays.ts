@@ -1,4 +1,4 @@
-// Coordinador de capas (ficha y pedido) e historial. Abrir agrega una entrada al historial; el
+// Coordinador de capas (pedido) e historial. Abrir agrega una entrada al historial; el
 // evento close del diálogo es la única salida, venga de donde venga el cierre.
 
 export const LAYER_STATE_KEY = "studioagsLayer";
@@ -6,18 +6,13 @@ export const LAYER_STATE_KEY = "studioagsLayer";
 // Si popstate no llega (no debería), close() no queda esperando para siempre.
 const HISTORY_SETTLE_TIMEOUT = 600;
 
-export interface LayerOptions {
-  // Después de cerrar y de devolver el foco.
-  onClose?: () => void;
-}
-
 export interface OpenOptions {
   // A dónde vuelve el foco al cerrar; por defecto, lo que estaba enfocado al abrir.
   opener?: HTMLElement | null;
 }
 
 export interface Overlays {
-  register(name: string, dialog: HTMLDialogElement, options?: LayerOptions): void;
+  register(name: string, dialog: HTMLDialogElement): void;
   open(name: string, options?: OpenOptions): boolean;
   // Se resuelve cuando el historial ya volvió: recién ahí conviene desplazar la página.
   close(name: string): Promise<void>;
@@ -29,7 +24,6 @@ export interface Overlays {
 interface Layer {
   name: string;
   dialog: HTMLDialogElement;
-  options: LayerOptions;
   opener: HTMLElement | null;
   pointerDownOnBackdrop: boolean;
   // Los close() pendientes: el evento close llega después, como tarea aparte.
@@ -130,7 +124,6 @@ export function createOverlays(win: Window = window): Overlays {
     if (opener?.isConnected) {
       opener.focus({ preventScroll: true });
     }
-    layer.options.onClose?.();
   }
 
   function onPopState(event: PopStateEvent): void {
@@ -150,14 +143,13 @@ export function createOverlays(win: Window = window): Overlays {
   win.addEventListener("popstate", onPopState);
 
   return {
-    register(name, dialog, options = {}) {
+    register(name, dialog) {
       if (layers.has(name)) {
         throw new Error(`La capa ${name} ya está registrada.`);
       }
       const layer: Layer = {
         name,
         dialog,
-        options,
         opener: null,
         pointerDownOnBackdrop: false,
         closeWaiters: [],
@@ -167,7 +159,7 @@ export function createOverlays(win: Window = window): Overlays {
       const onPointerDown = (event: PointerEvent) => {
         layer.pointerDownOnBackdrop = isBackdropEvent(dialog, event);
       };
-      // Solo si el toque empezó y terminó en el fondo: arrastrar desde la ficha no la cierra.
+      // Solo si el toque empezó y terminó en el fondo: arrastrar desde el panel no lo cierra.
       const onClick = (event: MouseEvent) => {
         const fromBackdrop = layer.pointerDownOnBackdrop && isBackdropEvent(dialog, event);
         layer.pointerDownOnBackdrop = false;

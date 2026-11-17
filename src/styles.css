@@ -192,7 +192,7 @@ body {
   margin: 0;
 }
 
-/* Con la ficha o el pedido abiertos la página no se desplaza (overlays.ts marca la capa). */
+/* Con el pedido abierto la página no se desplaza (overlays.ts marca la capa). */
 html[data-layer] {
   overflow: hidden;
   scrollbar-gutter: stable;
@@ -780,7 +780,7 @@ main > .catalog-section:first-child {
   line-height: 1.7;
 }
 
-/* Franja de confianza bajo el título: plazo, muestra y fecha de precios. */
+/* Franja de confianza bajo el título: plazo y muestra. */
 .trust-strip {
   display: flex;
   flex-wrap: wrap;
@@ -1199,7 +1199,6 @@ main > .catalog-section:first-child {
 .card-actions {
   display: grid;
   justify-items: start;
-  gap: 4px;
   margin-top: auto;
   padding-top: 18px;
 }
@@ -1248,10 +1247,6 @@ main > .catalog-section:first-child {
   flex-wrap: wrap;
   gap: 0 6px;
   text-align: left;
-}
-
-.ficha-link {
-  margin-left: -10px;
 }
 
 .price-note {
@@ -2303,7 +2298,7 @@ main > .catalog-section:first-child {
 
 /* Cursor con estela (motion.ts): el círculo llega al puntero con demora y el punto va justo en la
    punta. Sobre lo que se puede tocar el círculo se achica y el punto crece; en los campos de texto
-   se esconde, y con la ficha o el pedido abiertos tampoco se muestra, porque quedaría debajo. */
+   se esconde, y con el pedido abierto tampoco se muestra, porque quedaría debajo. */
 .cursor-trail {
   position: fixed;
   z-index: 90;
@@ -2565,7 +2560,7 @@ html[data-layer] .cursor-trail {
 }
 
 /* Botón flotante para escribir, abajo a la derecha. En el celu sube cuando aparece la barra del
-   pedido, y con la ficha o el pedido abiertos no se muestra. */
+   pedido, y con el pedido abierto no se muestra. */
 .chat-float {
   position: fixed;
   z-index: 25;
@@ -2598,7 +2593,7 @@ html[data-layer] .chat-float {
   display: none;
 }
 
-/* Botón cuadrado de 44 px: cerrar el pedido y la ficha, y las cantidades del pedido. */
+/* Botón cuadrado de 44 px: cerrar el pedido y las cantidades del pedido. */
 .icon-button,
 .quantity-controls button {
   width: 44px;
@@ -2617,111 +2612,9 @@ html[data-layer] .chat-float {
   height: 19px;
 }
 
-/* Ficha del catálogo: hoja de alto completo en celular, ventana centrada desde 768 px. */
-.ficha-dialog {
-  width: min(100% - 48px, 880px);
-  max-width: none;
-  height: calc(100vh - 48px);
-  height: calc(100dvh - 48px);
-  max-height: none;
-  margin: auto;
-  padding: 0;
-  overflow: hidden;
-  border: 0;
-  background: var(--paper);
-  color: var(--ink);
-  box-shadow: var(--shadow-photo);
-}
-
-.ficha-dialog::backdrop,
 .cart-dialog::backdrop {
   background: var(--backdrop);
   backdrop-filter: blur(2px);
-}
-
-.ficha-panel {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.ficha-header {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 14px 12px 24px;
-  border-bottom: 1px solid var(--line);
-}
-
-.ficha-header h2 {
-  min-width: 0;
-  margin: 0;
-  font-family: var(--display);
-  text-transform: uppercase;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.ficha-body {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
-  background: var(--photo-bg);
-  color: var(--ink-soft);
-}
-
-/* El contenedor desplazable recorta lo que sale de su caja: el anillo va hacia adentro. */
-.ficha-body:focus-visible {
-  outline-offset: -3px;
-}
-
-.ficha-heading {
-  min-width: 0;
-}
-
-.ficha-hint {
-  margin: 2px 0 0;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-/* La página entra ajustada al ancho; tocarla la amplía y se recorre desplazando o pellizcando. */
-.ficha-frame {
-  position: relative;
-}
-
-.ficha-body:not([aria-busy]) .ficha-frame {
-  cursor: zoom-in;
-}
-
-.ficha-body:not([aria-busy]) .ficha-frame.is-zoomed {
-  cursor: zoom-out;
-}
-
-.ficha-image,
-.ficha-placeholder {
-  width: 100%;
-  height: auto;
-  vertical-align: top;
-}
-
-.ficha-frame.is-zoomed .ficha-image {
-  width: var(--ficha-zoom-width, 200%);
-  max-width: none;
-}
-
-.ficha-message {
-  margin: 0;
-  padding: 20px 24px;
-  color: var(--ink-soft);
-  font-size: 15px;
-  line-height: 1.5;
 }
 
 /* Pedido: panel lateral desde 768 px, hoja de alto completo en celular. */
@@ -4179,22 +4072,6 @@ textarea.field-input {
 
   .footer-tagline {
     font-size: 15px;
-  }
-
-  .ficha-dialog {
-    width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    margin: 0;
-    box-shadow: none;
-  }
-
-  .ficha-header {
-    padding: max(10px, env(safe-area-inset-top)) var(--gutter) 10px;
-  }
-
-  .ficha-header h2 {
-    font-size: 20px;
   }
 
   :root {

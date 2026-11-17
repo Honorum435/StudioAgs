@@ -1,4 +1,4 @@
-import { business, businessValue, type CalendarDate } from "./business";
+import { businessValue, type CalendarDate } from "./business";
 import {
   lineName,
   pickAddOns,
@@ -14,8 +14,6 @@ import {
   calendarDateOf,
   capText,
   compareDates,
-  formatCalendarDate,
-  isCalendarDate,
   parseIsoDate,
 } from "./format";
 import { ORDER_CODE_PATTERN } from "./validation";
@@ -74,9 +72,10 @@ export interface DroppedItem {
   label: string;
 }
 
-export type RestoreNotice =
-  | { kind: "dropped"; items: readonly DroppedItem[] }
-  | { kind: "prices"; previous: CalendarDate; current: CalendarDate };
+export interface RestoreNotice {
+  kind: "dropped";
+  items: readonly DroppedItem[];
+}
 
 export interface OrderState {
   lines: readonly OrderLine[];
@@ -146,7 +145,6 @@ export interface OrderStoreOptions {
   storage?: StorageLike | null;
   now?: () => Date;
   catalog?: readonly CatalogProduct[];
-  pricesUpdatedAt?: CalendarDate;
 }
 
 export interface OrderStore {
@@ -178,9 +176,6 @@ export function clampQuantity(value: number): number {
 }
 
 export function noticeMessage(notice: RestoreNotice): string {
-  if (notice.kind === "prices") {
-    return `Actualizamos los precios al ${formatCalendarDate(notice.current)}: revisá el subtotal.`;
-  }
   const items = notice.items.map((item) => {
     if (item.kind === "addOn") {
       return `${item.label} de ${item.product}`;
@@ -264,26 +259,6 @@ function mergeLine(
   return lines.map((line) => (line === existing ? merged : line));
 }
 
-// Un aviso pendiente por tipo: se suman los descartes y se conserva la fecha de precios original.
-function mergeNotice(previous: RestoreNotice, notice: RestoreNotice): RestoreNotice {
-  if (previous.kind === "dropped" && notice.kind === "dropped") {
-    return { kind: "dropped", items: [...previous.items, ...notice.items] };
-  }
-  if (previous.kind === "prices" && notice.kind === "prices") {
-    return { ...notice, previous: previous.previous };
-  }
-  return notice;
-}
-
-function mergeNotices(current: readonly RestoreNotice[], added: readonly RestoreNotice[]): RestoreNotice[] {
-  return added.reduce<RestoreNotice[]>((notices, notice) => {
-    const previous = notices.find((item) => item.kind === notice.kind);
-    return previous
-      ? notices.map((item) => (item === previous ? mergeNotice(previous, notice) : item))
-      : [...notices, notice];
-  }, [...current]);
-}
-
 // Persistencia: formato versionado y validación estricta de la forma al restaurar.
 
 interface StoredLine {
@@ -299,7 +274,6 @@ interface StoredLine {
 interface StoredOrder {
   version: number;
   savedAt: number;
-  pricesUpdatedAt: CalendarDate;
   status: OrderStatus;
   code: string | null;
   sentVia: SentVia | null;
@@ -307,7 +281,8 @@ interface StoredOrder {
   changedSinceConfirm: boolean;
   lines: StoredLine[];
   form: OrderForm;
-  notices: RestoreNotice[];
+  // Puede traer avisos de versiones anteriores (el de precios): al restaurar se saltean.
+  notices: unknown[];
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -363,13 +338,7 @@ function isDroppedItem(value: unknown): value is DroppedItem {
 }
 
 function isNotice(value: unknown): value is RestoreNotice {
-  if (!isRecord(value)) {
-    return false;
-  }
-  if (value.kind === "dropped") {
-    return Array.isArray(value.items) && value.items.every(isDroppedItem);
-  }
-  return value.kind === "prices" && isCalendarDate(value.previous) && isCalendarDate(value.current);
+  return isRecord(value) && value.kind === "dropped" && Array.isArray(value.items) && value.items.every(isDroppedItem);
 }
 
 function isTimestamp(value: unknown): value is number {
@@ -388,7 +357,6 @@ function parseStoredOrder(raw: string): StoredOrder | null {
   }
   const valid =
     isTimestamp(data.savedAt) &&
-    isCalendarDate(data.pricesUpdatedAt) &&
     isOneOf(data.status, ORDER_STATUSES) &&
     (data.code === null || (isString(data.code) && ORDER_CODE_PATTERN.test(data.code))) &&
     (data.sentVia === null || isOneOf(data.sentVia, SENT_VIA)) &&
@@ -397,8 +365,7 @@ function parseStoredOrder(raw: string): StoredOrder | null {
     Array.isArray(data.lines) &&
     data.lines.every(isStoredLine) &&
     isStoredForm(data.form) &&
-    Array.isArray(data.notices) &&
-    data.notices.every(isNotice);
+    Array.isArray(data.notices);
   return valid ? (data as unknown as StoredOrder) : null;
 }
 
@@ -419,7 +386,6 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
   const catalog = options.catalog ?? products;
   const storage = options.storage === undefined ? browserStorage() : options.storage;
   const now = options.now ?? (() => new Date());
-  const pricesUpdatedAt = options.pricesUpdatedAt ?? businessValue(business.pricesUpdatedAt);
   const listeners = new Set<(state: OrderState) => void>();
 
   const findProduct = (id: string) => catalog.find((product) => product.id === id);
@@ -473,7 +439,6 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
     const stored: StoredOrder = {
       version: STORAGE_VERSION,
       savedAt: now().getTime(),
-      pricesUpdatedAt,
       status: snapshot.status,
       code: snapshot.code,
       sentVia: snapshot.sentVia,
@@ -552,13 +517,8 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
       lines = mergeLine(lines, product, combination, addOnIds, item.quantity);
     }
 
-    const added: RestoreNotice[] = [];
-    if (dropped.length > 0) {
-      added.push({ kind: "dropped", items: dropped });
-    }
-    if (compareDates(stored.pricesUpdatedAt, pricesUpdatedAt) !== 0) {
-      added.push({ kind: "prices", previous: stored.pricesUpdatedAt, current: pricesUpdatedAt });
-    }
+    // Un solo aviso pendiente: se suman los descartes de antes y los de ahora.
+    const droppedItems = [...stored.notices.filter(isNotice).flatMap((notice) => notice.items), ...dropped];
 
     const ideas = Object.fromEntries(
       Object.entries(stored.form.ideas).map(([id, text]) => [id, capText(text, IDEA_MAX_LENGTH)]),
@@ -571,7 +531,7 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
       sentVia: stored.sentVia,
       sentAt: stored.sentAt,
       changedSinceConfirm: lines.length > 0 && stored.changedSinceConfirm,
-      notices: mergeNotices(stored.notices, added),
+      notices: droppedItems.length > 0 ? [{ kind: "dropped", items: droppedItems }] : [],
     };
 
     const sent = restored.sentVia !== null && restored.sentAt !== null;
@@ -581,12 +541,12 @@ export function createOrderStore(options: OrderStoreOptions): OrderStore {
       (restored.status === "borrador"
         ? restored.code === null && unsent
         : restored.code !== null && (restored.status === "confirmado" ? unsent : sent));
-    if (added.length > 0 || !consistent) {
+    if (dropped.length > 0 || !consistent) {
       restored = backToDraft(restored);
     }
 
     // Lo corregido al restaurar se guarda enseguida.
-    if (added.length > 0) {
+    if (dropped.length > 0) {
       save(restored);
     }
     return restored;

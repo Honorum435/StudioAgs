@@ -17,7 +17,7 @@ import {
   type IntentId,
   type ResolvedSelection,
 } from "./catalog";
-import { escapeHtml, formatLongDate, formatPrice } from "./format";
+import { escapeHtml, formatPrice } from "./format";
 // Solo el tipo: el prerender de vite.config.ts no carga el código de whatsapp.ts.
 import type { WhatsAppLink } from "./whatsapp";
 
@@ -49,8 +49,6 @@ export function sitePagePath(id: SitePageId): string {
 // una columna, dos en celular ancho, dos en tablet y tres desde 1024 px.
 export const CARD_IMAGE_SIZES =
   "(max-width: 559px) 90vw, (max-width: 767px) calc(45vw - 8px), (max-width: 1023px) calc(50vw - 47px), (max-width: 1351px) calc(33.3vw - 39px), 412px";
-// La ficha ocupa todo el ancho en celular y hasta 880 px desde 768 px (styles.css).
-export const FICHA_SIZES = "(max-width: 767px) 100vw, (max-width: 927px) calc(100vw - 48px), 880px";
 export const HERO_MAIN_SIZES = "(max-width: 767px) 240px, 320px";
 // Página del producto: la galería ocupa el ancho en celular y algo más de la mitad desde 768 px.
 export const GALLERY_SIZES = "(max-width: 767px) 92vw, (max-width: 1351px) 52vw, 680px";
@@ -707,12 +705,11 @@ export function contactSection(business: BusinessInfo): string {
     </section>`;
 }
 
-export function trustStrip({ business, catalog }: PageData): string {
+export function trustStrip({ catalog }: PageData): string {
   const range = leadTimeRange(catalog);
   const items = [
     range ? `Producción: ${range}, según el producto` : "",
     "Te mandamos una muestra antes de imprimir",
-    `Precios actualizados al ${formatLongDate(businessValue(business.pricesUpdatedAt))}`,
   ].filter(Boolean);
   return `
     <ul class="trust-strip" aria-label="Antes de pedir">
@@ -848,7 +845,6 @@ export function productCard(product: CatalogProduct): string {
         ${quantityPicker(product)}
         <div class="card-actions">
           <button class="add-button" type="button" data-action="add" data-product-id="${id}" disabled>${addButtonContent(product, resolved)}</button>
-          ${fichaLink(product)}
         </div>
       </div>
     </article>`;
@@ -914,7 +910,6 @@ export function productPage(product: CatalogProduct): string {
         ${quantityPicker(product)}
         <div class="card-actions">
           <button class="add-button" type="button" data-action="add" data-product-id="${id}" disabled>${addButtonContent(product, resolved)}</button>
-          ${fichaLink(product)}
         </div>
       </div>
     </article>`;
@@ -1119,16 +1114,6 @@ export function processSection(): string {
     </section>`;
 }
 
-// Fotos que se van pasando junto a las preguntas, como pidió la dueña. Son de las galerías.
-const faqPhotos: ImageSpec[] = [
-  squarePhoto("foto-calendarios-3", 960),
-  squarePhoto("foto-complementos-1", 960),
-  squarePhoto("foto-bitacoras-1", 896),
-  squarePhoto("foto-tarjetas-1", 960),
-  squarePhoto("foto-calendarios-4", 1075),
-  squarePhoto("foto-tarjetas-2", 960),
-];
-
 // Una foto a la vista por vez; slideshow.ts las pasa solas y muestra el botón para frenarlas.
 // Sin JavaScript queda la primera. Son de adorno: el texto está en las preguntas.
 function slideshow(photos: readonly ImageSpec[], className: string, sizes: string): string {
@@ -1199,7 +1184,7 @@ export function faqSection({ business, catalog }: PageData): string {
             )
             .join("\n          ")}
         </div>
-        ${slideshow(faqPhotos, "faq-slideshow", FAQ_PHOTO_SIZES)}
+        ${slideshow(catalog.slice(0, 6).map((product) => product.images.card), "faq-slideshow", FAQ_PHOTO_SIZES)}
       </div>
     </section>`;
 }
@@ -1245,55 +1230,6 @@ export function chatButton(business: BusinessInfo): string {
     <a class="chat-float" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer" data-contact-chat>
       ${icon("chat")}<span class="chat-float-label">Escribinos</span><span class="visually-hidden"> (se abre en otra pestaña)</span>
     </a>`;
-}
-
-export function fichaTitle(product: CatalogProduct): string {
-  return `Ficha de ${product.name}`;
-}
-
-export function fichaAlt(product: CatalogProduct): string {
-  return `Página del catálogo de ${product.name}, con sus formatos y precios`;
-}
-
-// Sin página del catálogo, el producto no tiene "Ver ficha".
-function fichaLink(product: CatalogProduct): string {
-  const ficha = product.images.ficha;
-  if (!ficha) {
-    return "";
-  }
-  return `<a class="text-button ficha-link" href="${attr(imageUrl(ficha, ficha.width))}" data-action="open-ficha" data-product-id="${attr(product.id)}">Ver ficha<span class="visually-hidden"> de ${escapeHtml(product.name)}</span></a>`;
-}
-
-// Contenido de la ficha: la foto de la tarjeta queda a la vista hasta que carga la página.
-export function fichaContent(product: CatalogProduct, placeholderSrc?: string): string {
-  const card = product.images.card;
-  const ficha = product.images.ficha;
-  if (!ficha) {
-    return "";
-  }
-  const placeholder = placeholderSrc ?? imageUrl(card, Math.min(...card.widths));
-  return `
-    <div class="ficha-frame" data-action="zoom-ficha">
-      <img class="ficha-placeholder" data-ficha-placeholder src="${attr(placeholder)}" width="${card.width}" height="${card.height}" alt="" />
-      <img class="ficha-image" data-ficha-image src="${attr(imageUrl(ficha, ficha.width))}" srcset="${attr(srcset(ficha))}" sizes="${attr(FICHA_SIZES)}" width="${ficha.width}" height="${ficha.height}" alt="${attr(fichaAlt(product))}" decoding="async" hidden />
-    </div>
-    <p class="ficha-message" role="alert" data-ficha-error hidden>No pudimos cargar la ficha. Revisá tu conexión y volvé a abrirla.</p>`;
-}
-
-export function fichaDialog(): string {
-  return `
-    <dialog class="ficha-dialog" id="ficha-dialog" aria-labelledby="ficha-title">
-      <div class="ficha-panel">
-        <header class="ficha-header">
-          <div class="ficha-heading">
-            <h2 id="ficha-title" data-ficha-title>Ficha del catálogo</h2>
-            <p class="ficha-hint" id="ficha-hint">Tocá la página<span class="visually-hidden"> o presioná Enter</span> para ampliarla.</p>
-          </div>
-          <button class="icon-button" type="button" data-action="close-ficha" aria-label="Cerrar ficha">${icon("close")}</button>
-        </header>
-        <div class="ficha-body" data-ficha-body tabindex="0" role="region" aria-label="Página del catálogo" aria-describedby="ficha-hint"></div>
-      </div>
-    </dialog>`;
 }
 
 const emptyCart: CartSummary = { lines: [], quantity: 0, subtotal: 0 };
@@ -1352,7 +1288,6 @@ function pageShell(
     ...sections,
     "</main>",
     siteFooter(data.business, slogan),
-    fichaDialog(),
     cartDialog(),
     stickyBar(),
     chatButton(data.business),

@@ -1,7 +1,7 @@
 // Ayudas compartidas por las vistas: delegación de data-action, región viva y escrituras que
 // solo tocan el DOM si el valor cambió. No toca el DOM al importarse.
 
-export type ActionHandler = (element: HTMLElement, event: MouseEvent) => void;
+export type ActionHandler = (element: HTMLElement) => void;
 
 export function windowOf(node: Node): Window & typeof globalThis {
   return node.ownerDocument?.defaultView ?? window;
@@ -17,7 +17,7 @@ export function delegateActions(root: HTMLElement, actions: Readonly<Record<stri
     if (!element || !handler || (element instanceof HTMLButtonElement && element.disabled)) {
       return;
     }
-    handler(element, event);
+    handler(element);
   }
   root.addEventListener("click", onClick);
   return () => root.removeEventListener("click", onClick);

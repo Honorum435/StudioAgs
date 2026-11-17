@@ -24,7 +24,6 @@ const completeBusiness: BusinessInfo = {
   email: "hola@studioags.com.ar",
   responseTime: "Respondemos en el día.",
   exchangePolicy: "Te mandamos una muestra antes de imprimir.",
-  pricesUpdatedAt: { year: 2026, month: 7, day: 14 },
   featuredProducts: ["calendarios", "tarjetas"],
 };
 
@@ -256,7 +255,6 @@ describe("build", { timeout: 60_000 }, () => {
         `<h3 id="producto-${product.id}-titulo"><a class="product-link" href="producto/${product.id}/">${product.name}</a></h3>`,
       );
     }
-    expect(catalog).toContain("Precios actualizados al 14 de julio de 2026");
     expect(catalog).toContain('<h1 id="catalog-title">');
   });
 

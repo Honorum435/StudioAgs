@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { business, businessValue } from "./business";
 import type { ResolvedLine } from "./cart";
-import { galleryPhotos, optionPhotos, products, resolveSelection, type CatalogProduct } from "./catalog";
+import { galleryPhotos, imageUrl, optionPhotos, products, resolveSelection, type CatalogProduct } from "./catalog";
 import { formatPrice } from "./format";
 import {
   CARD_IMAGE_SIZES,
@@ -135,7 +135,6 @@ describe("página prerenderizada", () => {
     expect(items).toEqual([
       "Producción: de 1 a 5 días hábiles, según el producto",
       "Te mandamos una muestra antes de imprimir",
-      "Precios actualizados al 5 de noviembre de 2026",
     ]);
     expect(strip.compareDocumentPosition(catalog.querySelector(".section-heading")!)).toBe(
       Node.DOCUMENT_POSITION_PRECEDING,
@@ -183,12 +182,11 @@ describe("página prerenderizada", () => {
     expect(text(parse(stickyBarContent(filledCart)).body)).toContain(TOTAL_NOTE);
   });
 
-  it("arma el encabezado, el aviso sin JavaScript, la ficha, el panel vacío, la barra y la región viva", () => {
+  it("arma el encabezado, el aviso sin JavaScript, el panel vacío, la barra y la región viva", () => {
     expect(doc.querySelectorAll(".site-header")).toHaveLength(1);
     expect(page).toMatch(/<noscript>[\s\S]*JavaScript[\s\S]*https:\/\/www\.instagram\.com\/__studioags\/[\s\S]*<\/noscript>/);
     expect(page.indexOf("<noscript>")).toBeGreaterThan(page.indexOf("</header>"));
     expect(page.indexOf("<noscript>")).toBeLessThan(page.indexOf('<main id="contenido">'));
-    expect(doc.querySelector("dialog#ficha-dialog [data-action='close-ficha']")).not.toBeNull();
 
     const cart = doc.querySelector("dialog#cart-dialog")!;
     expect(cart.hasAttribute("open")).toBe(false);
@@ -413,6 +411,11 @@ describe("preguntas frecuentes", () => {
     }
     expect(faqDoc.querySelector(".faq-heading a[href^='mailto:']")).not.toBeNull();
   });
+
+  it("al lado pasan las fotos de las tarjetas de los primeros seis productos", () => {
+    const slides = [...faqDoc.querySelectorAll(".faq-slideshow img")].map((image) => image.getAttribute("src"));
+    expect(slides).toEqual(products.slice(0, 6).map(({ images }) => imageUrl(images.card, images.card.width)));
+  });
 });
 
 describe("contacto", () => {
@@ -496,19 +499,16 @@ describe("página de un producto", () => {
     const add = detail.querySelector<HTMLButtonElement>('[data-action="add"]')!;
     expect(add.disabled).toBe(true);
     expect(add.dataset.productId).toBe("calendarios");
-    expect(detail.querySelector('[data-action="open-ficha"]')).not.toBeNull();
   });
 
   it("la galería muestra la primera foto y deja las demás ocultas, con una miniatura por foto", () => {
     const photos = [...detail.querySelectorAll<HTMLElement>("[data-gallery-photo]")];
     const gallery = galleryPhotos(calendarios);
-    expect(gallery).toHaveLength((calendarios.gallery?.length ?? 0) + 2);
+    expect(gallery).toHaveLength((calendarios.gallery?.length ?? 0) + 1);
     expect(photos).toHaveLength(gallery.length + optionPhotos(calendarios).length);
     expect(photos.map((photo) => photo.hidden)).toEqual(photos.map((_photo, index) => index > 0));
     expect(photos[0].querySelector("img")?.getAttribute("fetchpriority")).toBe("high");
     expect(photos.slice(1).every((photo) => photo.querySelector("img")?.getAttribute("loading") === "lazy")).toBe(true);
-    // La última de la galería es la página del catálogo, entera.
-    expect(photos[gallery.length - 1].classList.contains("is-contained")).toBe(true);
 
     const thumbs = [...detail.querySelectorAll<HTMLButtonElement>('[data-action="show-photo"]')];
     expect(thumbs).toHaveLength(gallery.length);
@@ -658,21 +658,6 @@ describe("controles antes de hidratar", () => {
       expect(input.closest(".option-group")).toBeNull();
     }
     expect(card("tarjetas").querySelector(".addon-group")).toBeNull();
-  });
-
-  it("'Ver ficha' es un enlace común a la página de 1800 px, con el producto en el nombre", () => {
-    for (const item of products) {
-      const link = card(item.id).querySelector<HTMLAnchorElement>("a.ficha-link")!;
-      if (!item.images.ficha) {
-        // Lo que no estaba en el catálogo en PDF no tiene ficha.
-        expect(link).toBeNull();
-        continue;
-      }
-      expect(link.getAttribute("href")).toBe(`images/ficha-${item.id}-1800.webp`);
-      expect(link.dataset.action).toBe("open-ficha");
-      expect(link.dataset.productId).toBe(item.id);
-      expect(accessibleName(link)).toBe(`Ver ficha de ${item.name}`);
-    }
   });
 
   it("explica cómo mandar las fotos solo en los productos que las llevan", () => {

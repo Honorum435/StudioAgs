@@ -77,15 +77,13 @@ export interface ProductImages {
   // La foto de la tarjeta es un recorte de una de la galería: no se suma a la galería, para
   // no mostrar dos veces lo mismo.
   cardOnly?: boolean;
-  // La página del catálogo en PDF; los productos que no estaban en el catálogo no la tienen.
-  ficha?: ImageSpec;
 }
 
 // Una foto de la galería de la página del producto.
 export interface GalleryPhoto {
   image: ImageSpec;
   alt: string;
-  // La página del catálogo se muestra entera; las fotos llenan el cuadro.
+  // Se muestra entera, sin recortar; sin esto, la foto llena el cuadro.
   fit?: "contain";
 }
 
@@ -105,7 +103,7 @@ export interface CatalogProduct {
   leadTime: BusinessField<LeadTime>;
   photoInstructions?: PhotoInstructions;
   images: ProductImages;
-  // Fotos reales para la página del producto; sin ellas, la galería usa la foto y la ficha.
+  // Fotos reales para la página del producto; sin ellas, la galería usa la foto de la tarjeta.
   gallery?: readonly GalleryPhoto[];
   // Párrafos extra para la página del producto.
   details?: readonly string[];
@@ -179,11 +177,6 @@ function cardImage(base: string, widths: readonly number[], height: number): Ima
   return { base, widths, width: Math.max(...widths), height };
 }
 
-// Páginas del PDF de 613 × 860 pt, renderizadas a 300 dpi.
-function fichaImage(productId: string): ImageSpec {
-  return { base: `ficha-${productId}`, widths: [1200, 1800], width: 1800, height: 2523 };
-}
-
 // Fotos del álbum de la dueña y de las que mandó por WhatsApp, cuadradas como las produce
 // fotos-album.py: a 1200 y 600 px, o a la medida del cuadrado si es más chico (las de WhatsApp
 // miden 960).
@@ -215,17 +208,15 @@ export function productPath(product: Pick<CatalogProduct, "id">): string {
   return `producto/${product.id}/`;
 }
 
-// Las fotos reales primero; después la de la tarjeta, si no es una de ellas, y la página del
-// catálogo, si la tiene.
+// Las fotos reales primero; después la de la tarjeta, si no es una de ellas.
 export function galleryPhotos(product: CatalogProduct): GalleryPhoto[] {
   const gallery = product.gallery ?? [];
-  const { card, ficha } = product.images;
+  const { card } = product.images;
   return [
     ...gallery,
     ...(product.images.cardOnly || gallery.some((photo) => photo.image.base === card.base)
       ? []
       : [{ image: card, alt: product.imageAlt }]),
-    ...(ficha ? [{ image: ficha, alt: `Página del catálogo de ${product.name}`, fit: "contain" as const }] : []),
   ];
 }
 
@@ -481,7 +472,7 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["organizarte", "regalar", "marca"],
     leadTime: pendingLeadTime(),
-    images: { card: cardImage("calendarios", [400, 800], 600), ficha: fichaImage("calendarios") },
+    images: { card: cardImage("calendarios", [400, 800], 600) },
     gallery: [
       albumPhoto("calendarios", 1, "Calendarios de todos los colores, uno encima del otro"),
       albumPhoto("calendarios", 2, "Calendarios semanales rojos con fibrones para escribir"),
@@ -528,10 +519,7 @@ export const products: readonly CatalogProduct[] = [
       quality: photoQuality,
       howToSend: photoSending,
     },
-    images: {
-      card: cardImage("fotos", [400, 585], 439),
-      ficha: fichaImage("fotos"),
-    },
+    images: { card: cardImage("fotos", [400, 585], 439) },
   },
   {
     id: "pizarra-orma",
@@ -555,7 +543,7 @@ export const products: readonly CatalogProduct[] = [
       howToSend: photoSending,
     },
     // La de la tarjeta es un recorte de la misma foto de la pizarra gris.
-    images: { card: cardImage("pizarra-orma", [400, 617], 463), cardOnly: true, ficha: fichaImage("pizarra-orma") },
+    images: { card: cardImage("pizarra-orma", [400, 617], 463), cardOnly: true },
     gallery: boardPhotos,
   },
   {
@@ -572,7 +560,7 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["regalar", "decorar"],
     leadTime: pendingLeadTime(),
-    images: { card: cardImage("entre-flores", [400, 512], 384), ficha: fichaImage("entre-flores") },
+    images: { card: cardImage("entre-flores", [400, 512], 384) },
   },
   {
     id: "vinilos",
@@ -591,7 +579,7 @@ export const products: readonly CatalogProduct[] = [
     intents: ["marca", "decorar"],
     // El catálogo dice "de 1 a 4 días", sin aclarar si son hábiles.
     leadTime: { min: 1, max: 4, text: "De 1 a 4 días" },
-    images: { card: cardImage("vinilos", [369], 277), ficha: fichaImage("vinilos") },
+    images: { card: cardImage("vinilos", [369], 277) },
     gallery: [vinylStickers],
   },
   // La lista por metro cuadrado de la dueña (05/11/2026). El vinilo de corte, que es el de las
@@ -662,7 +650,7 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["marca"],
     leadTime: pendingLeadTime(),
-    images: { card: cardImage("tarjetas", [400, 679], 509), ficha: fichaImage("tarjetas") },
+    images: { card: cardImage("tarjetas", [400, 679], 509) },
     gallery: [
       albumPhoto("tarjetas", 1, "Gift cards, tarjetas de agradecimiento y tarjetas personales hechas para Maika", 960),
       albumPhoto("tarjetas", 2, "Tarjetas personales de StudioAGS en rosa, amarillo, azul y verde, con las caritas de la marca", 960),
@@ -785,7 +773,7 @@ export const products: readonly CatalogProduct[] = [
     needsPhotos: false,
     intents: ["decorar", "regalar"],
     leadTime: pendingLeadTime(),
-    images: { card: cardImage("laminas", [400, 740], 555), ficha: fichaImage("laminas") },
+    images: { card: cardImage("laminas", [400, 740], 555) },
     gallery: [albumPhoto("laminas", 1, "Láminas e ilustraciones de distintos artistas en un exhibidor", 960)],
   },
   // El texto y los colores de la dueña (chat del 02/11/2026), con el vos de la página; el precio,
