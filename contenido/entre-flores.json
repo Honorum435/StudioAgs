@@ -1,0 +1,22 @@
+{
+  "name": "Entre Flores",
+  "description": "Cuadro artesanal con flores de verbena reales, cultivadas y prensadas a mano. Se puede personalizar.",
+  "details": "",
+  "note": "Cada composición es única.",
+  "gallery": [
+    {
+      "src": "/fotos/entre-flores.webp",
+      "alt": "Cuadro artesanal Entre Flores con flores prensadas",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "Precio único",
+      "price": 35000,
+      "unit": "por unidad"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": []
+}

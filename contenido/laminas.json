@@ -1,0 +1,78 @@
+{
+  "name": "Láminas",
+  "description": "Ilustraciones y gráficas de distintos artistas, en formatos para decorar tus espacios.",
+  "details": "",
+  "note": "Diseños y disponibilidad pueden variar. Encuadrado a medida, por encargue.",
+  "gallery": [
+    {
+      "src": "/fotos/laminas.webp",
+      "alt": "Selección de ilustraciones y láminas decorativas",
+      "contain": false
+    },
+    {
+      "src": "/fotos/laminas-1.webp",
+      "alt": "Láminas e ilustraciones de distintos artistas en un exhibidor",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "A3+ (SA3)",
+      "price": 7000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "A3",
+      "price": 7000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "A4",
+      "price": 5000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "A5",
+      "price": 4000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "A6",
+      "price": 3000,
+      "unit": "por unidad"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": [
+    {
+      "option": "Tamaño: A3+ (SA3)",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Tamaño: A3",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Tamaño: A4",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Tamaño: A5",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Tamaño: A6",
+      "src": "",
+      "alt": "",
+      "contain": false
+    }
+  ]
+}

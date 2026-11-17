@@ -1,0 +1,87 @@
+{
+  "name": "Complementos",
+  "description": "Separadores imantados para tus libros y bitácoras, y marcos con imán para tus fotos.",
+  "details": "Marcá tus lecturas con separadores ideales para acompañarte en cada libro. Prácticos y lindos, te ayudan a retomar justo donde quedaste sin doblar las páginas. Elegí tus favoritos y dale un toque especial a tus momentos de lectura.\n\n¡Llevá 3 separadores con imán por solo $3.000!",
+  "note": "",
+  "gallery": [
+    {
+      "src": "/fotos/complementos-1.webp",
+      "alt": "Separadores imantados con flores y moños, en sus tarjetas de colores",
+      "contain": false
+    },
+    {
+      "src": "/fotos/complementos-2.webp",
+      "alt": "Separadores imantados con flores, cuadros y figuras en blanco y negro",
+      "contain": false
+    },
+    {
+      "src": "/fotos/complementos-3.webp",
+      "alt": "Marco con imán en la heladera, con la foto de un perro",
+      "contain": false
+    },
+    {
+      "src": "/fotos/complementos-4.webp",
+      "alt": "Marcos con imán para polaroid: rojo, amarillo con limones, cuadrillé verde y rosa con flores",
+      "contain": true
+    },
+    {
+      "src": "/fotos/complementos-5.webp",
+      "alt": "Marcos con imán para fotos cuadradas: lila, blanco con dibujos, blanco y negro, y verde",
+      "contain": true
+    },
+    {
+      "src": "/fotos/complementos-6.webp",
+      "alt": "Marcos con imán para tiras de fotos: bordó con flores, lila, blanco y negro, y dorado",
+      "contain": true
+    }
+  ],
+  "prices": [
+    {
+      "label": "Separador clásico",
+      "price": 1300,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Separador con imán",
+      "price": 1500,
+      "unit": "por unidad"
+    },
+    {
+      "label": "3 separadores con imán",
+      "price": 3000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Marco con imán",
+      "price": 5500,
+      "unit": "por unidad"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": [
+    {
+      "option": "Tipo: Separador clásico",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Tipo: Separador con imán",
+      "src": "/fotos/complementos-1.webp",
+      "alt": "Separadores imantados con flores y moños, en sus tarjetas de colores",
+      "contain": false
+    },
+    {
+      "option": "Tipo: 3 separadores con imán",
+      "src": "/fotos/complementos-2.webp",
+      "alt": "Separadores imantados con flores, cuadros y figuras en blanco y negro",
+      "contain": false
+    },
+    {
+      "option": "Tipo: Marco con imán",
+      "src": "/fotos/complementos-4.webp",
+      "alt": "Marcos con imán para polaroid: rojo, amarillo con limones, cuadrillé verde y rosa con flores",
+      "contain": true
+    }
+  ]
+}

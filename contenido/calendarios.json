@@ -1,0 +1,163 @@
+{
+  "name": "Calendarios",
+  "description": "Formatos clásicos, semanales y magnéticos. Personalizalos con colores, logo o un diseño propio.",
+  "details": "",
+  "note": "Monocromo: un solo color, para tu emprendimiento o un diseño propio. En el Único, que es una lámina, el color lo elegís por WhatsApp.",
+  "gallery": [
+    {
+      "src": "/fotos/calendarios.webp",
+      "alt": "Muestra de diseños y formatos de calendarios StudioAGS",
+      "contain": false
+    },
+    {
+      "src": "/fotos/calendarios-1.webp",
+      "alt": "Calendarios de todos los colores, uno encima del otro",
+      "contain": false
+    },
+    {
+      "src": "/fotos/calendarios-2.webp",
+      "alt": "Calendarios semanales rojos con fibrones para escribir",
+      "contain": false
+    },
+    {
+      "src": "/fotos/calendarios-3.webp",
+      "alt": "Calendario de cumpleaños personalizado para La Carmela, con caballos",
+      "contain": false
+    },
+    {
+      "src": "/fotos/calendarios-4.webp",
+      "alt": "Calendario 2027 personalizado con la foto de dos gatos, Minga y Pipi",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "Clásico sin notas",
+      "price": 40000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Clásico con notas",
+      "price": 40000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Único",
+      "price": 28000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Doce meses",
+      "price": 26000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Semanal grande",
+      "price": 26000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Semanal chico",
+      "price": 21000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Acrílico",
+      "price": 55000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Imán",
+      "price": 20000,
+      "unit": "por unidad"
+    }
+  ],
+  "addOns": [
+    {
+      "id": "calendarios-notas-con-iman",
+      "label": "Notas con imán",
+      "price": 3500,
+      "unit": "por unidad"
+    }
+  ],
+  "optionPhotos": [
+    {
+      "option": "Formato: Clásico sin notas",
+      "src": "/fotos/calendarios-5.webp",
+      "alt": "Calendario clásico rojo de julio, con la grilla del mes",
+      "contain": false
+    },
+    {
+      "option": "Formato: Clásico con notas",
+      "src": "/fotos/calendarios-6.webp",
+      "alt": "Calendario clásico rosa de diciembre, todo escrito, con las notas abajo",
+      "contain": false
+    },
+    {
+      "option": "Formato: Único",
+      "src": "/fotos/calendarios-7.webp",
+      "alt": "Calendario único rosa sobre la mesa, junto a un florero",
+      "contain": false
+    },
+    {
+      "option": "Formato: Doce meses",
+      "src": "/fotos/opcion-calendarios-doce-meses.webp",
+      "alt": "Dibujo del calendario de doce meses: el año entero en una hoja",
+      "contain": true
+    },
+    {
+      "option": "Formato: Semanal grande",
+      "src": "/fotos/calendarios-9.webp",
+      "alt": "Calendario semanal grande rojo, con fibrones",
+      "contain": false
+    },
+    {
+      "option": "Formato: Semanal chico",
+      "src": "/fotos/calendarios-8.webp",
+      "alt": "Calendario semanal chico rojo, con fibrones y un borrador",
+      "contain": false
+    },
+    {
+      "option": "Formato: Acrílico",
+      "src": "/fotos/calendarios-10.webp",
+      "alt": "Calendario de acrílico de septiembre, apoyado en la pared",
+      "contain": false
+    },
+    {
+      "option": "Formato: Imán",
+      "src": "/fotos/calendarios-11.webp",
+      "alt": "Calendario de imán lila en la heladera, con fibrones",
+      "contain": false
+    },
+    {
+      "option": "Colores: Pastel",
+      "src": "/fotos/calendarios-16.webp",
+      "alt": "Los doce meses en colores pastel",
+      "contain": true
+    },
+    {
+      "option": "Colores: Intenso",
+      "src": "/fotos/calendarios-13.webp",
+      "alt": "Los doce meses en colores intensos",
+      "contain": true
+    },
+    {
+      "option": "Colores: Cálido",
+      "src": "/fotos/calendarios-12.webp",
+      "alt": "Los doce meses en colores cálidos, del verde lima al rojo",
+      "contain": true
+    },
+    {
+      "option": "Colores: Frío",
+      "src": "/fotos/calendarios-14.webp",
+      "alt": "Los doce meses en colores fríos, del rosa al verde",
+      "contain": true
+    },
+    {
+      "option": "Colores: Monocromo",
+      "src": "/fotos/calendarios-15.webp",
+      "alt": "Los doce meses en un solo color; de ejemplo, azul",
+      "contain": true
+    }
+  ]
+}

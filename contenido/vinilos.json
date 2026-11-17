@@ -1,0 +1,96 @@
+{
+  "name": "Vinilos impresos",
+  "description": "Impresión UV en vinilo blanco o transparente, con distintas terminaciones de laca.",
+  "details": "",
+  "note": "",
+  "gallery": [
+    {
+      "src": "/fotos/vinilos.webp",
+      "alt": "Muestras de vinilos impresos y sus terminaciones",
+      "contain": false
+    },
+    {
+      "src": "/fotos/vinilos-1.webp",
+      "alt": "Planchas de stickers redondos con el logo de Maika",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "Blanco · Sin laca",
+      "price": 14500,
+      "unit": "por pliego"
+    },
+    {
+      "label": "Blanco · Laca sectorizada",
+      "price": 16600,
+      "unit": "por pliego"
+    },
+    {
+      "label": "Blanco · Laca completa",
+      "price": 18800,
+      "unit": "por pliego"
+    },
+    {
+      "label": "Transparente · Sin laca",
+      "price": 16200,
+      "unit": "por pliego"
+    },
+    {
+      "label": "Transparente · Laca sectorizada",
+      "price": 18600,
+      "unit": "por pliego"
+    },
+    {
+      "label": "Transparente · Laca completa",
+      "price": 21000,
+      "unit": "por pliego"
+    }
+  ],
+  "addOns": [
+    {
+      "id": "vinilos-maqueta",
+      "label": "Maqueta",
+      "price": 2500,
+      "unit": "cada 5 diseños"
+    },
+    {
+      "id": "vinilos-corte-individual",
+      "label": "Corte individual",
+      "price": 2500,
+      "unit": "por pliego"
+    }
+  ],
+  "optionPhotos": [
+    {
+      "option": "Vinilo: Blanco",
+      "src": "/fotos/vinilos-1.webp",
+      "alt": "Planchas de stickers redondos con el logo de Maika",
+      "contain": false
+    },
+    {
+      "option": "Vinilo: Transparente",
+      "src": "/fotos/opcion-vinilos-transparente.webp",
+      "alt": "Dibujo del vinilo transparente: el logo deja ver lo que hay detrás",
+      "contain": true
+    },
+    {
+      "option": "Laca UV: Sin laca",
+      "src": "/fotos/opcion-vinilos-sin-laca.webp",
+      "alt": "Dibujo de un sticker sin laca",
+      "contain": true
+    },
+    {
+      "option": "Laca UV: Laca sectorizada",
+      "src": "/fotos/opcion-vinilos-laca-sectorizada.webp",
+      "alt": "Dibujo de la laca sectorizada: solo sobre una parte del diseño",
+      "contain": true
+    },
+    {
+      "option": "Laca UV: Laca completa",
+      "src": "/fotos/opcion-vinilos-laca-completa.webp",
+      "alt": "Dibujo de la laca completa: sobre todo el diseño",
+      "contain": true
+    }
+  ]
+}

@@ -1,0 +1,1111 @@
+{
+  "calendarios": {
+    "name": "Calendarios",
+    "description": "Formatos clásicos, semanales y magnéticos. Personalizalos con colores, logo o un diseño propio.",
+    "details": "",
+    "note": "Monocromo: un solo color, para tu emprendimiento o un diseño propio. En el Único, que es una lámina, el color lo elegís por WhatsApp.",
+    "gallery": [
+      {
+        "src": "/fotos/calendarios.webp",
+        "alt": "Muestra de diseños y formatos de calendarios StudioAGS",
+        "contain": false
+      },
+      {
+        "src": "/fotos/calendarios-1.webp",
+        "alt": "Calendarios de todos los colores, uno encima del otro",
+        "contain": false
+      },
+      {
+        "src": "/fotos/calendarios-2.webp",
+        "alt": "Calendarios semanales rojos con fibrones para escribir",
+        "contain": false
+      },
+      {
+        "src": "/fotos/calendarios-3.webp",
+        "alt": "Calendario de cumpleaños personalizado para La Carmela, con caballos",
+        "contain": false
+      },
+      {
+        "src": "/fotos/calendarios-4.webp",
+        "alt": "Calendario 2027 personalizado con la foto de dos gatos, Minga y Pipi",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "Clásico sin notas",
+        "price": 40000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Clásico con notas",
+        "price": 40000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Único",
+        "price": 28000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Doce meses",
+        "price": 26000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Semanal grande",
+        "price": 26000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Semanal chico",
+        "price": 21000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Acrílico",
+        "price": 55000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Imán",
+        "price": 20000,
+        "unit": "por unidad"
+      }
+    ],
+    "addOns": [
+      {
+        "id": "calendarios-notas-con-iman",
+        "label": "Notas con imán",
+        "price": 3500,
+        "unit": "por unidad"
+      }
+    ],
+    "optionPhotos": [
+      {
+        "option": "Formato: Clásico sin notas",
+        "src": "/fotos/calendarios-5.webp",
+        "alt": "Calendario clásico rojo de julio, con la grilla del mes",
+        "contain": false
+      },
+      {
+        "option": "Formato: Clásico con notas",
+        "src": "/fotos/calendarios-6.webp",
+        "alt": "Calendario clásico rosa de diciembre, todo escrito, con las notas abajo",
+        "contain": false
+      },
+      {
+        "option": "Formato: Único",
+        "src": "/fotos/calendarios-7.webp",
+        "alt": "Calendario único rosa sobre la mesa, junto a un florero",
+        "contain": false
+      },
+      {
+        "option": "Formato: Doce meses",
+        "src": "/fotos/opcion-calendarios-doce-meses.webp",
+        "alt": "Dibujo del calendario de doce meses: el año entero en una hoja",
+        "contain": true
+      },
+      {
+        "option": "Formato: Semanal grande",
+        "src": "/fotos/calendarios-9.webp",
+        "alt": "Calendario semanal grande rojo, con fibrones",
+        "contain": false
+      },
+      {
+        "option": "Formato: Semanal chico",
+        "src": "/fotos/calendarios-8.webp",
+        "alt": "Calendario semanal chico rojo, con fibrones y un borrador",
+        "contain": false
+      },
+      {
+        "option": "Formato: Acrílico",
+        "src": "/fotos/calendarios-10.webp",
+        "alt": "Calendario de acrílico de septiembre, apoyado en la pared",
+        "contain": false
+      },
+      {
+        "option": "Formato: Imán",
+        "src": "/fotos/calendarios-11.webp",
+        "alt": "Calendario de imán lila en la heladera, con fibrones",
+        "contain": false
+      },
+      {
+        "option": "Colores: Pastel",
+        "src": "/fotos/calendarios-16.webp",
+        "alt": "Los doce meses en colores pastel",
+        "contain": true
+      },
+      {
+        "option": "Colores: Intenso",
+        "src": "/fotos/calendarios-13.webp",
+        "alt": "Los doce meses en colores intensos",
+        "contain": true
+      },
+      {
+        "option": "Colores: Cálido",
+        "src": "/fotos/calendarios-12.webp",
+        "alt": "Los doce meses en colores cálidos, del verde lima al rojo",
+        "contain": true
+      },
+      {
+        "option": "Colores: Frío",
+        "src": "/fotos/calendarios-14.webp",
+        "alt": "Los doce meses en colores fríos, del rosa al verde",
+        "contain": true
+      },
+      {
+        "option": "Colores: Monocromo",
+        "src": "/fotos/calendarios-15.webp",
+        "alt": "Los doce meses en un solo color; de ejemplo, azul",
+        "contain": true
+      }
+    ]
+  },
+  "fotos": {
+    "name": "Fotos para guardar",
+    "description": "Tus recuerdos en formatos Polaroid, tiras, fotos cuadradas o imanes para la heladera.",
+    "details": "",
+    "note": "",
+    "gallery": [
+      {
+        "src": "/fotos/fotos.webp",
+        "alt": "Ejemplos de formatos para imprimir fotos",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "Polaroid 8 × 6,5",
+        "price": 500,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Tira de fotos",
+        "price": 1500,
+        "unit": "por tira"
+      },
+      {
+        "label": "Foto 10 × 10",
+        "price": 1500,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Imán 10 × 10",
+        "price": 4000,
+        "unit": "por unidad"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": [
+      {
+        "option": "Formato: Polaroid 8 × 6,5",
+        "src": "/fotos/opcion-fotos-polaroid.webp",
+        "alt": "Medidas de la polaroid: 8 × 10 cm, con la foto de 6,6 × 6,6 cm",
+        "contain": true
+      },
+      {
+        "option": "Formato: Tira de fotos",
+        "src": "/fotos/opcion-fotos-tira.webp",
+        "alt": "Medidas de la tira: 6 × 17 cm, con tres fotos de 5 × 5 cm",
+        "contain": true
+      },
+      {
+        "option": "Formato: Foto 10 × 10",
+        "src": "/fotos/opcion-fotos-10x10.webp",
+        "alt": "Medidas de la foto de 10 × 10 cm",
+        "contain": true
+      },
+      {
+        "option": "Formato: Imán 10 × 10",
+        "src": "/fotos/fotos-1.webp",
+        "alt": "Imanes con fotos en la heladera, uno con forma de corazón",
+        "contain": false
+      }
+    ]
+  },
+  "pizarra-orma": {
+    "name": "Pizarra OrMa",
+    "description": "Pizarra magnética de 50 × 50 cm con fotos, polaroids, tira de fotos y pinzas imantadas.",
+    "details": "",
+    "note": "",
+    "gallery": [
+      {
+        "src": "/fotos/pizarra-orma.webp",
+        "alt": "Pizarra OrMa con fotos, notas y accesorios magnéticos",
+        "contain": false
+      },
+      {
+        "src": "/fotos/pizarra-orma-2.webp",
+        "alt": "Pizarra OrMa gris con marco de madera, fotos, polaroids y una gorra colgada",
+        "contain": true
+      },
+      {
+        "src": "/fotos/pizarra-orma-1.webp",
+        "alt": "Pizarra OrMa negra con imanes, fotos, notas y fibrones",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "Gris galvanizada",
+        "price": 35000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Negro mate",
+        "price": 40000,
+        "unit": "por unidad"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": [
+      {
+        "option": "Color: Gris galvanizada",
+        "src": "/fotos/pizarra-orma-2.webp",
+        "alt": "Pizarra OrMa gris con marco de madera, fotos, polaroids y una gorra colgada",
+        "contain": true
+      },
+      {
+        "option": "Color: Negro mate",
+        "src": "/fotos/pizarra-orma-1.webp",
+        "alt": "Pizarra OrMa negra con imanes, fotos, notas y fibrones",
+        "contain": false
+      }
+    ]
+  },
+  "entre-flores": {
+    "name": "Entre Flores",
+    "description": "Cuadro artesanal con flores de verbena reales, cultivadas y prensadas a mano. Se puede personalizar.",
+    "details": "",
+    "note": "Cada composición es única.",
+    "gallery": [
+      {
+        "src": "/fotos/entre-flores.webp",
+        "alt": "Cuadro artesanal Entre Flores con flores prensadas",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "Precio único",
+        "price": 35000,
+        "unit": "por unidad"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": []
+  },
+  "vinilos": {
+    "name": "Vinilos impresos",
+    "description": "Impresión UV en vinilo blanco o transparente, con distintas terminaciones de laca.",
+    "details": "",
+    "note": "",
+    "gallery": [
+      {
+        "src": "/fotos/vinilos.webp",
+        "alt": "Muestras de vinilos impresos y sus terminaciones",
+        "contain": false
+      },
+      {
+        "src": "/fotos/vinilos-1.webp",
+        "alt": "Planchas de stickers redondos con el logo de Maika",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "Blanco · Sin laca",
+        "price": 14500,
+        "unit": "por pliego"
+      },
+      {
+        "label": "Blanco · Laca sectorizada",
+        "price": 16600,
+        "unit": "por pliego"
+      },
+      {
+        "label": "Blanco · Laca completa",
+        "price": 18800,
+        "unit": "por pliego"
+      },
+      {
+        "label": "Transparente · Sin laca",
+        "price": 16200,
+        "unit": "por pliego"
+      },
+      {
+        "label": "Transparente · Laca sectorizada",
+        "price": 18600,
+        "unit": "por pliego"
+      },
+      {
+        "label": "Transparente · Laca completa",
+        "price": 21000,
+        "unit": "por pliego"
+      }
+    ],
+    "addOns": [
+      {
+        "id": "vinilos-maqueta",
+        "label": "Maqueta",
+        "price": 2500,
+        "unit": "cada 5 diseños"
+      },
+      {
+        "id": "vinilos-corte-individual",
+        "label": "Corte individual",
+        "price": 2500,
+        "unit": "por pliego"
+      }
+    ],
+    "optionPhotos": [
+      {
+        "option": "Vinilo: Blanco",
+        "src": "/fotos/vinilos-1.webp",
+        "alt": "Planchas de stickers redondos con el logo de Maika",
+        "contain": false
+      },
+      {
+        "option": "Vinilo: Transparente",
+        "src": "/fotos/opcion-vinilos-transparente.webp",
+        "alt": "Dibujo del vinilo transparente: el logo deja ver lo que hay detrás",
+        "contain": true
+      },
+      {
+        "option": "Laca UV: Sin laca",
+        "src": "/fotos/opcion-vinilos-sin-laca.webp",
+        "alt": "Dibujo de un sticker sin laca",
+        "contain": true
+      },
+      {
+        "option": "Laca UV: Laca sectorizada",
+        "src": "/fotos/opcion-vinilos-laca-sectorizada.webp",
+        "alt": "Dibujo de la laca sectorizada: solo sobre una parte del diseño",
+        "contain": true
+      },
+      {
+        "option": "Laca UV: Laca completa",
+        "src": "/fotos/opcion-vinilos-laca-completa.webp",
+        "alt": "Dibujo de la laca completa: sobre todo el diseño",
+        "contain": true
+      }
+    ]
+  },
+  "gran-formato": {
+    "name": "Gran formato",
+    "description": "Vinilo, lona frontlight y blueback por metro cuadrado, para carteles, banners y vidrieras.",
+    "details": "",
+    "note": "El vinilo de corte, para vidrieras y stickers, se cotiza aparte: consultanos.",
+    "gallery": [
+      {
+        "src": "/fotos/gran-formato-1.webp",
+        "alt": "Vinilo con el logo de La Verdu en una vidriera, mientras lo colocan",
+        "contain": false
+      },
+      {
+        "src": "/fotos/gran-formato-2.webp",
+        "alt": "Colocación de un vinilo blanco con el logo de Kriba Arquitectura en una pared azul",
+        "contain": false
+      },
+      {
+        "src": "/fotos/gran-formato-3.webp",
+        "alt": "Vinilo blanco con el logo de Kriba Arquitectura, ya colocado en la pared",
+        "contain": false
+      },
+      {
+        "src": "/fotos/gran-formato-4.webp",
+        "alt": "Puerta de vidrio de La Verdu vista desde la calle, con el vinilo ya colocado",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "Vinilo blanco",
+        "price": 33300,
+        "unit": "por m²"
+      },
+      {
+        "label": "Vinilo blanco con laca sectorizada",
+        "price": 38300,
+        "unit": "por m²"
+      },
+      {
+        "label": "Vinilo blanco con laca completa",
+        "price": 42200,
+        "unit": "por m²"
+      },
+      {
+        "label": "Vinilo transparente",
+        "price": 36700,
+        "unit": "por m²"
+      },
+      {
+        "label": "Vinilo transparente con laca sectorizada",
+        "price": 40000,
+        "unit": "por m²"
+      },
+      {
+        "label": "Vinilo transparente con laca completa",
+        "price": 43300,
+        "unit": "por m²"
+      },
+      {
+        "label": "Lona frontlight 13 oz",
+        "price": 27000,
+        "unit": "por m²"
+      },
+      {
+        "label": "Lona frontlight 13 oz con laca",
+        "price": 32400,
+        "unit": "por m²"
+      },
+      {
+        "label": "Blueback 150 g mate",
+        "price": 20900,
+        "unit": "por m²"
+      },
+      {
+        "label": "Blueback 150 g mate con laca",
+        "price": 25200,
+        "unit": "por m²"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": [
+      {
+        "option": "Material: Vinilo blanco",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Material: Vinilo blanco con laca sectorizada",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Material: Vinilo blanco con laca completa",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Material: Vinilo transparente",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Material: Vinilo transparente con laca sectorizada",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Material: Vinilo transparente con laca completa",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Material: Lona frontlight 13 oz",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Material: Lona frontlight 13 oz con laca",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Material: Blueback 150 g mate",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Material: Blueback 150 g mate con laca",
+        "src": "",
+        "alt": "",
+        "contain": false
+      }
+    ]
+  },
+  "dtf-textil": {
+    "name": "DTF textil",
+    "description": "Estampado DTF para remeras o cualquier tela, con tu logo o tu diseño.",
+    "details": "",
+    "note": "El precio es por metro cuadrado de estampado.",
+    "gallery": [
+      {
+        "src": "/fotos/dtf-textil-1.webp",
+        "alt": "Remera negra con el logo de StudioAGS estampado en blanco, con un mate en la mano",
+        "contain": false
+      },
+      {
+        "src": "/fotos/dtf-textil-2.webp",
+        "alt": "Remera negra en una percha con el estampado Campeón mundial",
+        "contain": false
+      },
+      {
+        "src": "/fotos/dtf-textil-3.webp",
+        "alt": "De cerca, el estampado Campeón mundial en blanco sobre la tela negra",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "Precio único",
+        "price": 22500,
+        "unit": "por m²"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": []
+  },
+  "tarjetas": {
+    "name": "Tarjetas personales",
+    "description": "Tarjetas en papel ilustración de 300 g. Elegí cantidad, impresión simple o doble faz y laminado.",
+    "details": "",
+    "note": "",
+    "gallery": [
+      {
+        "src": "/fotos/tarjetas.webp",
+        "alt": "Tarjetas impresas con distintas terminaciones",
+        "contain": false
+      },
+      {
+        "src": "/fotos/tarjetas-1.webp",
+        "alt": "Gift cards, tarjetas de agradecimiento y tarjetas personales hechas para Maika",
+        "contain": false
+      },
+      {
+        "src": "/fotos/tarjetas-2.webp",
+        "alt": "Tarjetas personales de StudioAGS en rosa, amarillo, azul y verde, con las caritas de la marca",
+        "contain": false
+      },
+      {
+        "src": "/fotos/tarjetas-3.webp",
+        "alt": "Tarjetas personales de Aura artesanal, velas y resina",
+        "contain": false
+      },
+      {
+        "src": "/fotos/tarjetas-4.webp",
+        "alt": "Tarjetas rosas de Las Reinas, artesanías para el hogar",
+        "contain": false
+      },
+      {
+        "src": "/fotos/tarjetas-5.webp",
+        "alt": "Tarjetas de Luz Sosa con la foto de dos manos tomadas",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "100 · Simple faz · Sin laminar",
+        "price": 13300,
+        "unit": "pack de 100"
+      },
+      {
+        "label": "100 · Simple faz · Laminado mate o brillo",
+        "price": 16300,
+        "unit": "pack de 100"
+      },
+      {
+        "label": "100 · Doble faz · Sin laminar",
+        "price": 16300,
+        "unit": "pack de 100"
+      },
+      {
+        "label": "100 · Doble faz · Laminado mate o brillo",
+        "price": 19300,
+        "unit": "pack de 100"
+      },
+      {
+        "label": "200 · Simple faz · Sin laminar",
+        "price": 19300,
+        "unit": "pack de 200"
+      },
+      {
+        "label": "200 · Simple faz · Laminado mate o brillo",
+        "price": 24500,
+        "unit": "pack de 200"
+      },
+      {
+        "label": "200 · Doble faz · Sin laminar",
+        "price": 24500,
+        "unit": "pack de 200"
+      },
+      {
+        "label": "200 · Doble faz · Laminado mate o brillo",
+        "price": 26300,
+        "unit": "pack de 200"
+      },
+      {
+        "label": "300 · Simple faz · Sin laminar",
+        "price": 23800,
+        "unit": "pack de 300"
+      },
+      {
+        "label": "300 · Simple faz · Laminado mate o brillo",
+        "price": 30600,
+        "unit": "pack de 300"
+      },
+      {
+        "label": "300 · Doble faz · Sin laminar",
+        "price": 30600,
+        "unit": "pack de 300"
+      },
+      {
+        "label": "300 · Doble faz · Laminado mate o brillo",
+        "price": 37500,
+        "unit": "pack de 300"
+      },
+      {
+        "label": "500 · Simple faz · Sin laminar",
+        "price": 34000,
+        "unit": "pack de 500"
+      },
+      {
+        "label": "500 · Simple faz · Laminado mate o brillo",
+        "price": 44500,
+        "unit": "pack de 500"
+      },
+      {
+        "label": "500 · Doble faz · Sin laminar",
+        "price": 46000,
+        "unit": "pack de 500"
+      },
+      {
+        "label": "500 · Doble faz · Laminado mate o brillo",
+        "price": 56000,
+        "unit": "pack de 500"
+      },
+      {
+        "label": "1.000 · Simple faz · Sin laminar",
+        "price": 58800,
+        "unit": "pack de 1.000"
+      },
+      {
+        "label": "1.000 · Simple faz · Laminado mate o brillo",
+        "price": 78100,
+        "unit": "pack de 1.000"
+      },
+      {
+        "label": "1.000 · Doble faz · Sin laminar",
+        "price": 80600,
+        "unit": "pack de 1.000"
+      },
+      {
+        "label": "1.000 · Doble faz · Laminado mate o brillo",
+        "price": 99000,
+        "unit": "pack de 1.000"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": [
+      {
+        "option": "Cantidad: 100",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Cantidad: 200",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Cantidad: 300",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Cantidad: 500",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Cantidad: 1.000",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Impresión: Simple faz",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Impresión: Doble faz",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Terminación: Sin laminar",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Terminación: Laminado mate o brillo",
+        "src": "",
+        "alt": "",
+        "contain": false
+      }
+    ]
+  },
+  "bitacoras": {
+    "name": "Bitácoras",
+    "description": "Bitácoras anilladas A5 o A6, con 60 hojas de opalina de 120 g y tapas ilustradas.",
+    "details": "Nuestras bitácoras tienen 60 hojas de opalina de 120 g, ideales para escritura, dibujo e ilustración. Su papel permite trabajar con distintos materiales, incluidos marcadores y pinturas a base de alcohol. Van anilladas con espiral blanco, negro o transparente.\n\nConsultá la disponibilidad de diseños, tamaños (A5 y A6) y stock al momento de hacer tu pedido.\n\nTambién hacemos tapas completamente personalizadas con nombres, ilustraciones, logos o diseños exclusivos. Para coordinar este tipo de trabajo y pedir un presupuesto, escribinos por Instagram o WhatsApp.",
+    "note": "",
+    "gallery": [
+      {
+        "src": "/fotos/bitacoras-1.webp",
+        "alt": "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas",
+        "contain": false
+      },
+      {
+        "src": "/fotos/bitacoras-2.webp",
+        "alt": "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro",
+        "contain": true
+      },
+      {
+        "src": "/fotos/bitacoras-3.webp",
+        "alt": "Tapas A5 en stock: formas lilas, sardinas, perros salchicha, patitos, arándanos y ajíes",
+        "contain": true
+      },
+      {
+        "src": "/fotos/bitacoras-4.webp",
+        "alt": "Bitácoras A6 en stock: formas bordó, una chica con flores, limones y un gato en la bañera",
+        "contain": true
+      }
+    ],
+    "prices": [
+      {
+        "label": "Bitácora A5",
+        "price": 7000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Bitácora A6",
+        "price": 5000,
+        "unit": "por unidad"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": [
+      {
+        "option": "Formato: Bitácora A5",
+        "src": "/fotos/bitacoras-2.webp",
+        "alt": "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro",
+        "contain": true
+      },
+      {
+        "option": "Formato: Bitácora A6",
+        "src": "/fotos/bitacoras-4.webp",
+        "alt": "Bitácoras A6 en stock: formas bordó, una chica con flores, limones y un gato en la bañera",
+        "contain": true
+      },
+      {
+        "option": "Hojas: Lisas",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Hojas: Rayadas",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Hojas: Cuadriculadas",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Hojas: Punteadas",
+        "src": "",
+        "alt": "",
+        "contain": false
+      }
+    ]
+  },
+  "archivo-bajonero": {
+    "name": "Archivo bajonero + alfajor",
+    "description": "Un cuadernillo para registrar cada alfajor que probás: marca, sabor, puntaje y tu top. Viene con un alfajor.",
+    "details": "En cada página anotás un bajón: marca, sabor, precio y fecha, guardás un pedacito del envoltorio y le ponés puntaje a las tapitas, el relleno y la cobertura. Al final armás tu top 34 y, si querés, lo compartís en Instagram.\n\nTrae también una breve historia del alfajor. Es una colaboración entre Paraná Bajoneros y StudioAGS.",
+    "note": "",
+    "gallery": [
+      {
+        "src": "/fotos/archivo-bajonero-1.webp",
+        "alt": "Tapa azul del Archivo bajonero, con un alfajor desarmado en capas",
+        "contain": true
+      },
+      {
+        "src": "/fotos/archivo-bajonero-2.webp",
+        "alt": "Página del top del Archivo bajonero, con 34 puestos para anotar los mejores alfajores",
+        "contain": true
+      },
+      {
+        "src": "/fotos/archivo-bajonero-3.webp",
+        "alt": "Tres alfajores Juana la Loca: uno dorado, uno blanco y uno con merengue",
+        "contain": true
+      }
+    ],
+    "prices": [
+      {
+        "label": "Precio único",
+        "price": 13000,
+        "unit": "por unidad"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": []
+  },
+  "complementos": {
+    "name": "Complementos",
+    "description": "Separadores imantados para tus libros y bitácoras, y marcos con imán para tus fotos.",
+    "details": "Marcá tus lecturas con separadores ideales para acompañarte en cada libro. Prácticos y lindos, te ayudan a retomar justo donde quedaste sin doblar las páginas. Elegí tus favoritos y dale un toque especial a tus momentos de lectura.\n\n¡Llevá 3 separadores con imán por solo $3.000!",
+    "note": "",
+    "gallery": [
+      {
+        "src": "/fotos/complementos-1.webp",
+        "alt": "Separadores imantados con flores y moños, en sus tarjetas de colores",
+        "contain": false
+      },
+      {
+        "src": "/fotos/complementos-2.webp",
+        "alt": "Separadores imantados con flores, cuadros y figuras en blanco y negro",
+        "contain": false
+      },
+      {
+        "src": "/fotos/complementos-3.webp",
+        "alt": "Marco con imán en la heladera, con la foto de un perro",
+        "contain": false
+      },
+      {
+        "src": "/fotos/complementos-4.webp",
+        "alt": "Marcos con imán para polaroid: rojo, amarillo con limones, cuadrillé verde y rosa con flores",
+        "contain": true
+      },
+      {
+        "src": "/fotos/complementos-5.webp",
+        "alt": "Marcos con imán para fotos cuadradas: lila, blanco con dibujos, blanco y negro, y verde",
+        "contain": true
+      },
+      {
+        "src": "/fotos/complementos-6.webp",
+        "alt": "Marcos con imán para tiras de fotos: bordó con flores, lila, blanco y negro, y dorado",
+        "contain": true
+      }
+    ],
+    "prices": [
+      {
+        "label": "Separador clásico",
+        "price": 1300,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Separador con imán",
+        "price": 1500,
+        "unit": "por unidad"
+      },
+      {
+        "label": "3 separadores con imán",
+        "price": 3000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "Marco con imán",
+        "price": 5500,
+        "unit": "por unidad"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": [
+      {
+        "option": "Tipo: Separador clásico",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Tipo: Separador con imán",
+        "src": "/fotos/complementos-1.webp",
+        "alt": "Separadores imantados con flores y moños, en sus tarjetas de colores",
+        "contain": false
+      },
+      {
+        "option": "Tipo: 3 separadores con imán",
+        "src": "/fotos/complementos-2.webp",
+        "alt": "Separadores imantados con flores, cuadros y figuras en blanco y negro",
+        "contain": false
+      },
+      {
+        "option": "Tipo: Marco con imán",
+        "src": "/fotos/complementos-4.webp",
+        "alt": "Marcos con imán para polaroid: rojo, amarillo con limones, cuadrillé verde y rosa con flores",
+        "contain": true
+      }
+    ]
+  },
+  "laminas": {
+    "name": "Láminas",
+    "description": "Ilustraciones y gráficas de distintos artistas, en formatos para decorar tus espacios.",
+    "details": "",
+    "note": "Diseños y disponibilidad pueden variar. Encuadrado a medida, por encargue.",
+    "gallery": [
+      {
+        "src": "/fotos/laminas.webp",
+        "alt": "Selección de ilustraciones y láminas decorativas",
+        "contain": false
+      },
+      {
+        "src": "/fotos/laminas-1.webp",
+        "alt": "Láminas e ilustraciones de distintos artistas en un exhibidor",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "A3+ (SA3)",
+        "price": 7000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "A3",
+        "price": 7000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "A4",
+        "price": 5000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "A5",
+        "price": 4000,
+        "unit": "por unidad"
+      },
+      {
+        "label": "A6",
+        "price": 3000,
+        "unit": "por unidad"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": [
+      {
+        "option": "Tamaño: A3+ (SA3)",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Tamaño: A3",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Tamaño: A4",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Tamaño: A5",
+        "src": "",
+        "alt": "",
+        "contain": false
+      },
+      {
+        "option": "Tamaño: A6",
+        "src": "",
+        "alt": "",
+        "contain": false
+      }
+    ]
+  },
+  "minijuegos": {
+    "name": "Minijuegos",
+    "description": "Mini juegos para el viaje: más de 15 juegos reutilizables y 2 fibrones con borrador.",
+    "details": "Jugás, borrás y volvés a empezar. Cada uno mide 11,5 × 11,5 cm y va anillado, así entra en cualquier mochila.\n\nElegí el tuyo en naranja, rosa, celeste, verde o amarillo.",
+    "note": "",
+    "gallery": [
+      {
+        "src": "/fotos/minijuegos-1.webp",
+        "alt": "Minijuegos anillados en naranja, rosa, celeste y verde",
+        "contain": false
+      },
+      {
+        "src": "/fotos/minijuegos-2.webp",
+        "alt": "Minijuegos de todos los colores abiertos en abanico, el celeste adelante, en la mano",
+        "contain": false
+      },
+      {
+        "src": "/fotos/minijuegos-3.webp",
+        "alt": "Una búsqueda de objetos a medio jugar, con el fibrón, sobre las piedras",
+        "contain": false
+      },
+      {
+        "src": "/fotos/minijuegos-4.webp",
+        "alt": "Minijuego naranja con la tapa Mini juegos para el viaje, sobre las piedras",
+        "contain": false
+      }
+    ],
+    "prices": [
+      {
+        "label": "Precio único",
+        "price": 15000,
+        "unit": "por unidad"
+      }
+    ],
+    "addOns": [],
+    "optionPhotos": [
+      {
+        "option": "Color: Naranja",
+        "src": "/fotos/minijuegos-4.webp",
+        "alt": "Minijuego naranja con la tapa Mini juegos para el viaje, sobre las piedras",
+        "contain": false
+      },
+      {
+        "option": "Color: Rosa",
+        "src": "/fotos/minijuegos-5.webp",
+        "alt": "Minijuego rosa con sus dos fibrones, en la mano",
+        "contain": false
+      },
+      {
+        "option": "Color: Celeste",
+        "src": "/fotos/minijuegos-2.webp",
+        "alt": "Minijuegos de todos los colores abiertos en abanico, el celeste adelante, en la mano",
+        "contain": false
+      },
+      {
+        "option": "Color: Verde",
+        "src": "/fotos/minijuegos-6.webp",
+        "alt": "Minijuego verde con la tapa Mini juegos para el viaje",
+        "contain": false
+      },
+      {
+        "option": "Color: Amarillo",
+        "src": "",
+        "alt": "",
+        "contain": false
+      }
+    ]
+  }
+}

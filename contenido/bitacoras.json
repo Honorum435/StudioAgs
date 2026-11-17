@@ -1,0 +1,79 @@
+{
+  "name": "Bitácoras",
+  "description": "Bitácoras anilladas A5 o A6, con 60 hojas de opalina de 120 g y tapas ilustradas.",
+  "details": "Nuestras bitácoras tienen 60 hojas de opalina de 120 g, ideales para escritura, dibujo e ilustración. Su papel permite trabajar con distintos materiales, incluidos marcadores y pinturas a base de alcohol. Van anilladas con espiral blanco, negro o transparente.\n\nConsultá la disponibilidad de diseños, tamaños (A5 y A6) y stock al momento de hacer tu pedido.\n\nTambién hacemos tapas completamente personalizadas con nombres, ilustraciones, logos o diseños exclusivos. Para coordinar este tipo de trabajo y pedir un presupuesto, escribinos por Instagram o WhatsApp.",
+  "note": "",
+  "gallery": [
+    {
+      "src": "/fotos/bitacoras-1.webp",
+      "alt": "Bitácoras anilladas con tapas ilustradas de limones, cuadros, fantasmas y naranjas",
+      "contain": false
+    },
+    {
+      "src": "/fotos/bitacoras-2.webp",
+      "alt": "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro",
+      "contain": true
+    },
+    {
+      "src": "/fotos/bitacoras-3.webp",
+      "alt": "Tapas A5 en stock: formas lilas, sardinas, perros salchicha, patitos, arándanos y ajíes",
+      "contain": true
+    },
+    {
+      "src": "/fotos/bitacoras-4.webp",
+      "alt": "Bitácoras A6 en stock: formas bordó, una chica con flores, limones y un gato en la bañera",
+      "contain": true
+    }
+  ],
+  "prices": [
+    {
+      "label": "Bitácora A5",
+      "price": 7000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Bitácora A6",
+      "price": 5000,
+      "unit": "por unidad"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": [
+    {
+      "option": "Formato: Bitácora A5",
+      "src": "/fotos/bitacoras-2.webp",
+      "alt": "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro",
+      "contain": true
+    },
+    {
+      "option": "Formato: Bitácora A6",
+      "src": "/fotos/bitacoras-4.webp",
+      "alt": "Bitácoras A6 en stock: formas bordó, una chica con flores, limones y un gato en la bañera",
+      "contain": true
+    },
+    {
+      "option": "Hojas: Lisas",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Hojas: Rayadas",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Hojas: Cuadriculadas",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Hojas: Punteadas",
+      "src": "",
+      "alt": "",
+      "contain": false
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "DTF textil",
+  "description": "Estampado DTF para remeras o cualquier tela, con tu logo o tu diseño.",
+  "details": "",
+  "note": "El precio es por metro cuadrado de estampado.",
+  "gallery": [
+    {
+      "src": "/fotos/dtf-textil-1.webp",
+      "alt": "Remera negra con el logo de StudioAGS estampado en blanco, con un mate en la mano",
+      "contain": false
+    },
+    {
+      "src": "/fotos/dtf-textil-2.webp",
+      "alt": "Remera negra en una percha con el estampado Campeón mundial",
+      "contain": false
+    },
+    {
+      "src": "/fotos/dtf-textil-3.webp",
+      "alt": "De cerca, el estampado Campeón mundial en blanco sobre la tela negra",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "Precio único",
+      "price": 22500,
+      "unit": "por m²"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": []
+}

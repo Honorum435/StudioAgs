@@ -1,0 +1,50 @@
+{
+  "name": "Pizarra OrMa",
+  "description": "Pizarra magnética de 50 × 50 cm con fotos, polaroids, tira de fotos y pinzas imantadas.",
+  "details": "",
+  "note": "",
+  "gallery": [
+    {
+      "src": "/fotos/pizarra-orma.webp",
+      "alt": "Pizarra OrMa con fotos, notas y accesorios magnéticos",
+      "contain": false
+    },
+    {
+      "src": "/fotos/pizarra-orma-2.webp",
+      "alt": "Pizarra OrMa gris con marco de madera, fotos, polaroids y una gorra colgada",
+      "contain": true
+    },
+    {
+      "src": "/fotos/pizarra-orma-1.webp",
+      "alt": "Pizarra OrMa negra con imanes, fotos, notas y fibrones",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "Gris galvanizada",
+      "price": 35000,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Negro mate",
+      "price": 40000,
+      "unit": "por unidad"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": [
+    {
+      "option": "Color: Gris galvanizada",
+      "src": "/fotos/pizarra-orma-2.webp",
+      "alt": "Pizarra OrMa gris con marco de madera, fotos, polaroids y una gorra colgada",
+      "contain": true
+    },
+    {
+      "option": "Color: Negro mate",
+      "src": "/fotos/pizarra-orma-1.webp",
+      "alt": "Pizarra OrMa negra con imanes, fotos, notas y fibrones",
+      "contain": false
+    }
+  ]
+}

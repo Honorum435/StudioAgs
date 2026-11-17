@@ -1,0 +1,62 @@
+{
+  "name": "Fotos para guardar",
+  "description": "Tus recuerdos en formatos Polaroid, tiras, fotos cuadradas o imanes para la heladera.",
+  "details": "",
+  "note": "",
+  "gallery": [
+    {
+      "src": "/fotos/fotos.webp",
+      "alt": "Ejemplos de formatos para imprimir fotos",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "Polaroid 8 × 6,5",
+      "price": 500,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Tira de fotos",
+      "price": 1500,
+      "unit": "por tira"
+    },
+    {
+      "label": "Foto 10 × 10",
+      "price": 1500,
+      "unit": "por unidad"
+    },
+    {
+      "label": "Imán 10 × 10",
+      "price": 4000,
+      "unit": "por unidad"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": [
+    {
+      "option": "Formato: Polaroid 8 × 6,5",
+      "src": "/fotos/opcion-fotos-polaroid.webp",
+      "alt": "Medidas de la polaroid: 8 × 10 cm, con la foto de 6,6 × 6,6 cm",
+      "contain": true
+    },
+    {
+      "option": "Formato: Tira de fotos",
+      "src": "/fotos/opcion-fotos-tira.webp",
+      "alt": "Medidas de la tira: 6 × 17 cm, con tres fotos de 5 × 5 cm",
+      "contain": true
+    },
+    {
+      "option": "Formato: Foto 10 × 10",
+      "src": "/fotos/opcion-fotos-10x10.webp",
+      "alt": "Medidas de la foto de 10 × 10 cm",
+      "contain": true
+    },
+    {
+      "option": "Formato: Imán 10 × 10",
+      "src": "/fotos/fotos-1.webp",
+      "alt": "Imanes con fotos en la heladera, uno con forma de corazón",
+      "contain": false
+    }
+  ]
+}

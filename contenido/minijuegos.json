@@ -1,0 +1,68 @@
+{
+  "name": "Minijuegos",
+  "description": "Mini juegos para el viaje: más de 15 juegos reutilizables y 2 fibrones con borrador.",
+  "details": "Jugás, borrás y volvés a empezar. Cada uno mide 11,5 × 11,5 cm y va anillado, así entra en cualquier mochila.\n\nElegí el tuyo en naranja, rosa, celeste, verde o amarillo.",
+  "note": "",
+  "gallery": [
+    {
+      "src": "/fotos/minijuegos-1.webp",
+      "alt": "Minijuegos anillados en naranja, rosa, celeste y verde",
+      "contain": false
+    },
+    {
+      "src": "/fotos/minijuegos-2.webp",
+      "alt": "Minijuegos de todos los colores abiertos en abanico, el celeste adelante, en la mano",
+      "contain": false
+    },
+    {
+      "src": "/fotos/minijuegos-3.webp",
+      "alt": "Una búsqueda de objetos a medio jugar, con el fibrón, sobre las piedras",
+      "contain": false
+    },
+    {
+      "src": "/fotos/minijuegos-4.webp",
+      "alt": "Minijuego naranja con la tapa Mini juegos para el viaje, sobre las piedras",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "Precio único",
+      "price": 15000,
+      "unit": "por unidad"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": [
+    {
+      "option": "Color: Naranja",
+      "src": "/fotos/minijuegos-4.webp",
+      "alt": "Minijuego naranja con la tapa Mini juegos para el viaje, sobre las piedras",
+      "contain": false
+    },
+    {
+      "option": "Color: Rosa",
+      "src": "/fotos/minijuegos-5.webp",
+      "alt": "Minijuego rosa con sus dos fibrones, en la mano",
+      "contain": false
+    },
+    {
+      "option": "Color: Celeste",
+      "src": "/fotos/minijuegos-2.webp",
+      "alt": "Minijuegos de todos los colores abiertos en abanico, el celeste adelante, en la mano",
+      "contain": false
+    },
+    {
+      "option": "Color: Verde",
+      "src": "/fotos/minijuegos-6.webp",
+      "alt": "Minijuego verde con la tapa Mini juegos para el viaje",
+      "contain": false
+    },
+    {
+      "option": "Color: Amarillo",
+      "src": "",
+      "alt": "",
+      "contain": false
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "name": "Tarjetas personales",
+  "description": "Tarjetas en papel ilustración de 300 g. Elegí cantidad, impresión simple o doble faz y laminado.",
+  "details": "",
+  "note": "",
+  "gallery": [
+    {
+      "src": "/fotos/tarjetas.webp",
+      "alt": "Tarjetas impresas con distintas terminaciones",
+      "contain": false
+    },
+    {
+      "src": "/fotos/tarjetas-1.webp",
+      "alt": "Gift cards, tarjetas de agradecimiento y tarjetas personales hechas para Maika",
+      "contain": false
+    },
+    {
+      "src": "/fotos/tarjetas-2.webp",
+      "alt": "Tarjetas personales de StudioAGS en rosa, amarillo, azul y verde, con las caritas de la marca",
+      "contain": false
+    },
+    {
+      "src": "/fotos/tarjetas-3.webp",
+      "alt": "Tarjetas personales de Aura artesanal, velas y resina",
+      "contain": false
+    },
+    {
+      "src": "/fotos/tarjetas-4.webp",
+      "alt": "Tarjetas rosas de Las Reinas, artesanías para el hogar",
+      "contain": false
+    },
+    {
+      "src": "/fotos/tarjetas-5.webp",
+      "alt": "Tarjetas de Luz Sosa con la foto de dos manos tomadas",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "100 · Simple faz · Sin laminar",
+      "price": 13300,
+      "unit": "pack de 100"
+    },
+    {
+      "label": "100 · Simple faz · Laminado mate o brillo",
+      "price": 16300,
+      "unit": "pack de 100"
+    },
+    {
+      "label": "100 · Doble faz · Sin laminar",
+      "price": 16300,
+      "unit": "pack de 100"
+    },
+    {
+      "label": "100 · Doble faz · Laminado mate o brillo",
+      "price": 19300,
+      "unit": "pack de 100"
+    },
+    {
+      "label": "200 · Simple faz · Sin laminar",
+      "price": 19300,
+      "unit": "pack de 200"
+    },
+    {
+      "label": "200 · Simple faz · Laminado mate o brillo",
+      "price": 24500,
+      "unit": "pack de 200"
+    },
+    {
+      "label": "200 · Doble faz · Sin laminar",
+      "price": 24500,
+      "unit": "pack de 200"
+    },
+    {
+      "label": "200 · Doble faz · Laminado mate o brillo",
+      "price": 26300,
+      "unit": "pack de 200"
+    },
+    {
+      "label": "300 · Simple faz · Sin laminar",
+      "price": 23800,
+      "unit": "pack de 300"
+    },
+    {
+      "label": "300 · Simple faz · Laminado mate o brillo",
+      "price": 30600,
+      "unit": "pack de 300"
+    },
+    {
+      "label": "300 · Doble faz · Sin laminar",
+      "price": 30600,
+      "unit": "pack de 300"
+    },
+    {
+      "label": "300 · Doble faz · Laminado mate o brillo",
+      "price": 37500,
+      "unit": "pack de 300"
+    },
+    {
+      "label": "500 · Simple faz · Sin laminar",
+      "price": 34000,
+      "unit": "pack de 500"
+    },
+    {
+      "label": "500 · Simple faz · Laminado mate o brillo",
+      "price": 44500,
+      "unit": "pack de 500"
+    },
+    {
+      "label": "500 · Doble faz · Sin laminar",
+      "price": 46000,
+      "unit": "pack de 500"
+    },
+    {
+      "label": "500 · Doble faz · Laminado mate o brillo",
+      "price": 56000,
+      "unit": "pack de 500"
+    },
+    {
+      "label": "1.000 · Simple faz · Sin laminar",
+      "price": 58800,
+      "unit": "pack de 1.000"
+    },
+    {
+      "label": "1.000 · Simple faz · Laminado mate o brillo",
+      "price": 78100,
+      "unit": "pack de 1.000"
+    },
+    {
+      "label": "1.000 · Doble faz · Sin laminar",
+      "price": 80600,
+      "unit": "pack de 1.000"
+    },
+    {
+      "label": "1.000 · Doble faz · Laminado mate o brillo",
+      "price": 99000,
+      "unit": "pack de 1.000"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": [
+    {
+      "option": "Cantidad: 100",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Cantidad: 200",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Cantidad: 300",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Cantidad: 500",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Cantidad: 1.000",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Impresión: Simple faz",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Impresión: Doble faz",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Terminación: Sin laminar",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Terminación: Laminado mate o brillo",
+      "src": "",
+      "alt": "",
+      "contain": false
+    }
+  ]
+}

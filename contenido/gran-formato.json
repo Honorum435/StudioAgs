@@ -1,0 +1,143 @@
+{
+  "name": "Gran formato",
+  "description": "Vinilo, lona frontlight y blueback por metro cuadrado, para carteles, banners y vidrieras.",
+  "details": "",
+  "note": "El vinilo de corte, para vidrieras y stickers, se cotiza aparte: consultanos.",
+  "gallery": [
+    {
+      "src": "/fotos/gran-formato-1.webp",
+      "alt": "Vinilo con el logo de La Verdu en una vidriera, mientras lo colocan",
+      "contain": false
+    },
+    {
+      "src": "/fotos/gran-formato-2.webp",
+      "alt": "Colocación de un vinilo blanco con el logo de Kriba Arquitectura en una pared azul",
+      "contain": false
+    },
+    {
+      "src": "/fotos/gran-formato-3.webp",
+      "alt": "Vinilo blanco con el logo de Kriba Arquitectura, ya colocado en la pared",
+      "contain": false
+    },
+    {
+      "src": "/fotos/gran-formato-4.webp",
+      "alt": "Puerta de vidrio de La Verdu vista desde la calle, con el vinilo ya colocado",
+      "contain": false
+    }
+  ],
+  "prices": [
+    {
+      "label": "Vinilo blanco",
+      "price": 33300,
+      "unit": "por m²"
+    },
+    {
+      "label": "Vinilo blanco con laca sectorizada",
+      "price": 38300,
+      "unit": "por m²"
+    },
+    {
+      "label": "Vinilo blanco con laca completa",
+      "price": 42200,
+      "unit": "por m²"
+    },
+    {
+      "label": "Vinilo transparente",
+      "price": 36700,
+      "unit": "por m²"
+    },
+    {
+      "label": "Vinilo transparente con laca sectorizada",
+      "price": 40000,
+      "unit": "por m²"
+    },
+    {
+      "label": "Vinilo transparente con laca completa",
+      "price": 43300,
+      "unit": "por m²"
+    },
+    {
+      "label": "Lona frontlight 13 oz",
+      "price": 27000,
+      "unit": "por m²"
+    },
+    {
+      "label": "Lona frontlight 13 oz con laca",
+      "price": 32400,
+      "unit": "por m²"
+    },
+    {
+      "label": "Blueback 150 g mate",
+      "price": 20900,
+      "unit": "por m²"
+    },
+    {
+      "label": "Blueback 150 g mate con laca",
+      "price": 25200,
+      "unit": "por m²"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": [
+    {
+      "option": "Material: Vinilo blanco",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Material: Vinilo blanco con laca sectorizada",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Material: Vinilo blanco con laca completa",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Material: Vinilo transparente",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Material: Vinilo transparente con laca sectorizada",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Material: Vinilo transparente con laca completa",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Material: Lona frontlight 13 oz",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Material: Lona frontlight 13 oz con laca",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Material: Blueback 150 g mate",
+      "src": "",
+      "alt": "",
+      "contain": false
+    },
+    {
+      "option": "Material: Blueback 150 g mate con laca",
+      "src": "",
+      "alt": "",
+      "contain": false
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Archivo bajonero + alfajor",
+  "description": "Un cuadernillo para registrar cada alfajor que probás: marca, sabor, puntaje y tu top. Viene con un alfajor.",
+  "details": "En cada página anotás un bajón: marca, sabor, precio y fecha, guardás un pedacito del envoltorio y le ponés puntaje a las tapitas, el relleno y la cobertura. Al final armás tu top 34 y, si querés, lo compartís en Instagram.\n\nTrae también una breve historia del alfajor. Es una colaboración entre Paraná Bajoneros y StudioAGS.",
+  "note": "",
+  "gallery": [
+    {
+      "src": "/fotos/archivo-bajonero-1.webp",
+      "alt": "Tapa azul del Archivo bajonero, con un alfajor desarmado en capas",
+      "contain": true
+    },
+    {
+      "src": "/fotos/archivo-bajonero-2.webp",
+      "alt": "Página del top del Archivo bajonero, con 34 puestos para anotar los mejores alfajores",
+      "contain": true
+    },
+    {
+      "src": "/fotos/archivo-bajonero-3.webp",
+      "alt": "Tres alfajores Juana la Loca: uno dorado, uno blanco y uno con merengue",
+      "contain": true
+    }
+  ],
+  "prices": [
+    {
+      "label": "Precio único",
+      "price": 13000,
+      "unit": "por unidad"
+    }
+  ],
+  "addOns": [],
+  "optionPhotos": []
+}
