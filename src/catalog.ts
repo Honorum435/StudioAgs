@@ -84,9 +84,10 @@ export interface ProductContent {
   gallery: { src: string; alt: string | null; contain: boolean }[];
   // Una fila por combinación de los grupos con precio; "Precio único" si no hay ninguno.
   prices: { label: string; price: number; unit: string }[];
-  addOns: AddOn[];
+  // Si no hay, el panel los deja vacíos, sin la lista o en null.
+  addOns?: AddOn[] | null;
   // Una fila por opción de cada grupo, "<Grupo>: <Opción>"; src vacío si no tiene foto.
-  optionPhotos: { option: string; src: string | null; alt: string | null; contain: boolean }[];
+  optionPhotos?: { option: string; src: string | null; alt: string | null; contain: boolean }[] | null;
 }
 
 // Lo que queda en el código, en la lista de más abajo. Lo que no se aclara: sin opciones,
@@ -307,16 +308,17 @@ export function buildProduct(structure: ProductStructure, content: ProductConten
     contain: photo.contain,
   });
 
+  const optionPhotos = content.optionPhotos ?? [];
   const rowName = (g: OptionGroup, option: OptionValue) => `${g.label}: ${option.label}`;
   const known = (structure.groups ?? []).flatMap((g) => g.options.map((option) => rowName(g, option)));
-  const unknown = content.optionPhotos.find((row) => !known.includes(row.option));
+  const unknown = optionPhotos.find((row) => !known.includes(row.option));
   if (unknown) {
     throw new Error(`En ${file}, «${unknown.option}» no es una opción de ${structure.id}`);
   }
   const groups = (structure.groups ?? []).map((g) => ({
     ...g,
     options: g.options.map((option) => {
-      const row = content.optionPhotos.find((item) => item.option === rowName(g, option));
+      const row = optionPhotos.find((item) => item.option === rowName(g, option));
       return row?.src ? { ...option, photo: toPhoto(row) } : option;
     }),
   }));
@@ -348,7 +350,7 @@ export function buildProduct(structure: ProductStructure, content: ProductConten
     gallery: content.gallery.map(toPhoto),
     groups,
     combinations,
-    addOns: content.addOns,
+    addOns: content.addOns ?? [],
     personalizable: structure.personalizable ?? true,
     intents: structure.intents,
     // Plazo provisorio para los productos que el catálogo no informa.

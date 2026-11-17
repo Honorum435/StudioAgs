@@ -1012,7 +1012,7 @@ export function howToBuy(): string {
     </section>`;
 }
 
-// Fotos del álbum de la dueña, cuadradas como las produce fotos-album.py.
+// Fotos del álbum de la dueña, cuadradas.
 const processSteps: Array<{ title: string; text: string; alt: string }> = [
   {
     title: "Sellamos a mano",

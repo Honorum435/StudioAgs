@@ -32,7 +32,7 @@ Sin un número válido la página no muestra el botón de WhatsApp: el pedido so
 El error lista lo que falta, uno por uno:
 
 - **`VITE_WHATSAPP_NUMBER` o `VITE_SITE_URL`**: faltan o tienen otro formato. Corregí `.env` o las variables del hosting.
-- **`src/business.ts todavía tiene datos de ejemplo: ...`**: los datos del negocio que la dueña todavía no confirmó (retiro, envíos, medios de pago, Instagram, horario, cambios, fecha de los precios) están envueltos en `example(...)`. Corregí el texto si hace falta y sacale el `example(...)`:
+- **`src/business.ts todavía tiene datos de ejemplo: ...`**: los datos del negocio que la dueña todavía no confirmó (retiro, envíos, medios de pago, Instagram, horario, cambios) están envueltos en `example(...)`. Corregí el texto si hace falta y sacale el `example(...)`:
 
   ```ts
   instagramHandle: example("studioags"), // antes
@@ -45,16 +45,37 @@ El error lista lo que falta, uno por uno:
   leadTime: { min: 3, max: 5, text: "De 3 a 5 días hábiles" },
   ```
 
-## Productos y precios
+## Panel de Aixa
 
-Todo está en `src/catalog.ts`: nombre, descripción, opciones con su precio, adicionales (`addOns`), filtros (`intents`), si se personaliza, si necesita fotos y el plazo. Cuando cambien los precios, actualizá también `pricesUpdatedAt` en `src/business.ts`: es la fecha que se muestra en la página.
+Aixa edita precios, textos y fotos desde https://honorum435.github.io/StudioAgs/admin/ (no hace falta tocar código).
+
+- **Puede cambiar:** los precios, los adicionales, los textos de cada producto (nombre, descripción, "más texto" y aclaración), las fotos de la galería (agregar, sacar, ordenar) y la foto que aparece al elegir cada opción.
+- **No puede cambiar:** opciones nuevas, productos nuevos, plazos ni filtros. Eso se cambia en `src/catalog.ts`.
+- Cada guardado se publica solo en unos minutos (es un commit a `main`; el workflow corre los tests y vuelve a publicar). Si a los 5 minutos no cambió, que me avise: un workflow que falla deja el sitio como estaba y manda un mail al dueño del repo.
+- Las fotos que sube se convierten a WebP, de hasta 1200 px, en el navegador, y se guardan en `public/fotos/`.
+
+**Darle acceso (lo hace el dueño del repo):**
+
+1. En GitHub: Settings → Developer settings → Fine-grained personal access tokens → generar uno solo para este repo, con permiso **Contents: Read and write**.
+2. Aixa entra al panel, elige **Sign In with Token** y lo pega. Para el celular hay un QR en **Sign In with Mobile**.
+3. El token nunca se manda por chat. Si se pierde o vence, se revoca y se genera otro.
+
+**En desarrollo:** abrí `http://localhost:5173/admin/index.html` (`/admin/` solo muestra la tienda). Corré `git pull` antes de trabajar: Aixa también hace commits a `main`.
+
+**Para sumar una opción o un producto:** agregalo en `src/catalog.ts`, sumá sus filas a `contenido/<id>.json` (precio y, si quiere, foto) y a `src/contenido-tests.json`. `npx vitest run src/contenido.test.ts` dice qué falta.
+
+## Contenido y fotos
+
+- Precios, textos y fotos de cada producto: `contenido/<id>.json`. Se arman con la estructura de `src/catalog.ts`.
+- Fotos de los productos: un solo archivo WebP cada una, en `public/fotos/`.
+- Fotos fijas del sitio (el puesto de la feria, Comunidad AGS, `compartir.jpg`): `public/images/`.
 
 El sitio tiene estas páginas, y todas se arman solas al hacer el build:
 
 - **Inicio** (`/`): armado como la página de ejemplo que mandó la dueña. Tiene el título con una polaroid grande del puesto de la feria sobre el panel azul (con las caritas del kit de marca de agua), los círculos por uso que abren Productos ya filtrado (`productos/?uso=regalar`) y los más vendidos, que se eligen en `featuredProducts` de `src/business.ts`. Abajo van Nosotros con Comunidad AGS al lado (pedidos ya entregados, que llevan a Instagram) y la franja roja de "¿Tenés una idea?".
 - **Productos** (`productos/`): el catálogo con los filtros, la búsqueda y el orden. El buscador del encabezado lleva acá con el texto (`productos/?q=tarjetas`).
 - **Nosotros** (`nosotros/`), **Preguntas frecuentes** (`preguntas-frecuentes/`) y **Contacto** (`contacto/`): sus textos están en `src/templates.ts` y los datos de contacto en `src/business.ts`. Las respuestas de Preguntas frecuentes salen de los mismos datos que "Antes de pedir", y al lado van pasando fotos de las galerías (`src/slideshow.ts`).
-- **Cada producto** (`producto/<id>/`, por ejemplo `producto/calendarios/`): una galería de fotos, las mismas opciones y el mismo pedido. Para sumar texto a una página, agregá párrafos en `details`; para sumar fotos, ver `fotos-album.py` más abajo.
+- **Cada producto** (`producto/<id>/`, por ejemplo `producto/calendarios/`): una galería de fotos, las mismas opciones y el mismo pedido. El texto y las fotos salen de su `contenido/<id>.json`.
 
 El pedido es el mismo en todas las páginas. Todas tienen además los avisos que corren arriba y el botón flotante "Escribinos", que abre WhatsApp cuando está el número.
 
@@ -66,27 +87,6 @@ Los colores son los de la hoja de identidad del kit y van de a dos, como en el k
 - El pedido queda guardado solo en el navegador de la clienta, nunca en un servidor. Un pedido sin enviar dura 30 días; uno enviado se borra a las 48 horas. Si al volver algo ya no existe en el catálogo, se saca del pedido y se le avisa.
 
 ## Imágenes
-
-Las fotos de las tarjetas, las fichas y `compartir.jpg` (la imagen al compartir el link) salen del PDF original del catálogo, que no está en el repo. Para regenerarlas hace falta Python con PyMuPDF y Pillow:
-
-```sh
-pip install pymupdf pillow
-python extraer-imagenes.py "RUTA/AL/catalogo.pdf"
-```
-
-Escribe en `public/images/`, nunca amplía una foto y al terminar imprime los anchos y altos que hay que declarar en `src/catalog.ts`. Qué foto y qué recorte usa cada producto se elige al principio del script; `--listar PAGINA` muestra las fotos de una página del PDF.
-
-Las fotos de la galería de cada página, las de Comunidad AGS y las de "Así preparamos tu pedido" salen del álbum de fotos de la dueña (fotos HEIC y JPG del celular) y de las que mandó por WhatsApp. Hace falta Pillow y [ffmpeg](https://ffmpeg.org/) para leer las HEIC. Se le pasan todas las carpetas donde buscar:
-
-```sh
-python fotos-album.py "RUTA/AL/ALBUM_DESCOMPRIMIDO" "RUTA/A/LAS_FOTOS_DE_WHATSAPP"
-```
-
-Qué fotos usa cada producto se elige al principio del script. Cada foto sale cuadrada a 1200 y 600 px, o a la medida del cuadrado si es más chico (las de WhatsApp miden 960); las marcadas para no recortar salen enteras, y una que vino de costado o cabeza abajo se endereza con `girar`. Después se declaran en `gallery` del producto en `src/catalog.ts`. Un producto que no estaba en el catálogo en PDF, como Complementos, no tiene ficha: su foto de tarjeta es la primera de la galería. Uno que todavía no tenga fotos puede llevar una imagen provisoria con el logo, que arma el mismo script (`PROVISORIAS`); cuando lleguen las fotos, se saca de ahí y se suma a `GALERIAS`. Hoy no hay ninguno.
-
-Las dos fotos del puesto de la feria (la polaroid del inicio y el arco de Nosotros) salen del mismo script, en la lista `stand`.
-
-**Foto por opción:** al elegir una opción (por ejemplo, el minijuego rosa), la tarjeta cambia su foto y la página del producto la pasa a la foto grande. Cada opción la declara en `photo` dentro de `src/catalog.ts`; una opción sin foto deja la que se estaba viendo. Las fotos del álbum salen de `fotos-album.py`, a continuación de la galería de su producto. Los dibujos del PDF (las medidas de Fotos, las lacas de Vinilos y el calendario de doce meses) salen de `extraer-imagenes.py`, en `OPCIONES`, y se ven enteros.
 
 La marca de agua del panel azul (`src/caritas-marca-de-agua.webp`) la arma `caritas.py` con cuatro caras de la hoja de identidad del kit:
 

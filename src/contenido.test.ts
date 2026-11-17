@@ -18,7 +18,7 @@ describe("contenido/", () => {
 
   it("cada precio es un entero mayor que 0 y cada producto tiene al menos una foto", () => {
     for (const [id, content] of Object.entries(real)) {
-      for (const { label, price } of [...content.prices, ...content.addOns]) {
+      for (const { label, price } of [...content.prices, ...(content.addOns ?? [])]) {
         expect(Number.isInteger(price) && price > 0, `contenido/${id}.json: el precio de «${label}» tiene que ser un entero mayor que 0`).toBe(true);
       }
       expect(content.gallery.length, `contenido/${id}.json: falta al menos una foto en la galería`).toBeGreaterThan(0);
@@ -30,7 +30,7 @@ describe("contenido/", () => {
       for (const { src } of content.gallery) {
         expect(src && existsSync(`public${src}`), `contenido/${id}.json: no existe public${src}`).toBe(true);
       }
-      for (const { src } of content.optionPhotos) {
+      for (const { src } of content.optionPhotos ?? []) {
         expect(!src || existsSync(`public${src}`), `contenido/${id}.json: no existe public${src}`).toBe(true);
       }
     }

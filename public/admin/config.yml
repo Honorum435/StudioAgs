@@ -1,0 +1,94 @@
+# Panel de Aixa (Sveltia CMS): edita contenido/*.json y las fotos de public/fotos/.
+# Cada guardado es un commit a main y el workflow vuelve a publicar el sitio.
+# Las opciones y los productos nuevos no se agregan acá: se hacen en src/catalog.ts.
+backend:
+  name: github
+  repo: Honorum435/StudioAgs
+  branch: main
+  commit_messages:
+    update: "Panel: {{slug}}"
+    uploadMedia: "Panel: foto {{path}}"
+    deleteMedia: "Panel: borrar foto {{path}}"
+
+site_url: https://honorum435.github.io/StudioAgs/
+
+media_folder: public/fotos
+public_folder: /fotos
+media_libraries:
+  default:
+    config:
+      slugify_filename: true
+      transformations:
+        raster_image:
+          format: webp
+          quality: 80
+          width: 1200
+          height: 1200
+
+collections:
+  - name: productos
+    label: Productos
+    folder: contenido
+    extension: json
+    format: json
+    identifier_field: name
+    create: false
+    delete: false
+    duplicate: false
+    fields:
+      - { name: name, label: Nombre }
+      - { name: description, label: Descripción, widget: text, hint: Se ve en la tarjeta del catálogo. }
+      - { name: details, label: Más texto, widget: text, required: false, hint: Solo en la página del producto. Cada renglón es un párrafo. }
+      - { name: note, label: Aclaración, required: false }
+      - name: gallery
+        label: Fotos
+        widget: list
+        min: 1
+        summary: "{{alt}}"
+        thumbnail: src
+        hint: La primera es la de la tarjeta del catálogo. Arrastralas para cambiar el orden.
+        fields:
+          - { name: src, label: Foto, widget: image, choose_url: false }
+          - { name: alt, label: Qué se ve, required: false, hint: Si lo dejás vacío se usa el nombre del producto. }
+          - { name: contain, label: Mostrarla entera, widget: boolean, default: false }
+      - name: prices
+        label: Precios
+        widget: list
+        allow_add: false
+        allow_remove: false
+        allow_reorder: false
+        collapsed: true
+        summary: "{{label}}: $ {{price}} {{unit}}"
+        fields:
+          - { name: label, label: Opción, readonly: true }
+          - { name: price, label: Precio, widget: number, value_type: int, min: 1 }
+          - { name: unit, label: Unidad }
+      - name: addOns
+        label: Adicionales
+        widget: list
+        required: false
+        allow_add: false
+        allow_remove: false
+        allow_reorder: false
+        summary: "{{label}}: $ {{price}} {{unit}}"
+        fields:
+          - { name: id, label: Código, readonly: true, hint: Lo usan los pedidos guardados. No se toca. }
+          - { name: label, label: Nombre }
+          - { name: price, label: Precio, widget: number, value_type: int, min: 1 }
+          - { name: unit, label: Unidad }
+      - name: optionPhotos
+        label: Fotos de las opciones
+        widget: list
+        required: false
+        allow_add: false
+        allow_remove: false
+        allow_reorder: false
+        collapsed: true
+        summary: "{{option}}"
+        thumbnail: src
+        hint: La foto que aparece al elegir esa opción. Sin foto, queda la que se estaba viendo.
+        fields:
+          - { name: option, label: Opción, readonly: true }
+          - { name: src, label: Foto, widget: image, required: false, choose_url: false }
+          - { name: alt, label: Qué se ve, required: false }
+          - { name: contain, label: Mostrarla entera, widget: boolean, default: false }

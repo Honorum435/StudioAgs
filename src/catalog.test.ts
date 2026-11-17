@@ -307,12 +307,18 @@ describe("buildProduct", () => {
     expect([built.personalizable, built.needsPhotos, isExample(built.leadTime)]).toEqual([true, false, true]);
   });
 
+  it("sin adicionales (null) ni fotos de opciones, los dos quedan en listas vacías", () => {
+    const built = buildProduct(structure, { ...content, addOns: null, optionPhotos: undefined });
+    expect(built.addOns).toEqual([]);
+    expect(built.groups[1].options.every((option) => !option.photo)).toBe(true);
+  });
+
   it("avisa en castellano si falta un precio o sobra una fila de fotos", () => {
     expect(() => buildProduct(structure, { ...content, prices: content.prices.slice(0, 1) })).toThrow(
       "Falta el precio de «Grande» en contenido/prueba.json",
     );
     const extra = { option: "Color: Verde", src: null, alt: null, contain: false };
-    expect(() => buildProduct(structure, { ...content, optionPhotos: [...content.optionPhotos, extra] })).toThrow(
+    expect(() => buildProduct(structure, { ...content, optionPhotos: [...(content.optionPhotos ?? []), extra] })).toThrow(
       "En contenido/prueba.json, «Color: Verde» no es una opción de prueba",
     );
   });

@@ -2,6 +2,22 @@
 
 Lo que queda después del pulido (`plan-pulido.md`). Nada de esto bloquea probar la tienda; lo de "Antes de publicar" sí bloquea `npm run build`.
 
+## Panel de Aixa (17/11/2026)
+
+**Hecho:**
+- El panel está en `/admin/` (Sveltia CMS, `public/admin/`): Aixa edita precios, adicionales, textos, galerías y la foto de cada opción, y cada guardado se publica solo.
+- Los datos de cada producto pasaron a `contenido/<id>.json`; `src/catalog.ts` solo tiene la estructura (opciones, filtros, plazos).
+- Salieron las fichas del PDF y el aviso de "Actualizamos los precios al...": ya no existe `pricesUpdatedAt`.
+- Cada foto de producto es un solo WebP (hasta 1200 px) en `public/fotos/`.
+- Las fotos que pasan al lado de Preguntas frecuentes salen de las galerías de los productos.
+- Se borraron `extraer-imagenes.py` y `fotos-album.py` (están en el historial de git): ya no hay que volver a correr scripts de Python para las fotos ni los precios. Queda `caritas.py`.
+
+**Falta que haga el dueño:**
+- Crear el token (fine-grained, solo este repo, Contents read and write) y entrar a Aixa al panel, en el navegador y en el celular (ver "Panel de Aixa" en el README).
+- Hacer una edición de prueba (por ejemplo, un precio) y confirmar que se publica sola.
+
+Con esto quedan obsoletos varios pendientes de más abajo: el aviso de la fecha de precios, las fichas y volver a correr los scripts de fotos. Siguen en el texto como historia.
+
 ## Pedidos de Aixa (chat del 30/10/2026)
 
 Lo que pidió después de ver el sitio con el kit de marca.
@@ -361,7 +377,7 @@ La fecha de precios pasó a ser el 5 de noviembre de 2026 y ya no es de ejemplo.
   - **Tarjetas:** Maika, las tarjetas de StudioAGS con las caritas, Aura, Las Reinas y Luz Sosa.
   - **Vinilos:** los stickers de Maika.
   - **Láminas:** el exhibidor.
-- **Complementos:** un producto nuevo con el separador clásico ($ 1.300), el separador con imán ($ 1.500) y el marco con imán ($ 5.500). Los separadores salieron de Bitácoras y el marco, de Fotos. Los precios son los del catálogo y los del cartel de la feria (IMG_9314). Como no estaba en el catálogo en PDF, no tiene "Ver ficha".
+- **Complementos:** un producto nuevo con el separador clásico ($ 1.300), el separador con imán ($ 1.500) y el marco con imán ($ 5.500). Los separadores salieron de Bitácoras y el marco, de Fotos. Los precios son los del catálogo y los del cartel de la feria (IMG_9314). (Las fichas del PDF ya no existen: ver "Panel de Aixa".)
 
 **Falta que Aixa:**
 - **Mande dos fotos que citó en el chat y no llegaron en los zip:**
@@ -489,7 +505,7 @@ Falta antes de pasarla a `main`:
 - Plazos de producción en `src/catalog.ts` para Calendarios, Pizarra OrMa, Entre Flores, Tarjetas, Bitácoras y Láminas (marcados con `pendingLeadTime()`).
 - Qué productos son personalizables y en qué intención va cada uno (hoy hay un reparto por defecto).
 - Extras de Tarjetas que aparecen en el PDF (puntas redondeadas, agujereado) y la cantidad de fotos que trae la Pizarra OrMa.
-- Permiso para usar en la web la foto de Vinilos con los stickers y QR de un cliente (el script tiene una alternativa anotada).
+- Permiso para usar en la web la foto de Vinilos con los stickers y QR de un cliente (`fotos-album.py` tenía una alternativa anotada; el script se borró, está en el historial de git).
 - Fotos reales de Vinilos, Entre Flores, Fotos y Láminas: las del PDF no llegan a verse nítidas en pantallas de alta densidad.
 
 ## Verificar en dispositivos reales
