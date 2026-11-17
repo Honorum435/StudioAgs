@@ -5,6 +5,8 @@ backend:
   name: github
   repo: Honorum435/StudioAgs
   branch: main
+  # Sin servidor de login: solo se entra con el token (saca el botón de GitHub, que no andaría).
+  auth_methods: [token]
   commit_messages:
     update: "Panel: {{slug}}"
     uploadMedia: "Panel: foto {{path}}"
@@ -15,6 +17,8 @@ site_url: https://honorum435.github.io/StudioAgs/
 media_folder: public/fotos
 public_folder: /fotos
 media_libraries:
+  # Sin bancos de fotos (Unsplash y demás): solo las fotos que sube ella.
+  stock_assets: false
   default:
     config:
       slugify_filename: true
@@ -32,6 +36,8 @@ collections:
     extension: json
     format: json
     identifier_field: name
+    # El nombre del archivo es el id del producto en src/catalog.ts: no se puede renombrar.
+    slug: { editable: false }
     create: false
     delete: false
     duplicate: false
@@ -72,7 +78,7 @@ collections:
         allow_reorder: false
         summary: "{{label}}: $ {{price}} {{unit}}"
         fields:
-          - { name: id, label: Código, readonly: true, hint: Lo usan los pedidos guardados. No se toca. }
+          - { name: id, label: Código, readonly: true } # Lo usan los pedidos guardados.
           - { name: label, label: Nombre }
           - { name: price, label: Precio, widget: number, value_type: int, min: 1 }
           - { name: unit, label: Unidad }

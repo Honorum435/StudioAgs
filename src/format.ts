@@ -26,7 +26,7 @@ function daysInMonth(year: number, month: number): number {
   return new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
 
-export function isCalendarDate(value: unknown): value is CalendarDate {
+function isCalendarDate(value: unknown): value is CalendarDate {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return false;
   }

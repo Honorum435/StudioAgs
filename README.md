@@ -39,7 +39,7 @@ El error lista lo que falta, uno por uno:
   instagramHandle: "studioags",          // después
   ```
 
-- **`src/catalog.ts todavía tiene datos de ejemplo: calendarios.leadTime, ...`**: son plazos de producción provisorios (`leadTime: pendingLeadTime()`). Cambialos por el plazo real, en días hábiles:
+- **`src/catalog.ts todavía tiene datos de ejemplo: calendarios.leadTime, ...`**: son plazos de producción provisorios: los productos de la lista que no tienen `leadTime`. Agregale a cada uno el plazo real, en días hábiles:
 
   ```ts
   leadTime: { min: 3, max: 5, text: "De 3 a 5 días hábiles" },
@@ -57,10 +57,10 @@ Aixa edita precios, textos y fotos desde https://honorum435.github.io/StudioAgs/
 **Darle acceso (lo hace el dueño del repo):**
 
 1. En GitHub: Settings → Developer settings → Fine-grained personal access tokens → generar uno solo para este repo, con permiso **Contents: Read and write**.
-2. Aixa entra al panel, elige **Sign In with Token** y lo pega. Para el celular hay un QR en **Sign In with Mobile**.
+2. Aixa entra al panel, toca **Iniciar sesión con un token de acceso** (es el único botón) y lo pega. Para el celular hay un QR en el menú de la cuenta, en **Sign In with Mobile**.
 3. El token nunca se manda por chat. Si se pierde o vence, se revoca y se genera otro.
 
-**En desarrollo:** abrí `http://localhost:5173/admin/index.html` (`/admin/` solo muestra la tienda). Corré `git pull` antes de trabajar: Aixa también hace commits a `main`.
+**En desarrollo:** abrí `http://localhost:5173/admin/index.html` (`/admin/` solo muestra la tienda). Ahí aparece además "Trabajar con un repositorio local", que edita los archivos de tu compu sin hacer commits; en la página publicada no está. Corré `git pull` antes de trabajar: Aixa también hace commits a `main`.
 
 **Para sumar una opción o un producto:** agregalo en `src/catalog.ts`, sumá sus filas a `contenido/<id>.json` (precio y, si quiere, foto) y a `src/contenido-tests.json`. `npx vitest run src/contenido.test.ts` dice qué falta.
 
