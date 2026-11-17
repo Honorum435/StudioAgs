@@ -398,32 +398,31 @@ describe("foto de la opción", () => {
     const before = cardImage("minijuegos").getAttribute("src");
     choose("minijuegos", "color", "rosa");
     const image = cardImage("minijuegos");
-    expect(image.getAttribute("src")).toBe("images/foto-minijuegos-5-1200.webp");
-    expect(image.getAttribute("srcset")).toBe("images/foto-minijuegos-5-600.webp 600w, images/foto-minijuegos-5-1200.webp 1200w");
+    expect(image.getAttribute("src")).toBe("fotos/minijuegos-5.webp");
     expect(image.getAttribute("alt")).toBe("Minijuego rosa con sus dos fibrones, en la mano");
     expect(image.getAttribute("src")).not.toBe(before);
 
     choose("minijuegos", "color", "amarillo");
-    expect(cardImage("minijuegos").getAttribute("src")).toBe("images/foto-minijuegos-5-1200.webp");
+    expect(cardImage("minijuegos").getAttribute("src")).toBe("fotos/minijuegos-5.webp");
   });
 
   it("un dibujo del catálogo se ve entero y una foto vuelve a llenar el cuadro", () => {
     mount();
     choose("fotos", "formato", "tira");
-    expect(cardImage("fotos").getAttribute("src")).toBe("images/opcion-fotos-tira-542.webp");
+    expect(cardImage("fotos").getAttribute("src")).toBe("fotos/opcion-fotos-tira.webp");
     expect(cardImage("fotos").closest(".product-image-wrap")?.classList.contains("is-contained")).toBe(true);
 
     choose("fotos", "formato", "iman-10x10");
-    expect(cardImage("fotos").getAttribute("src")).toBe("images/foto-fotos-1-1200.webp");
+    expect(cardImage("fotos").getAttribute("src")).toBe("fotos/fotos-1.webp");
     expect(cardImage("fotos").closest(".product-image-wrap")?.classList.contains("is-contained")).toBe(false);
   });
 
   it("en Calendarios cambia con el formato y con el color, el último que se toca", () => {
     mount();
     choose("calendarios", "formato", "acrilico");
-    expect(cardImage("calendarios").getAttribute("src")).toBe("images/foto-calendarios-10-1200.webp");
+    expect(cardImage("calendarios").getAttribute("src")).toBe("fotos/calendarios-10.webp");
     choose("calendarios", "colores", "frio");
-    expect(cardImage("calendarios").getAttribute("src")).toBe("images/foto-calendarios-14-1200.webp");
+    expect(cardImage("calendarios").getAttribute("src")).toBe("fotos/calendarios-14.webp");
   });
 
   it("cada paleta de Calendarios muestra su lámina de los doce meses, entera", () => {
@@ -431,7 +430,7 @@ describe("foto de la opción", () => {
     // Pastel viene elegido: va al final, para que elegirlo sea un cambio.
     for (const [color, number] of [["intenso", 13], ["calido", 12], ["frio", 14], ["monocromo", 15], ["pastel", 16]] as const) {
       choose("calendarios", "colores", color);
-      expect(cardImage("calendarios").getAttribute("src")).toBe(`images/foto-calendarios-${number}-1200.webp`);
+      expect(cardImage("calendarios").getAttribute("src")).toBe(`fotos/calendarios-${number}.webp`);
       expect(cardImage("calendarios").getAttribute("alt")).toMatch(/^Los doce meses /);
       expect(cardImage("calendarios").closest(".product-image-wrap")?.classList.contains("is-contained")).toBe(true);
     }
@@ -440,9 +439,9 @@ describe("foto de la opción", () => {
   it("en Bitácoras la A6 muestra las A6 en stock y la A5, las A5", () => {
     mount();
     choose("bitacoras", "formato", "bitacora-a6");
-    expect(cardImage("bitacoras").getAttribute("src")).toBe("images/foto-bitacoras-4-1104.webp");
+    expect(cardImage("bitacoras").getAttribute("src")).toBe("fotos/bitacoras-4.webp");
     expect(cardImage("bitacoras").getAttribute("alt")).toMatch(/^Bitácoras A6 /);
     choose("bitacoras", "formato", "bitacora-a5");
-    expect(cardImage("bitacoras").getAttribute("src")).toBe("images/foto-bitacoras-2-1080.webp");
+    expect(cardImage("bitacoras").getAttribute("src")).toBe("fotos/bitacoras-2.webp");
   });
 });

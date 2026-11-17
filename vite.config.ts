@@ -309,6 +309,8 @@ export default defineConfig({
   base: "./",
   plugins: [studioAgs()],
   test: {
+    // Los tests usan una copia de los textos y precios: no cambian cuando se edita contenido/.
+    alias: [{ find: /^\.\/contenido$/, replacement: resolve(__dirname, "src/contenido-tests.json") }],
     environment: "node",
     include: ["src/**/*.test.ts"],
   },

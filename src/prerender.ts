@@ -5,7 +5,6 @@ import {
   type BusinessInfo,
 } from "./business";
 import {
-  imageUrl,
   listPendingCatalogFields,
   productPath,
   products as defaultCatalog,
@@ -151,7 +150,7 @@ function productNode(options: SiteOptions, product: CatalogProduct): Record<stri
     "@type": "Product",
     name: product.name,
     description: product.description,
-    image: absolute(options.siteUrl, imageUrl(product.images.card, product.images.card.width)),
+    image: absolute(options.siteUrl, product.gallery[0].src),
     url: absolute(options.siteUrl, productPath(product)),
     brand: { "@type": "Brand", name: SITE_NAME },
     offers: productOffer(product, `${absolute(options.siteUrl, "/")}#tienda`),

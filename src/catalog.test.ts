@@ -1,16 +1,15 @@
-import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { businessValue, example, isExample } from "./business";
 import {
-  galleryPhotos,
-  imageUrl,
+  buildProduct,
   initialSelection,
   intents,
   listPendingCatalogFields,
-  productPhotos,
   products,
   resolveSelection,
   type CatalogProduct,
+  type ProductContent,
+  type ProductStructure,
 } from "./catalog";
 
 function product(id: string): CatalogProduct {
@@ -245,69 +244,77 @@ describe("catálogo", () => {
     ]);
   });
 
-  it("declara sus imágenes con anchos, ancho y alto", () => {
-    for (const item of products) {
-      const { card } = item.images;
-      expect(card.base.length).toBeGreaterThan(0);
-      expect(card.widths.length).toBeGreaterThan(0);
-      expect([...card.widths].sort((a, b) => a - b)).toEqual(card.widths);
-      expect(card.width).toBe(Math.max(...card.widths));
-      expect(card.height).toBeGreaterThan(0);
-      // La foto de la tarjeta es la del catálogo o una de la galería.
-      expect([item.id, ...(item.gallery ?? []).map((photo) => photo.image.base)]).toContain(card.base);
-    }
-    const bases = products.map(({ images }) => images.card.base);
-    expect(new Set(bases).size).toBe(bases.length);
+  it("Gran formato lleva las fotos de la vidriera y la pared", () => {
+    expect(product("gran-formato").gallery.map((photo) => photo.src)).toEqual([
+      "fotos/gran-formato-1.webp",
+      "fotos/gran-formato-2.webp",
+      "fotos/gran-formato-3.webp",
+      "fotos/gran-formato-4.webp",
+    ]);
+  });
+});
+
+describe("buildProduct", () => {
+  const structure: ProductStructure = {
+    id: "prueba",
+    intents: ["regalar"],
+    groups: [
+      { id: "tamano", label: "Tamaño", options: [{ id: "chico", label: "Chico" }, { id: "grande", label: "Grande" }] },
+      { id: "color", label: "Color", free: true, options: [{ id: "rojo", label: "Rojo" }, { id: "azul", label: "Azul" }] },
+    ],
+  };
+  const content: ProductContent = {
+    name: "Prueba",
+    description: "Un producto de prueba",
+    details: null,
+    note: null,
+    gallery: [{ src: "/fotos/prueba.webp", alt: null, contain: false }],
+    prices: [
+      { label: "Chico", price: 100, unit: "por unidad" },
+      { label: "Grande", price: 200, unit: "por unidad" },
+    ],
+    addOns: [],
+    optionPhotos: [
+      { option: "Color: Rojo", src: "/fotos/prueba-rojo.webp", alt: "Prueba roja", contain: true },
+      { option: "Color: Azul", src: null, alt: null, contain: false },
+    ],
+  };
+
+  it("arma las combinaciones con el precio de los grupos que no son gratis", () => {
+    const built = buildProduct(structure, content);
+    expect(built.combinations.map(({ id, label, price }) => [id, label, price])).toEqual([
+      ["prueba-chico-rojo", "Chico · Rojo", 100],
+      ["prueba-chico-azul", "Chico · Azul", 100],
+      ["prueba-grande-rojo", "Grande · Rojo", 200],
+      ["prueba-grande-azul", "Grande · Azul", 200],
+    ]);
   });
 
-  it("cada imagen declarada, también las de las opciones, existe en public/images con cada ancho", () => {
-    const specs = products.flatMap((item) => [
-      item.images.card,
-      ...productPhotos(item).map((photo) => photo.image),
-    ]);
-    const missing = specs.flatMap((spec) =>
-      spec.widths.map((width) => `public/${imageUrl(spec, width)}`).filter((path) => !existsSync(path)),
+  it("los textos y fotos que el panel deja vacíos (null) no rompen nada", () => {
+    const built = buildProduct(structure, content);
+    expect([built.details, built.note]).toEqual(["", ""]);
+    // Sin barra al principio y, sin descripción, con el nombre del producto.
+    expect(built.gallery).toEqual([{ src: "fotos/prueba.webp", alt: "Prueba", contain: false }]);
+    const [rojo, azul] = built.groups[1].options;
+    expect(rojo.photo).toEqual({ src: "fotos/prueba-rojo.webp", alt: "Prueba roja", contain: true });
+    expect(azul.photo).toBeUndefined();
+  });
+
+  it("sin grupos busca la fila «Precio único» y usa los valores por defecto", () => {
+    const single = { ...content, prices: [{ label: "Precio único", price: 500, unit: "por unidad" }], optionPhotos: [] };
+    const built = buildProduct({ id: "prueba", intents: ["regalar"] }, single);
+    expect(built.combinations).toEqual([{ id: "prueba", values: {}, label: "", price: 500, unit: "por unidad" }]);
+    expect([built.personalizable, built.needsPhotos, isExample(built.leadTime)]).toEqual([true, false, true]);
+  });
+
+  it("avisa en castellano si falta un precio o sobra una fila de fotos", () => {
+    expect(() => buildProduct(structure, { ...content, prices: content.prices.slice(0, 1) })).toThrow(
+      "Falta el precio de «Grande» en contenido/prueba.json",
     );
-    expect(missing).toEqual([]);
-    for (const item of products) {
-      for (const option of item.groups.flatMap((group) => group.options)) {
-        if (option.photo) {
-          expect(option.photo.alt.length).toBeGreaterThan(0);
-        }
-      }
-    }
-  });
-
-  it("Gran formato lleva las fotos de la vidriera y la pared, y la primera es la de la tarjeta", () => {
-    const item = product("gran-formato");
-    expect(item.gallery?.map((photo) => photo.image.base)).toEqual([
-      "foto-gran-formato-1",
-      "foto-gran-formato-2",
-      "foto-gran-formato-3",
-      "foto-gran-formato-4",
-    ]);
-    expect(item.images.card.base).toBe("foto-gran-formato-1");
-    expect(item.imageAlt).toBe(item.gallery![0].alt);
-  });
-
-  it("la galería de Bitácoras no repite la foto de la tarjeta", () => {
-    expect(galleryPhotos(product("bitacoras")).map((photo) => photo.image.base)).toEqual([
-      "foto-bitacoras-1",
-      "foto-bitacoras-2",
-      "foto-bitacoras-3",
-      "foto-bitacoras-4",
-    ]);
-  });
-
-  it("la galería de la Pizarra no suma la foto de la tarjeta, que es un recorte de la gris", () => {
-    expect(galleryPhotos(product("pizarra-orma")).map((photo) => photo.image.base)).toEqual([
-      "foto-pizarra-orma-2",
-      "foto-pizarra-orma-1",
-    ]);
-  });
-
-  it("arma la ruta de cada imagen con su nombre base y su ancho", () => {
-    expect(imageUrl(product("tarjetas").images.card, 400)).toBe("images/tarjetas-400.webp");
+    const extra = { option: "Color: Verde", src: null, alt: null, contain: false };
+    expect(() => buildProduct(structure, { ...content, optionPhotos: [...content.optionPhotos, extra] })).toThrow(
+      "En contenido/prueba.json, «Color: Verde» no es una opción de prueba",
+    );
   });
 });
 

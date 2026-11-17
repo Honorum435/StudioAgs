@@ -1,11 +1,8 @@
 import { businessValue, type BusinessInfo } from "./business";
 import type { OrderSummary, ResolvedLine, SentVia } from "./cart";
 import {
-  galleryPhotos,
-  imageSrcset,
-  imageUrl,
   initialSelection,
-  optionPhotos,
+  extraOptionPhotos,
   intents,
   lineName,
   photoSending,
@@ -13,8 +10,8 @@ import {
   resolveSelection,
   type AddOn,
   type CatalogProduct,
-  type ImageSpec,
   type IntentId,
+  type Photo,
   type ResolvedSelection,
 } from "./catalog";
 import { escapeHtml, formatPrice } from "./format";
@@ -45,24 +42,6 @@ export function sitePagePath(id: SitePageId): string {
   return `${id}/`;
 }
 
-// Anchos de la foto según el layout de styles.css (margen lateral de 5vw hasta 36 px):
-// una columna, dos en celular ancho, dos en tablet y tres desde 1024 px.
-export const CARD_IMAGE_SIZES =
-  "(max-width: 559px) 90vw, (max-width: 767px) calc(45vw - 8px), (max-width: 1023px) calc(50vw - 47px), (max-width: 1351px) calc(33.3vw - 39px), 412px";
-export const HERO_MAIN_SIZES = "(max-width: 767px) 240px, 320px";
-// Página del producto: la galería ocupa el ancho en celular y algo más de la mitad desde 768 px.
-export const GALLERY_SIZES = "(max-width: 767px) 92vw, (max-width: 1351px) 52vw, 680px";
-export const GALLERY_THUMB_SIZES = "72px";
-// Cuatro columnas desde 1024 px y dos en tablet y celular.
-export const PROCESS_PHOTO_SIZES = "(max-width: 1023px) calc(50vw - 40px), 300px";
-export const INTENT_PHOTO_SIZES = "(max-width: 767px) 132px, 168px";
-// Cuatro columnas desde 1024 px, dos en tablet y celular.
-export const BEST_PHOTO_SIZES = "(max-width: 1023px) calc(50vw - 40px), 300px";
-export const ABOUT_PHOTO_SIZES = "(max-width: 767px) 90vw, 520px";
-// Tres fotos por fila en la tarjeta rosa del inicio, que en celular ocupa todo el ancho.
-export const COMMUNITY_PHOTO_SIZES = "(max-width: 1023px) 22vw, 110px";
-export const FAQ_PHOTO_SIZES = "(max-width: 1023px) 90vw, 440px";
-
 export const TOTAL_NOTE = "El total final se confirma por WhatsApp.";
 export const ORDER_UPDATED_NOTE = "Actualizamos tu pedido · revisalo";
 export const ORDER_CHANGED_NOTE = "Cambiaste el pedido: volvé a tocar Continuar.";
@@ -91,37 +70,23 @@ function attr(value: string | number): string {
   return escapeHtml(String(value));
 }
 
-function srcset(spec: ImageSpec): string {
-  return imageSrcset(spec);
-}
-
 interface ImageOptions {
   className?: string;
   alt: string;
-  sizes: string;
   loading?: "lazy";
   highPriority?: boolean;
 }
 
-function responsiveImage(spec: ImageSpec, options: ImageOptions): string {
+// Todas las imágenes están en un cuadro de tamaño fijo (styles.css): no hacen falta width ni height.
+function image(src: string, options: ImageOptions): string {
   const attributes = [
     options.className ? `class="${attr(options.className)}"` : "",
-    `src="${attr(imageUrl(spec, spec.width))}"`,
-    `srcset="${attr(srcset(spec))}"`,
-    `sizes="${attr(options.sizes)}"`,
-    `width="${spec.width}"`,
-    `height="${spec.height}"`,
+    `src="${attr(src)}"`,
     `alt="${attr(options.alt)}"`,
     options.loading ? `loading="${options.loading}"` : "",
     options.highPriority ? 'fetchpriority="high"' : 'decoding="async"',
   ];
   return `<img ${attributes.filter(Boolean).join(" ")} />`;
-}
-
-// Fotos cuadradas como las produce fotos-album.py: a 1200 y 600 px, o a la medida del cuadrado si
-// es más chico (las de WhatsApp miden 960).
-function squarePhoto(base: string, size = 1200): ImageSpec {
-  return { base, widths: [600, size], width: size, height: size };
 }
 
 function lowerFirst(text: string): string {
@@ -505,8 +470,6 @@ export function noscriptNote(business: BusinessInfo): string {
 }
 
 // El puesto de la feria con sus carteles, como pidió la dueña. La foto del equipo va en Nosotros.
-const standPhoto: ImageSpec = { base: "foto-stand-1", widths: [600, 960], width: 960, height: 1280 };
-const teamPhoto = squarePhoto("foto-stand-2", 896);
 const TEAM_ALT = "Las dos personas de StudioAGS sonriendo en su puesto de una feria, con láminas, stickers y calendarios";
 
 export function hero(): string {
@@ -525,7 +488,7 @@ export function hero(): string {
       <div class="hero-art" aria-hidden="true">
         <div class="hero-sticker hero-sticker-top">hecho<br />con cariño</div>
         <div class="hero-photo hero-photo-main">
-          ${responsiveImage(standPhoto, { alt: "", sizes: HERO_MAIN_SIZES, highPriority: true })}
+          ${image("images/stand-1.webp", { alt: "", highPriority: true })}
           <span>un mundo de ideas</span>
         </div>
         <div class="hero-sparkle">✳</div>
@@ -536,16 +499,7 @@ export function hero(): string {
 
 // Comunidad AGS: pedidos que ya se entregaron, como los eligió la dueña. Las fotos y el usuario
 // son un solo enlace a Instagram.
-const communityPhotos: ImageSpec[] = [
-  squarePhoto("foto-comunidad-1", 960),
-  squarePhoto("foto-comunidad-2", 960),
-  squarePhoto("foto-comunidad-3", 960),
-  squarePhoto("foto-comunidad-4", 960),
-  squarePhoto("foto-comunidad-5"),
-  squarePhoto("foto-comunidad-6", 816),
-  squarePhoto("foto-comunidad-7"),
-  squarePhoto("foto-comunidad-8"),
-];
+const communityPhotos = Array.from({ length: 8 }, (_, index) => `images/comunidad-${index + 1}.webp`);
 
 // En el lugar de la reseña de la página de ejemplo: no hay reseñas reales todavía (pendientes.md).
 export function communityCard(business: BusinessInfo): string {
@@ -555,7 +509,7 @@ export function communityCard(business: BusinessInfo): string {
       <h2 id="community-title">Comunidad AGS</h2>
       <a class="community-link" href="${attr(instagramUrl(handle))}" target="_blank" rel="noopener noreferrer">
         <span class="community-grid">
-          ${communityPhotos.map((photo) => responsiveImage(photo, { alt: "", sizes: COMMUNITY_PHOTO_SIZES, loading: "lazy" })).join("")}
+          ${communityPhotos.map((src) => image(src, { alt: "", loading: "lazy" })).join("")}
         </span>
         <span class="community-handle">${icon("instagram")} Seguinos en @${escapeHtml(handle)} ${icon("arrow")}</span><span class="visually-hidden"> (se abre en otra pestaña)</span>
       </a>
@@ -575,13 +529,11 @@ export function intentCircles({ catalog }: PageData): string {
     .map((intent) => {
       const { blurb, photo } = intentShowcase[intent.id];
       const product = catalog.find((item) => item.id === photo);
-      const image = product
-        ? responsiveImage(product.images.card, { alt: "", sizes: INTENT_PHOTO_SIZES, loading: "lazy" })
-        : "";
+      const picture = product ? image(product.gallery[0].src, { alt: "", loading: "lazy" }) : "";
       return `
         <li>
           <a class="intent-link intent-${attr(intent.id)}" href="${sitePagePath("productos")}?uso=${attr(intent.id)}">
-            <span class="intent-photo" aria-hidden="true">${image}</span>
+            <span class="intent-photo" aria-hidden="true">${picture}</span>
             <span class="intent-label">${escapeHtml(intent.label)}</span>
             <span class="intent-blurb">${escapeHtml(blurb)}</span>
           </a>
@@ -615,7 +567,7 @@ export function bestSellers({ business, catalog }: PageData): string {
       (product) => `
         <li>
           <a class="best-card" href="${attr(productPath(product))}">
-            <span class="best-photo">${responsiveImage(product.images.card, { alt: product.imageAlt, sizes: BEST_PHOTO_SIZES, loading: "lazy" })}</span>
+            <span class="best-photo">${image(product.gallery[0].src, { alt: product.gallery[0].alt, loading: "lazy" })}</span>
             <span class="best-name">${escapeHtml(product.name)}</span>
             <span class="best-price">${priceLabel(product)}</span>
           </a>
@@ -633,7 +585,6 @@ export function bestSellers({ business, catalog }: PageData): string {
     </section>`;
 }
 
-const stampPhoto = squarePhoto("foto-proceso-1");
 const STAMP_ALT = "Sello con la carita de StudioAGS junto a la almohadilla y dos tarjetas recién selladas";
 
 // Tarjeta blanca con la foto y una carita del kit pegada en la esquina, como la flor de la página
@@ -642,7 +593,7 @@ export function aboutTeaser(): string {
   return `
     <section class="about-teaser" aria-labelledby="about-teaser-title">
       <div class="about-teaser-photo">
-        ${responsiveImage(stampPhoto, { className: "about-photo", alt: STAMP_ALT, sizes: ABOUT_PHOTO_SIZES, loading: "lazy" })}
+        ${image("images/proceso-1.webp", { className: "about-photo", alt: STAMP_ALT, loading: "lazy" })}
         <span class="about-sticker" aria-hidden="true"></span>
       </div>
       <div class="about-copy">
@@ -671,7 +622,7 @@ export function aboutIntro(): string {
         <p>Nos gusta que cada cosa tenga algo tuyo: un nombre, una fecha, tu logo o esa foto que te encanta. Por eso trabajamos pedido por pedido: te mandamos una muestra antes de imprimir y seguimos hasta que te guste.</p>
         <p>Después viene la parte que más disfrutamos: lo preparamos a mano, lo sellamos con nuestra carita y lo envolvemos para que llegue listo para regalar o para quedártelo.</p>
       </div>
-      ${responsiveImage(teamPhoto, { className: "about-photo", alt: TEAM_ALT, sizes: ABOUT_PHOTO_SIZES, highPriority: true })}
+      ${image("images/stand-2.webp", { className: "about-photo", alt: TEAM_ALT, highPriority: true })}
     </section>`;
 }
 
@@ -742,7 +693,7 @@ function optionGroups(product: CatalogProduct): string {
       const options = group.options
         .map(
           (option) =>
-            `<label class="option-chip"><input type="radio" name="${attr(`opcion-${product.id}-${group.id}`)}" value="${attr(option.id)}"${option.photo ? ` data-photo="${attr(option.photo.image.base)}"` : ""}${selection[group.id] === option.id ? " checked" : ""} disabled autocomplete="off" /><span>${escapeHtml(option.label)}</span></label>`,
+            `<label class="option-chip"><input type="radio" name="${attr(`opcion-${product.id}-${group.id}`)}" value="${attr(option.id)}"${option.photo ? ` data-photo="${attr(option.photo.src)}"` : ""}${selection[group.id] === option.id ? " checked" : ""} disabled autocomplete="off" /><span>${escapeHtml(option.label)}</span></label>`,
         )
         .join("");
       return `
@@ -822,12 +773,7 @@ export function productCard(product: CatalogProduct): string {
   return `
     <article class="product-card" id="producto-${id}" data-product-island data-product-id="${id}" aria-labelledby="producto-${id}-titulo">
       <a class="product-image-wrap" href="${attr(productPath(product))}" tabindex="-1" aria-hidden="true">
-        ${responsiveImage(product.images.card, {
-          className: "product-image",
-          alt: product.imageAlt,
-          sizes: CARD_IMAGE_SIZES,
-          loading: "lazy",
-        })}
+        ${image(product.gallery[0].src, { className: "product-image", alt: product.gallery[0].alt, loading: "lazy" })}
         ${product.personalizable ? '<span class="product-category">Personalizable</span>' : ""}
       </a>
       <div class="product-content">
@@ -854,23 +800,19 @@ export function productCard(product: CatalogProduct): string {
 // cargan recién cuando se muestran. Después de las de la galería van, sin miniatura, las fotos
 // de las opciones: aparecen al elegir la opción.
 function productGallery(product: CatalogProduct): string {
-  const photos = galleryPhotos(product);
-  const slides = [...photos, ...optionPhotos(product)]
+  const photos = product.gallery;
+  const slides = [...photos, ...extraOptionPhotos(product)]
     .map(
       (photo, index) => `
-        <figure class="gallery-photo${photo.fit === "contain" ? " is-contained" : ""}" data-gallery-photo data-photo-base="${attr(photo.image.base)}"${index === 0 ? "" : " hidden"}>
-          ${responsiveImage(photo.image, {
-            alt: photo.alt,
-            sizes: GALLERY_SIZES,
-            ...(index === 0 ? { highPriority: true } : { loading: "lazy" as const }),
-          })}
+        <figure class="gallery-photo${photo.contain ? " is-contained" : ""}" data-gallery-photo data-photo-src="${attr(photo.src)}"${index === 0 ? "" : " hidden"}>
+          ${image(photo.src, { alt: photo.alt, ...(index === 0 ? { highPriority: true } : { loading: "lazy" as const }) })}
         </figure>`,
     )
     .join("");
   const thumbs = photos
     .map(
       (photo, index) =>
-        `<button class="gallery-thumb${index === 0 ? " is-active" : ""}" type="button" data-action="show-photo" data-photo-index="${index}" aria-pressed="${index === 0}" disabled>${responsiveImage(photo.image, { alt: "", sizes: GALLERY_THUMB_SIZES, loading: "lazy" })}<span class="visually-hidden">Foto ${index + 1} de ${photos.length}</span></button>`,
+        `<button class="gallery-thumb${index === 0 ? " is-active" : ""}" type="button" data-action="show-photo" data-photo-index="${index}" aria-pressed="${index === 0}" disabled>${image(photo.src, { alt: "", loading: "lazy" })}<span class="visually-hidden">Foto ${index + 1} de ${photos.length}</span></button>`,
     )
     .join("");
   return `
@@ -884,7 +826,13 @@ export function productPage(product: CatalogProduct): string {
   const resolved = initialResolved(product);
   const id = attr(product.id);
   const leadTime = businessValue(product.leadTime).text;
-  const details = (product.details ?? []).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("");
+  // Cada línea del texto es un párrafo.
+  const details = product.details
+    .split("\n")
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+    .join("");
   return `
     <nav class="breadcrumb" aria-label="Estás en">
       <ol>
@@ -1091,10 +1039,9 @@ const processSteps: Array<{ title: string; text: string; alt: string }> = [
 export function processSection(): string {
   const steps = processSteps
     .map((step, index) => {
-      const photo = squarePhoto(`foto-proceso-${index + 1}`);
       return `
         <li class="process-step">
-          ${responsiveImage(photo, { className: "process-photo", alt: step.alt, sizes: PROCESS_PHOTO_SIZES, loading: "lazy" })}
+          ${image(`images/proceso-${index + 1}.webp`, { className: "process-photo", alt: step.alt, loading: "lazy" })}
           <h3>${escapeHtml(step.title)}</h3>
           <p>${escapeHtml(step.text)}</p>
         </li>`;
@@ -1116,15 +1063,10 @@ export function processSection(): string {
 
 // Una foto a la vista por vez; slideshow.ts las pasa solas y muestra el botón para frenarlas.
 // Sin JavaScript queda la primera. Son de adorno: el texto está en las preguntas.
-function slideshow(photos: readonly ImageSpec[], className: string, sizes: string): string {
+function slideshow(photos: readonly Photo[], className: string): string {
   const slides = photos
     .map((photo, index) =>
-      responsiveImage(photo, {
-        className: `slideshow-slide${index === 0 ? " is-current" : ""}`,
-        alt: "",
-        sizes,
-        loading: "lazy",
-      }),
+      image(photo.src, { className: `slideshow-slide${index === 0 ? " is-current" : ""}`, alt: "", loading: "lazy" }),
     )
     .join("");
   return `
@@ -1184,7 +1126,7 @@ export function faqSection({ business, catalog }: PageData): string {
             )
             .join("\n          ")}
         </div>
-        ${slideshow(catalog.slice(0, 6).map((product) => product.images.card), "faq-slideshow", FAQ_PHOTO_SIZES)}
+        ${slideshow(catalog.slice(0, 6).map((product) => product.gallery[0]), "faq-slideshow")}
       </div>
     </section>`;
 }

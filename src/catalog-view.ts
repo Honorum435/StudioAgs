@@ -1,13 +1,10 @@
 import { MAX_QUANTITY, MIN_QUANTITY, clampQuantity, type OrderStore } from "./cart";
 import {
-  imageSrcset,
-  imageUrl,
   initialSelection,
-  productPhotos,
   products,
   resolveSelection,
   type CatalogProduct,
-  type GalleryPhoto,
+  type Photo,
   type Selection,
 } from "./catalog";
 import { announceTo, delegateActions, rememberHtml, setHtml, windowOf, type ActionHandler } from "./dom";
@@ -133,14 +130,10 @@ function showSlide(gallery: HTMLElement, index: number): void {
 }
 
 // En la tarjeta, la foto pasa a la de la opción; los dibujos del catálogo se ven enteros.
-function paintCardImage(image: HTMLImageElement, photo: GalleryPhoto): void {
-  const spec = photo.image;
-  image.srcset = imageSrcset(spec);
-  image.src = imageUrl(spec, spec.width);
-  image.width = spec.width;
-  image.height = spec.height;
+function paintCardImage(image: HTMLImageElement, photo: Photo): void {
+  image.src = photo.src;
   image.alt = photo.alt;
-  image.closest(".product-image-wrap")?.classList.toggle("is-contained", photo.fit === "contain");
+  image.closest(".product-image-wrap")?.classList.toggle("is-contained", photo.contain);
 }
 
 export function mountCatalogView(options: CatalogViewOptions): CatalogView {
@@ -218,17 +211,17 @@ export function mountCatalogView(options: CatalogViewOptions): CatalogView {
 
   // La opción elegida muestra su foto, como pidió la dueña: en la página del producto pasa a la
   // foto grande y en la tarjeta reemplaza la imagen.
-  function showOptionPhoto(island: CardIsland, base: string): void {
+  function showOptionPhoto(island: CardIsland, src: string): void {
     const gallery = island.card.querySelector<HTMLElement>("[data-gallery]");
     if (gallery) {
       const slides = Array.from(gallery.querySelectorAll<HTMLElement>("[data-gallery-photo]"));
-      const index = slides.findIndex((slide) => slide.dataset.photoBase === base);
+      const index = slides.findIndex((slide) => slide.dataset.photoSrc === src);
       if (index >= 0) {
         showSlide(gallery, index);
       }
       return;
     }
-    const photo = productPhotos(island.product).find((item) => item.image.base === base);
+    const photo = island.product.groups.flatMap((g) => g.options).find((o) => o.photo?.src === src)?.photo;
     const image = island.card.querySelector<HTMLImageElement>(".product-image");
     if (photo && image) {
       paintCardImage(image, photo);

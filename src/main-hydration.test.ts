@@ -258,21 +258,21 @@ describe("página de un producto", () => {
     await hydrate();
     const thumbs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-action="show-photo"]'));
     const photos = Array.from(document.querySelectorAll<HTMLElement>("[data-gallery-photo]"));
-    const visible = () => photos.filter((photo) => !photo.hidden).map((photo) => photo.dataset.photoBase);
+    const visible = () => photos.filter((photo) => !photo.hidden).map((photo) => photo.dataset.photoSrc);
 
     $<HTMLInputElement>('article.product-page input[value="rosa"]').click();
-    expect(visible()).toEqual(["foto-minijuegos-5"]);
+    expect(visible()).toEqual(["fotos/minijuegos-5.webp"]);
     expect(thumbs.every((thumb) => thumb.getAttribute("aria-pressed") === "false")).toBe(true);
 
     // El naranja es una foto de la galería: se marca su miniatura.
     $<HTMLInputElement>('article.product-page input[value="naranja"]').click();
-    expect(visible()).toEqual(["foto-minijuegos-4"]);
+    expect(visible()).toEqual(["fotos/minijuegos-4.webp"]);
     expect(thumbs.map((thumb) => thumb.getAttribute("aria-pressed"))).toEqual(
       thumbs.map((_thumb, index) => String(index === 3)),
     );
 
     thumbs[0].click();
-    expect(visible()).toEqual(["foto-minijuegos-1"]);
+    expect(visible()).toEqual(["fotos/minijuegos-1.webp"]);
   });
 });
 

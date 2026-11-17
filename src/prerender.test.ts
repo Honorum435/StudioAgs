@@ -104,7 +104,7 @@ describe("jsonLd", () => {
     for (const item of items) {
       expect(item["@type"]).toBe("Product");
       expect(item.offers.priceCurrency).toBe("ARS");
-      expect(item.image.startsWith(`${siteUrl}/images/`)).toBe(true);
+      expect(item.image.startsWith(`${siteUrl}/fotos/`)).toBe(true);
     }
   });
 

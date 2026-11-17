@@ -2,10 +2,9 @@
 import { describe, expect, it } from "vitest";
 import { business, businessValue } from "./business";
 import type { ResolvedLine } from "./cart";
-import { galleryPhotos, imageUrl, optionPhotos, products, resolveSelection, type CatalogProduct } from "./catalog";
+import { extraOptionPhotos, products, resolveSelection, type CatalogProduct } from "./catalog";
 import { formatPrice } from "./format";
 import {
-  CARD_IMAGE_SIZES,
   TOTAL_NOTE,
   announcements,
   sortOptions,
@@ -414,7 +413,7 @@ describe("preguntas frecuentes", () => {
 
   it("al lado pasan las fotos de las tarjetas de los primeros seis productos", () => {
     const slides = [...faqDoc.querySelectorAll(".faq-slideshow img")].map((image) => image.getAttribute("src"));
-    expect(slides).toEqual(products.slice(0, 6).map(({ images }) => imageUrl(images.card, images.card.width)));
+    expect(slides).toEqual(products.slice(0, 6).map(({ gallery }) => gallery[0].src));
   });
 });
 
@@ -452,10 +451,9 @@ describe("así preparamos tu pedido", () => {
     ]);
     steps.forEach((step, index) => {
       const image = step.querySelector("img")!;
-      expect(image.getAttribute("src")).toBe(`images/foto-proceso-${index + 1}-1200.webp`);
+      expect(image.getAttribute("src")).toBe(`images/proceso-${index + 1}.webp`);
       expect(image.getAttribute("alt")).not.toBe("");
       expect(image.getAttribute("loading")).toBe("lazy");
-      expect([image.getAttribute("width"), image.getAttribute("height")]).toEqual(["1200", "1200"]);
     });
   });
 });
@@ -503,9 +501,8 @@ describe("página de un producto", () => {
 
   it("la galería muestra la primera foto y deja las demás ocultas, con una miniatura por foto", () => {
     const photos = [...detail.querySelectorAll<HTMLElement>("[data-gallery-photo]")];
-    const gallery = galleryPhotos(calendarios);
-    expect(gallery).toHaveLength((calendarios.gallery?.length ?? 0) + 1);
-    expect(photos).toHaveLength(gallery.length + optionPhotos(calendarios).length);
+    const gallery = calendarios.gallery;
+    expect(photos).toHaveLength(gallery.length + extraOptionPhotos(calendarios).length);
     expect(photos.map((photo) => photo.hidden)).toEqual(photos.map((_photo, index) => index > 0));
     expect(photos[0].querySelector("img")?.getAttribute("fetchpriority")).toBe("high");
     expect(photos.slice(1).every((photo) => photo.querySelector("img")?.getAttribute("loading") === "lazy")).toBe(true);
@@ -524,17 +521,17 @@ describe("página de un producto", () => {
     const options = calendarios.groups.flatMap((group) => group.options);
     expect(options.every((option) => option.photo)).toBe(true);
     for (const option of options) {
-      const base = option.photo!.image.base;
-      expect(detail.querySelector<HTMLInputElement>(`input[value="${option.id}"]`)?.dataset.photo).toBe(base);
-      const slide = slides.find((item) => item.dataset.photoBase === base)!;
+      const src = option.photo!.src;
+      expect(detail.querySelector<HTMLInputElement>(`input[value="${option.id}"]`)?.dataset.photo).toBe(src);
+      const slide = slides.find((item) => item.dataset.photoSrc === src)!;
       expect(slide.hidden).toBe(true);
-      expect(slide.classList.contains("is-contained")).toBe(option.photo!.fit === "contain");
+      expect(slide.classList.contains("is-contained")).toBe(option.photo!.contain);
     }
     const minijuegos = parse(renderProductPage({ business, catalog: products }, product("minijuegos")));
     expect(minijuegos.querySelector<HTMLInputElement>('input[value="amarillo"]')?.hasAttribute("data-photo")).toBe(false);
-    expect(minijuegos.querySelector<HTMLInputElement>('input[value="rosa"]')?.dataset.photo).toBe("foto-minijuegos-5");
+    expect(minijuegos.querySelector<HTMLInputElement>('input[value="rosa"]')?.dataset.photo).toBe("fotos/minijuegos-5.webp");
     // El naranja ya está en la galería: no se repite.
-    expect(minijuegos.querySelectorAll('[data-photo-base="foto-minijuegos-4"]')).toHaveLength(1);
+    expect(minijuegos.querySelectorAll('[data-photo-src="fotos/minijuegos-4.webp"]')).toHaveLength(1);
   });
 
   it("ofrece los tres productos que siguen en el catálogo, dando la vuelta al final", () => {
@@ -672,17 +669,13 @@ describe("controles antes de hidratar", () => {
 });
 
 describe("imágenes", () => {
-  it("cada foto de tarjeta lleva srcset con los anchos del catálogo, sizes, width, height y carga diferida", () => {
+  it("cada foto de tarjeta es la primera de su galería, con carga diferida y sin srcset", () => {
     for (const item of products) {
       const image = card(item.id).querySelector("img.product-image")!;
-      const spec = item.images.card;
-      const candidates = (image.getAttribute("srcset") ?? "").split(", ");
-      expect(candidates).toEqual(spec.widths.map((width) => `images/${spec.base}-${width}.webp ${width}w`));
-      expect(image.getAttribute("sizes")).toBe(CARD_IMAGE_SIZES);
-      expect(image.getAttribute("width")).toBe(String(spec.width));
-      expect(image.getAttribute("height")).toBe(String(spec.height));
+      expect(image.getAttribute("src")).toBe(item.gallery[0].src);
+      expect(image.hasAttribute("srcset")).toBe(false);
       expect(image.getAttribute("loading")).toBe("lazy");
-      expect(image.getAttribute("alt")).toBe(item.imageAlt);
+      expect(image.getAttribute("alt")).toBe(item.gallery[0].alt);
       expect(image.hasAttribute("fetchpriority")).toBe(false);
     }
   });
@@ -692,7 +685,7 @@ describe("imágenes", () => {
     const priority = [...homeDoc.querySelectorAll('[fetchpriority="high"]')];
     expect(priority).toHaveLength(1);
     expect(priority[0].closest(".hero-photo-main")).not.toBeNull();
-    expect(priority[0].getAttribute("srcset")).toContain("images/foto-stand-1-960.webp 960w");
+    expect(priority[0].getAttribute("src")).toBe("images/stand-1.webp");
     // Una sola polaroid, la del puesto.
     expect(homeDoc.querySelectorAll(".hero-photo")).toHaveLength(1);
   });
