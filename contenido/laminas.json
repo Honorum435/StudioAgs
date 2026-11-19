@@ -15,6 +15,50 @@
       "contain": false
     }
   ],
+  "groups": [
+    {
+      "id": "tamano",
+      "label": "Tamaño",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "a3-plus",
+          "label": "A3+ (SA3)",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "a3",
+          "label": "A3",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "a4",
+          "label": "A4",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "a5",
+          "label": "A5",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "a6",
+          "label": "A6",
+          "src": "",
+          "alt": "",
+          "contain": false
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "A3+ (SA3)",
@@ -43,36 +87,13 @@
     }
   ],
   "addOns": [],
-  "optionPhotos": [
-    {
-      "option": "Tamaño: A3+ (SA3)",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Tamaño: A3",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Tamaño: A4",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Tamaño: A5",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Tamaño: A6",
-      "src": "",
-      "alt": "",
-      "contain": false
-    }
-  ]
+  "intents": [
+    "decorar",
+    "regalar"
+  ],
+  "personalizable": false,
+  "photoQuantity": "",
+  "leadTime": null,
+  "featured": true,
+  "order": 12
 }

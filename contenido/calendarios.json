@@ -30,6 +30,113 @@
       "contain": false
     }
   ],
+  "groups": [
+    {
+      "id": "formato",
+      "label": "Formato",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "clasico-sin-notas",
+          "label": "Clásico sin notas",
+          "src": "/fotos/calendarios-5.webp",
+          "alt": "Calendario clásico rojo de julio, con la grilla del mes",
+          "contain": false
+        },
+        {
+          "id": "clasico-con-notas",
+          "label": "Clásico con notas",
+          "src": "/fotos/calendarios-6.webp",
+          "alt": "Calendario clásico rosa de diciembre, todo escrito, con las notas abajo",
+          "contain": false
+        },
+        {
+          "id": "unico",
+          "label": "Único",
+          "src": "/fotos/calendarios-7.webp",
+          "alt": "Calendario único rosa sobre la mesa, junto a un florero",
+          "contain": false
+        },
+        {
+          "id": "doce-meses",
+          "label": "Doce meses",
+          "src": "/fotos/opcion-calendarios-doce-meses.webp",
+          "alt": "Dibujo del calendario de doce meses: el año entero en una hoja",
+          "contain": true
+        },
+        {
+          "id": "semanal-grande",
+          "label": "Semanal grande",
+          "src": "/fotos/calendarios-9.webp",
+          "alt": "Calendario semanal grande rojo, con fibrones",
+          "contain": false
+        },
+        {
+          "id": "semanal-chico",
+          "label": "Semanal chico",
+          "src": "/fotos/calendarios-8.webp",
+          "alt": "Calendario semanal chico rojo, con fibrones y un borrador",
+          "contain": false
+        },
+        {
+          "id": "acrilico",
+          "label": "Acrílico",
+          "src": "/fotos/calendarios-10.webp",
+          "alt": "Calendario de acrílico de septiembre, apoyado en la pared",
+          "contain": false
+        },
+        {
+          "id": "iman",
+          "label": "Imán",
+          "src": "/fotos/calendarios-11.webp",
+          "alt": "Calendario de imán lila en la heladera, con fibrones",
+          "contain": false
+        }
+      ]
+    },
+    {
+      "id": "colores",
+      "label": "Colores",
+      "changesPrice": false,
+      "options": [
+        {
+          "id": "pastel",
+          "label": "Pastel",
+          "src": "/fotos/calendarios-16.webp",
+          "alt": "Los doce meses en colores pastel",
+          "contain": true
+        },
+        {
+          "id": "intenso",
+          "label": "Intenso",
+          "src": "/fotos/calendarios-13.webp",
+          "alt": "Los doce meses en colores intensos",
+          "contain": true
+        },
+        {
+          "id": "calido",
+          "label": "Cálido",
+          "src": "/fotos/calendarios-12.webp",
+          "alt": "Los doce meses en colores cálidos, del verde lima al rojo",
+          "contain": true
+        },
+        {
+          "id": "frio",
+          "label": "Frío",
+          "src": "/fotos/calendarios-14.webp",
+          "alt": "Los doce meses en colores fríos, del rosa al verde",
+          "contain": true
+        },
+        {
+          "id": "monocromo",
+          "label": "Monocromo",
+          "src": "/fotos/calendarios-15.webp",
+          "alt": "Los doce meses en un solo color; de ejemplo, azul",
+          "contain": true
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "Clásico sin notas",
@@ -80,84 +187,14 @@
       "unit": "por unidad"
     }
   ],
-  "optionPhotos": [
-    {
-      "option": "Formato: Clásico sin notas",
-      "src": "/fotos/calendarios-5.webp",
-      "alt": "Calendario clásico rojo de julio, con la grilla del mes",
-      "contain": false
-    },
-    {
-      "option": "Formato: Clásico con notas",
-      "src": "/fotos/calendarios-6.webp",
-      "alt": "Calendario clásico rosa de diciembre, todo escrito, con las notas abajo",
-      "contain": false
-    },
-    {
-      "option": "Formato: Único",
-      "src": "/fotos/calendarios-7.webp",
-      "alt": "Calendario único rosa sobre la mesa, junto a un florero",
-      "contain": false
-    },
-    {
-      "option": "Formato: Doce meses",
-      "src": "/fotos/opcion-calendarios-doce-meses.webp",
-      "alt": "Dibujo del calendario de doce meses: el año entero en una hoja",
-      "contain": true
-    },
-    {
-      "option": "Formato: Semanal grande",
-      "src": "/fotos/calendarios-9.webp",
-      "alt": "Calendario semanal grande rojo, con fibrones",
-      "contain": false
-    },
-    {
-      "option": "Formato: Semanal chico",
-      "src": "/fotos/calendarios-8.webp",
-      "alt": "Calendario semanal chico rojo, con fibrones y un borrador",
-      "contain": false
-    },
-    {
-      "option": "Formato: Acrílico",
-      "src": "/fotos/calendarios-10.webp",
-      "alt": "Calendario de acrílico de septiembre, apoyado en la pared",
-      "contain": false
-    },
-    {
-      "option": "Formato: Imán",
-      "src": "/fotos/calendarios-11.webp",
-      "alt": "Calendario de imán lila en la heladera, con fibrones",
-      "contain": false
-    },
-    {
-      "option": "Colores: Pastel",
-      "src": "/fotos/calendarios-16.webp",
-      "alt": "Los doce meses en colores pastel",
-      "contain": true
-    },
-    {
-      "option": "Colores: Intenso",
-      "src": "/fotos/calendarios-13.webp",
-      "alt": "Los doce meses en colores intensos",
-      "contain": true
-    },
-    {
-      "option": "Colores: Cálido",
-      "src": "/fotos/calendarios-12.webp",
-      "alt": "Los doce meses en colores cálidos, del verde lima al rojo",
-      "contain": true
-    },
-    {
-      "option": "Colores: Frío",
-      "src": "/fotos/calendarios-14.webp",
-      "alt": "Los doce meses en colores fríos, del rosa al verde",
-      "contain": true
-    },
-    {
-      "option": "Colores: Monocromo",
-      "src": "/fotos/calendarios-15.webp",
-      "alt": "Los doce meses en un solo color; de ejemplo, azul",
-      "contain": true
-    }
-  ]
+  "intents": [
+    "organizarte",
+    "regalar",
+    "marca"
+  ],
+  "personalizable": true,
+  "photoQuantity": "",
+  "leadTime": null,
+  "featured": true,
+  "order": 1
 }

@@ -344,27 +344,34 @@ describe("inicio", () => {
     }
   });
 
-  it("los más vendidos son los elegidos, en su orden, con foto, nombre y precio", () => {
-    const featured = businessValue(business.featuredProducts);
+  it("los más vendidos son los marcados en el panel, en el orden del catálogo, con foto, nombre y precio", () => {
+    const featured = products.filter((item) => item.featured).map((item) => item.id);
+    expect(featured).toEqual(["calendarios", "fotos", "bitacoras", "laminas"]);
     const cards = [...homeDoc.querySelectorAll<HTMLAnchorElement>(".best-card")];
     expect(cards.map((card) => card.getAttribute("href"))).toEqual(featured.map((id) => `producto/${id}/`));
     expect(text(cards[0].querySelector(".best-name"))).toBe("Calendarios");
     expect(text(cards[0].querySelector(".best-price"))).toBe(`Desde ${squash(formatPrice(20000))}`);
-    const single = parse(
-      renderPage({ business: { ...business, featuredProducts: ["entre-flores"] }, catalog: products }),
-    );
+    const only = (id: string) => products.map((item) => ({ ...item, featured: item.id === id }));
+    const single = parse(renderPage({ business, catalog: only("entre-flores") }));
     expect(text(single.querySelector(".best-price"))).not.toMatch(/^Desde/);
     expect(cards.every((card) => card.querySelector("img")?.getAttribute("alt") !== "")).toBe(true);
     expect(homeDoc.querySelector(".best-heading a")?.getAttribute("href")).toBe("productos/");
   });
 
-  it("sin elegidos que existan, muestra los primeros cuatro del catálogo", () => {
-    const fallback = parse(
-      renderPage({ business: { ...business, featuredProducts: ["no-existe"] }, catalog: products }),
-    );
-    expect([...fallback.querySelectorAll(".best-card")].map((card) => card.getAttribute("href"))).toEqual(
+  it("muestra hasta cuatro marcados y, sin ninguno, los primeros cuatro del catálogo", () => {
+    const hrefs = (catalog: CatalogProduct[]) =>
+      [...parse(renderPage({ business, catalog })).querySelectorAll(".best-card")].map((card) => card.getAttribute("href"));
+    expect(hrefs(products.map((item) => ({ ...item, featured: false })))).toEqual(
       products.slice(0, 4).map((item) => `producto/${item.id}/`),
     );
+    expect(hrefs(products.map((item) => ({ ...item, featured: true })))).toHaveLength(4);
+  });
+
+  it("si se borra el producto de la foto de un círculo, usa otro de esa intención", () => {
+    const catalog = products.filter((item) => item.id !== "tarjetas");
+    const circle = parse(renderPage({ business, catalog })).querySelector(".intent-marca .intent-photo img");
+    const first = catalog.find((item) => item.intents.includes("marca"))!;
+    expect(circle?.getAttribute("src")).toBe(first.gallery[0].src);
   });
 
   it("los círculos tienen un título para los lectores aunque no se vea", () => {
@@ -571,7 +578,10 @@ describe("escape", () => {
     const catalog = products.map((item) => (item.id === "tarjetas" ? { ...item, name: hostile } : item));
     const html = renderSitePage({ business, catalog }, "productos");
     // En el inicio, el nombre sale en los más vendidos.
-    const homeHtml = renderPage({ business: { ...business, featuredProducts: ["tarjetas"] }, catalog });
+    const homeHtml = renderPage({
+      business,
+      catalog: catalog.map((item) => ({ ...item, featured: item.id === "tarjetas" })),
+    });
     expect(homeHtml).not.toContain("<script>alert");
     expect(homeHtml).toContain("&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;");
 

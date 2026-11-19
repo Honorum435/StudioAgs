@@ -528,7 +528,9 @@ export function intentCircles({ catalog }: PageData): string {
   const items = intents
     .map((intent) => {
       const { blurb, photo } = intentShowcase[intent.id];
-      const product = catalog.find((item) => item.id === photo);
+      // Si ese producto se borra en el panel, la foto sale del primero que tiene esa intención.
+      const product =
+        catalog.find((item) => item.id === photo) ?? catalog.find((item) => item.intents.includes(intent.id));
       const picture = product ? image(product.gallery[0].src, { alt: "", loading: "lazy" }) : "";
       return `
         <li>
@@ -555,12 +557,9 @@ function priceLabel(product: CatalogProduct): string {
   return low === Math.max(...prices) ? formatPrice(low) : `Desde ${formatPrice(low)}`;
 }
 
-// Los que eligió la dueña, en su orden; si ninguno existe, los primeros del catálogo.
-export function bestSellers({ business, catalog }: PageData): string {
-  const picked = businessValue(business.featuredProducts).flatMap((id) => {
-    const product = catalog.find((item) => item.id === id);
-    return product ? [product] : [];
-  });
+// Los que se marcan en el panel, en el orden del catálogo; si no hay ninguno, los primeros.
+export function bestSellers({ catalog }: PageData): string {
+  const picked = catalog.filter((product) => product.featured);
   const featured = (picked.length > 0 ? picked : catalog).slice(0, 4);
   const cards = featured
     .map(

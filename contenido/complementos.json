@@ -35,6 +35,43 @@
       "contain": true
     }
   ],
+  "groups": [
+    {
+      "id": "tipo",
+      "label": "Tipo",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "separador",
+          "label": "Separador clásico",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "separador-con-iman",
+          "label": "Separador con imán",
+          "src": "/fotos/complementos-1.webp",
+          "alt": "Separadores imantados con flores y moños, en sus tarjetas de colores",
+          "contain": false
+        },
+        {
+          "id": "separadores-con-iman-x3",
+          "label": "3 separadores con imán",
+          "src": "/fotos/complementos-2.webp",
+          "alt": "Separadores imantados con flores, cuadros y figuras en blanco y negro",
+          "contain": false
+        },
+        {
+          "id": "marco-con-iman",
+          "label": "Marco con imán",
+          "src": "/fotos/complementos-4.webp",
+          "alt": "Marcos con imán para polaroid: rojo, amarillo con limones, cuadrillé verde y rosa con flores",
+          "contain": true
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "Separador clásico",
@@ -58,30 +95,13 @@
     }
   ],
   "addOns": [],
-  "optionPhotos": [
-    {
-      "option": "Tipo: Separador clásico",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Tipo: Separador con imán",
-      "src": "/fotos/complementos-1.webp",
-      "alt": "Separadores imantados con flores y moños, en sus tarjetas de colores",
-      "contain": false
-    },
-    {
-      "option": "Tipo: 3 separadores con imán",
-      "src": "/fotos/complementos-2.webp",
-      "alt": "Separadores imantados con flores, cuadros y figuras en blanco y negro",
-      "contain": false
-    },
-    {
-      "option": "Tipo: Marco con imán",
-      "src": "/fotos/complementos-4.webp",
-      "alt": "Marcos con imán para polaroid: rojo, amarillo con limones, cuadrillé verde y rosa con flores",
-      "contain": true
-    }
-  ]
+  "intents": [
+    "regalar",
+    "organizarte"
+  ],
+  "personalizable": true,
+  "photoQuantity": "Solo para los marcos: una foto por cada marco. Los separadores no llevan fotos.",
+  "leadTime": null,
+  "featured": false,
+  "order": 11
 }

@@ -72,38 +72,67 @@ export interface PhotoInstructions {
   howToSend: string;
 }
 
-// Lo que se edita desde el panel (contenido/<id>.json). El panel guarda null en los textos que se
-// dejan vacíos: null y "" valen lo mismo.
-export interface ProductContent {
+// Lo que edita el panel: el producto entero está en contenido/<id>.json y el nombre del archivo es
+// su id. El panel guarda null o "" en lo que se deja vacío: valen lo mismo. Lo que no se aclara:
+// sin opciones, personalizable, plazo provisorio de 3 a 5 días hábiles y sin fotos del cliente.
+export interface ProductFile {
   name: string;
   description: string;
   // Párrafos extra para la página del producto, separados por una línea en blanco.
-  details: string | null;
-  note: string | null;
+  details?: string | null;
+  note?: string | null;
   // La primera foto es la de la tarjeta.
-  gallery: { src: string; alt: string | null; contain: boolean }[];
-  // Una fila por combinación de los grupos con precio; "Precio único" si no hay ninguno.
-  prices: { label: string; price: number; unit: string }[];
-  // Si no hay, el panel los deja vacíos, sin la lista o en null.
-  addOns?: AddOn[] | null;
-  // Una fila por opción de cada grupo, "<Grupo>: <Opción>"; src vacío si no tiene foto.
-  optionPhotos?: { option: string; src: string | null; alt: string | null; contain: boolean }[] | null;
-}
-
-// Lo que queda en el código, en la lista de más abajo. Lo que no se aclara: sin opciones,
-// personalizable, plazo provisorio de 3 a 5 días hábiles y sin fotos del cliente.
-export interface ProductStructure {
-  id: string;
-  intents: IntentId[];
-  groups?: OptionGroup[];
-  personalizable?: boolean;
-  // Solo los plazos que informa el catálogo.
-  leadTime?: LeadTime;
+  gallery: FilePhoto[];
+  groups?: FileGroup[] | null;
+  // Una fila por combinación de los grupos que cambian el precio ("Clásico · Pastel"), o una
+  // "Precio único" si no hay ninguno. Las filas que no son de ninguna combinación no se usan. El
+  // panel deja el precio en null mientras falta cargarlo (y no deja guardar así).
+  prices: { label: string; price: number | null; unit: string }[];
+  addOns?: FileAddOn[] | null;
+  // Ids de intents; los que no existen no se usan.
+  intents?: string[] | null;
+  personalizable?: boolean | null;
   // Si el cliente tiene que mandar fotos: cuántas.
-  photoQuantity?: string;
+  photoQuantity?: string | null;
+  // Sin desde y hasta, el provisorio. Sin texto, "De 3 a 5 días hábiles".
+  leadTime?: { min?: number | null; max?: number | null; text?: string | null } | null;
+  // Va en "Los más vendidos" del inicio.
+  featured?: boolean | null;
+  // Lugar en el catálogo: los números más chicos primero; sin número, al final.
+  order?: number | null;
 }
 
-// El producto armado: la estructura más el contenido, con sus combinaciones y precios.
+export interface FilePhoto {
+  src: string | null;
+  alt?: string | null;
+  contain?: boolean | null;
+}
+
+// Los códigos (id) los pone el panel al guardar y no cambian aunque cambie el nombre: los pedidos
+// guardados los usan. Si falta alguno, sale del nombre.
+export interface FileOption extends Omit<FilePhoto, "src"> {
+  id?: string | null;
+  label: string;
+  // La foto que aparece al elegir la opción: es opcional.
+  src?: string | null;
+}
+
+export interface FileGroup {
+  id?: string | null;
+  label: string;
+  // Sin aclarar, cambia el precio. Los que no (los colores de los calendarios) no van en la fila del precio.
+  changesPrice?: boolean | null;
+  options?: FileOption[] | null;
+}
+
+export interface FileAddOn {
+  id?: string | null;
+  label: string;
+  price: number;
+  unit: string;
+}
+
+// El producto armado, con sus combinaciones y precios.
 export interface CatalogProduct {
   id: string;
   name: string;
@@ -120,6 +149,8 @@ export interface CatalogProduct {
   leadTime: BusinessField<LeadTime>;
   needsPhotos: boolean;
   photoInstructions?: PhotoInstructions;
+  // Va en "Los más vendidos" del inicio.
+  featured: boolean;
 }
 
 export interface ResolvedSelection {
@@ -139,155 +170,36 @@ const photoQuality =
 export const photoSending =
   "Mandalas por WhatsApp como documento (no como foto), así no pierden calidad, apenas nos mandes el pedido.";
 
-// Un grupo de opciones, cada una como [id, etiqueta]. Los ids no se cambian: los pedidos guardados los usan.
-function group(id: string, label: string, options: [string, string][]): OptionGroup {
-  return { id, label, options: options.map(([optionId, optionLabel]) => ({ id: optionId, label: optionLabel })) };
+// "Laca sectorizada" → "laca-sectorizada": minúsculas, sin tildes y con guiones. El panel arma los
+// códigos nuevos con la misma regla (public/admin/panel.js).
+export function slugify(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
-// Un grupo que no cambia el precio.
-function freeGroup(id: string, label: string, options: [string, string][]): OptionGroup {
-  return { ...group(id, label, options), free: true };
+// El código guardado o, si falta, el que sale del nombre; si se repite, con -2, -3…
+function assignIds(items: readonly { id?: string | null; label: string }[], prefix: string, fallback: string): string[] {
+  const used = new Set<string>();
+  return items.map((item) => {
+    const base = item.id?.trim() || `${prefix}${slugify(item.label) || fallback}`;
+    let id = base;
+    for (let n = 2; used.has(id); n++) {
+      id = `${base}-${n}`;
+    }
+    used.add(id);
+    return id;
+  });
 }
 
-// Reparto inicial de intenciones y personalizables: revisar con la dueña.
-const structures: ProductStructure[] = [
-  {
-    id: "calendarios",
-    intents: ["organizarte", "regalar", "marca"],
-    // Los colores los pidió la dueña: los monocromos son los de los emprendimientos y los personalizados.
-    groups: [
-      group("formato", "Formato", [
-        ["clasico-sin-notas", "Clásico sin notas"],
-        ["clasico-con-notas", "Clásico con notas"],
-        ["unico", "Único"],
-        ["doce-meses", "Doce meses"],
-        ["semanal-grande", "Semanal grande"],
-        ["semanal-chico", "Semanal chico"],
-        ["acrilico", "Acrílico"],
-        ["iman", "Imán"],
-      ]),
-      freeGroup("colores", "Colores", [
-        ["pastel", "Pastel"],
-        ["intenso", "Intenso"],
-        ["calido", "Cálido"],
-        ["frio", "Frío"],
-        ["monocromo", "Monocromo"],
-      ]),
-    ],
-  },
-  {
-    id: "fotos",
-    intents: ["regalar", "decorar"],
-    groups: [
-      group("formato", "Formato", [
-        ["polaroid", "Polaroid 8 × 6,5"],
-        ["tira", "Tira de fotos"],
-        ["foto-10x10", "Foto 10 × 10"],
-        ["iman-10x10", "Imán 10 × 10"],
-      ]),
-    ],
-    leadTime: { min: 1, max: 3, text: "De 1 a 3 días hábiles" },
-    photoQuantity: "Una foto por cada copia que pidas; para cada tira, tres.",
-  },
-  {
-    id: "pizarra-orma",
-    intents: ["decorar", "organizarte", "regalar"],
-    groups: [group("color", "Color", [["gris-galvanizada", "Gris galvanizada"], ["negro-mate", "Negro mate"]])],
-    photoQuantity:
-      "Para los accesorios: 3 fotos para los imanes de 10 × 10, 3 para las polaroid mini y 9 para las 3 tiras triples.",
-  },
-  { id: "entre-flores", intents: ["regalar", "decorar"] },
-  {
-    id: "vinilos",
-    intents: ["marca", "decorar"],
-    groups: [
-      group("material", "Vinilo", [["blanco", "Blanco"], ["transparente", "Transparente"]]),
-      group("laca", "Laca UV", [
-        ["sin-laca", "Sin laca"],
-        ["laca-sectorizada", "Laca sectorizada"],
-        ["laca-completa", "Laca completa"],
-      ]),
-    ],
-    // El catálogo dice "de 1 a 4 días", sin aclarar si son hábiles.
-    leadTime: { min: 1, max: 4, text: "De 1 a 4 días" },
-  },
-  {
-    id: "gran-formato",
-    intents: ["marca", "decorar"],
-    groups: [
-      group("material", "Material", [
-        ["vinilo-blanco", "Vinilo blanco"],
-        ["vinilo-blanco-laca-sectorizada", "Vinilo blanco con laca sectorizada"],
-        ["vinilo-blanco-laca-completa", "Vinilo blanco con laca completa"],
-        ["vinilo-transparente", "Vinilo transparente"],
-        ["vinilo-transparente-laca-sectorizada", "Vinilo transparente con laca sectorizada"],
-        ["vinilo-transparente-laca-completa", "Vinilo transparente con laca completa"],
-        ["lona-frontlight", "Lona frontlight 13 oz"],
-        ["lona-frontlight-laca", "Lona frontlight 13 oz con laca"],
-        ["blueback", "Blueback 150 g mate"],
-        ["blueback-laca", "Blueback 150 g mate con laca"],
-      ]),
-    ],
-  },
-  { id: "dtf-textil", intents: ["marca", "regalar"] },
-  {
-    id: "tarjetas",
-    intents: ["marca"],
-    groups: [
-      group("cantidad", "Cantidad", [["100", "100"], ["200", "200"], ["300", "300"], ["500", "500"], ["1000", "1.000"]]),
-      group("faz", "Impresión", [["simple-faz", "Simple faz"], ["doble-faz", "Doble faz"]]),
-      group("terminacion", "Terminación", [["sin-laminar", "Sin laminar"], ["laminado", "Laminado mate o brillo"]]),
-    ],
-  },
-  {
-    id: "bitacoras",
-    intents: ["organizarte", "regalar"],
-    groups: [
-      group("formato", "Formato", [["bitacora-a5", "Bitácora A5"], ["bitacora-a6", "Bitácora A6"]]),
-      freeGroup("hojas", "Hojas", [
-        ["lisas", "Lisas"],
-        ["rayadas", "Rayadas"],
-        ["cuadriculadas", "Cuadriculadas"],
-        ["punteadas", "Punteadas"],
-      ]),
-    ],
-  },
-  { id: "archivo-bajonero", intents: ["regalar"], personalizable: false },
-  {
-    id: "complementos",
-    intents: ["regalar", "organizarte"],
-    groups: [
-      group("tipo", "Tipo", [
-        ["separador", "Separador clásico"],
-        ["separador-con-iman", "Separador con imán"],
-        ["separadores-con-iman-x3", "3 separadores con imán"],
-        ["marco-con-iman", "Marco con imán"],
-      ]),
-    ],
-    photoQuantity: "Solo para los marcos: una foto por cada marco. Los separadores no llevan fotos.",
-  },
-  {
-    id: "laminas",
-    intents: ["decorar", "regalar"],
-    groups: [group("tamano", "Tamaño", [["a3-plus", "A3+ (SA3)"], ["a3", "A3"], ["a4", "A4"], ["a5", "A5"], ["a6", "A6"]])],
-    personalizable: false,
-  },
-  {
-    id: "minijuegos",
-    intents: ["regalar"],
-    // Los colores que nombró la dueña (chat del 02/11/2026).
-    groups: [
-      freeGroup("color", "Color", [
-        ["naranja", "Naranja"],
-        ["rosa", "Rosa"],
-        ["celeste", "Celeste"],
-        ["verde", "Verde"],
-        ["amarillo", "Amarillo"],
-      ]),
-    ],
-    personalizable: false,
-  },
-];
+const intentIds = new Set<string>(intents.map((intent) => intent.id));
+
+function isIntentId(id: string): id is IntentId {
+  return intentIds.has(id);
+}
 
 // Todas las combinaciones posibles: una opción de cada grupo.
 function pick(groups: readonly OptionGroup[]): OptionValue[][] {
@@ -297,42 +209,75 @@ function pick(groups: readonly OptionGroup[]): OptionValue[][] {
   );
 }
 
-// Junta la estructura del código con lo que se edita en contenido/<id>.json.
-export function buildProduct(structure: ProductStructure, content: ProductContent): CatalogProduct {
-  const file = `contenido/${structure.id}.json`;
+// El nombre de la fila de precio de una combinación: las opciones que cambian el precio, con " · ".
+// El panel arma las filas con la misma regla.
+export function priceRowLabel(groups: readonly Pick<OptionGroup, "free">[], picked: readonly Pick<OptionValue, "label">[]): string {
+  return picked.filter((_, index) => !groups[index].free).map((option) => option.label).join(" · ") || "Precio único";
+}
+
+function leadTimeText(min: number, max: number): string {
+  if (min === max) {
+    return min === 1 ? "1 día hábil" : `${min} días hábiles`;
+  }
+  return `De ${min} a ${max} días hábiles`;
+}
+
+function readLeadTime(raw: ProductFile["leadTime"]): LeadTime | null {
+  const { min, max } = raw ?? {};
+  if (!Number.isInteger(min) || !Number.isInteger(max) || min! < 1 || max! < min!) {
+    return null;
+  }
+  return { min: min!, max: max!, text: raw?.text?.trim() || leadTimeText(min!, max!) };
+}
+
+// Arma el producto de contenido/<id>.json. Lo que el panel no deja guardar (sin nombre, sin fotos,
+// un grupo sin opciones o una combinación sin precio) frena el build con el archivo y el motivo.
+export function buildProduct(id: string, file: ProductFile): CatalogProduct {
+  const path = `contenido/${id}.json`;
+  if (!file.name?.trim()) {
+    throw new Error(`En ${path} falta el nombre`);
+  }
+  const gallery = (file.gallery ?? []).filter((photo) => photo.src);
+  if (gallery.length === 0) {
+    throw new Error(`En ${path} falta al menos una foto`);
+  }
   // Las páginas usan <base href>: las rutas van sin la barra del principio. Una foto sin
   // descripción lleva el nombre del producto.
-  const toPhoto = (photo: { src: string | null; alt: string | null; contain: boolean }): Photo => ({
+  const toPhoto = (photo: FilePhoto): Photo => ({
     src: (photo.src ?? "").replace(/^\//, ""),
-    alt: photo.alt || content.name,
-    contain: photo.contain,
+    alt: photo.alt?.trim() || file.name,
+    contain: photo.contain ?? false,
   });
 
-  const optionPhotos = content.optionPhotos ?? [];
-  const rowName = (g: OptionGroup, option: OptionValue) => `${g.label}: ${option.label}`;
-  const known = (structure.groups ?? []).flatMap((g) => g.options.map((option) => rowName(g, option)));
-  const unknown = optionPhotos.find((row) => !known.includes(row.option));
-  if (unknown) {
-    throw new Error(`En ${file}, «${unknown.option}» no es una opción de ${structure.id}`);
-  }
-  const groups = (structure.groups ?? []).map((g) => ({
-    ...g,
-    options: g.options.map((option) => {
-      const row = optionPhotos.find((item) => item.option === rowName(g, option));
-      return row?.src ? { ...option, photo: toPhoto(row) } : option;
-    }),
-  }));
+  const fileGroups = file.groups ?? [];
+  const groupIds = assignIds(fileGroups, "", "opciones");
+  const groups: OptionGroup[] = fileGroups.map((g, index) => {
+    const fileOptions = g.options ?? [];
+    if (fileOptions.length === 0) {
+      throw new Error(`En ${path}, «${g.label}» no tiene ninguna opción`);
+    }
+    const optionIds = assignIds(fileOptions, "", "opcion");
+    return {
+      id: groupIds[index],
+      label: g.label,
+      options: fileOptions.map((option, optionIndex) => ({
+        id: optionIds[optionIndex],
+        label: option.label,
+        ...(option.src && { photo: toPhoto({ ...option, src: option.src }) }),
+      })),
+      ...(g.changesPrice === false && { free: true }),
+    };
+  });
 
   const labels = (options: OptionValue[]) => options.map((option) => option.label).join(" · ");
   const combinations = pick(groups).map((picked) => {
-    // El precio depende solo de los grupos que no son gratis.
-    const priceLabel = labels(picked.filter((_, index) => !groups[index].free)) || "Precio único";
-    const row = content.prices.find((item) => item.label === priceLabel);
-    if (!row) {
-      throw new Error(`Falta el precio de «${priceLabel}» en ${file}`);
+    const rowLabel = priceRowLabel(groups, picked);
+    const row = file.prices.find((item) => item.label === rowLabel);
+    if (!row || typeof row.price !== "number" || !Number.isInteger(row.price) || row.price <= 0 || !row.unit?.trim()) {
+      throw new Error(`Falta el precio de «${rowLabel}» en ${path}`);
     }
     return {
-      id: [structure.id, ...picked.map((option) => option.id)].join("-"),
+      id: [id, ...picked.map((option) => option.id)].join("-"),
       values: Object.fromEntries(groups.map((g, index) => [g.id, picked[index].id])),
       label: labels(picked),
       price: row.price,
@@ -340,35 +285,39 @@ export function buildProduct(structure: ProductStructure, content: ProductConten
     };
   });
 
-  const { photoQuantity } = structure;
+  const fileAddOns = file.addOns ?? [];
+  const addOnIds = assignIds(fileAddOns, `${id}-`, "adicional");
+  const addOns = fileAddOns.map(({ label, price, unit }, index) => ({ id: addOnIds[index], label, price, unit }));
+
+  const photoQuantity = file.photoQuantity?.trim();
   return {
-    id: structure.id,
-    name: content.name,
-    description: content.description,
-    details: content.details ?? "",
-    note: content.note ?? "",
-    gallery: content.gallery.map(toPhoto),
+    id,
+    name: file.name,
+    description: file.description ?? "",
+    details: file.details ?? "",
+    note: file.note ?? "",
+    gallery: gallery.map(toPhoto),
     groups,
     combinations,
-    addOns: content.addOns ?? [],
-    personalizable: structure.personalizable ?? true,
-    intents: structure.intents,
-    // Plazo provisorio para los productos que el catálogo no informa.
-    leadTime: structure.leadTime ?? example({ min: 3, max: 5, text: "De 3 a 5 días hábiles" }),
+    addOns,
+    personalizable: file.personalizable ?? true,
+    intents: [...new Set(file.intents ?? [])].filter(isIntentId),
+    // Plazo provisorio para los productos que no lo tienen cargado.
+    leadTime: readLeadTime(file.leadTime) ?? example({ min: 3, max: 5, text: "De 3 a 5 días hábiles" }),
     needsPhotos: Boolean(photoQuantity),
     ...(photoQuantity && {
       photoInstructions: { quantity: photoQuantity, quality: photoQuality, howToSend: photoSending },
     }),
+    featured: file.featured ?? false,
   };
 }
 
-export function buildCatalog(content: Record<string, ProductContent>): CatalogProduct[] {
-  return structures.map((structure) => {
-    if (!content[structure.id]) {
-      throw new Error(`Falta contenido/${structure.id}.json`);
-    }
-    return buildProduct(structure, content[structure.id]);
-  });
+// Todos los productos de contenido/, por su lugar en el catálogo y, si empatan, por nombre.
+export function buildCatalog(files: Readonly<Record<string, ProductFile>>): CatalogProduct[] {
+  const position = (file: ProductFile) => (Number.isFinite(file.order) ? file.order! : Infinity);
+  return Object.entries(files)
+    .sort(([, a], [, b]) => position(a) - position(b) || a.name.localeCompare(b.name, "es"))
+    .map(([id, file]) => buildProduct(id, file));
 }
 
 export const products = buildCatalog(content);
