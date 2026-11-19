@@ -1,4 +1,6 @@
 /// <reference types="vitest/config" />
+// Primero: deja contenido/*.json listo para el catálogo, que en Node no tiene import.meta.glob.
+import "./src/contenido-node";
 import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -46,7 +48,7 @@ interface PublishSettings {
 export interface StudioAgsOptions {
   // Para tests: reemplaza los datos de src/business.ts.
   business?: BusinessInfo;
-  // Para tests: reemplaza los productos de src/catalog.ts.
+  // Para tests: reemplaza los productos de contenido/.
   catalog?: readonly CatalogProduct[];
 }
 
@@ -85,14 +87,13 @@ function resolvePublishSettings(
     );
   }
 
-  const pendingData: [file: string, fields: readonly string[]][] = [
-    ["src/business.ts", pending.business],
-    ["src/catalog.ts", pending.catalog],
-  ];
-  for (const [file, fields] of pendingData) {
-    if (fields.length > 0) {
-      problems.push(`${file} todavía tiene datos de ejemplo: ${fields.join(", ")}.`);
-    }
+  if (pending.business.length > 0) {
+    problems.push(`src/business.ts todavía tiene datos de ejemplo: ${pending.business.join(", ")}.`);
+  }
+  // Los plazos se cargan en el panel: "calendarios.leadTime" se muestra como "calendarios".
+  const noLeadTime = pending.catalog.map((field) => field.replace(/\.leadTime$/, ""));
+  if (noLeadTime.length > 0) {
+    problems.push(`Falta el plazo de producción (en el panel, o leadTime en contenido/<id>.json) de: ${noLeadTime.join(", ")}.`);
   }
 
   return {
@@ -169,7 +170,7 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
           [
             "No se puede preparar la tienda para publicar:",
             list,
-            'Completá .env (copiá .env.example) o las variables del hosting y sacá los example(...) de src/business.ts y src/catalog.ts. Para una versión de prueba usá "npm run build:prueba".',
+            'Completá .env (copiá .env.example) o las variables del hosting, sacá los example(...) de src/business.ts y cargá los plazos que falten en el panel. Para una versión de prueba usá "npm run build:prueba".',
           ].join("\n"),
         );
       }
@@ -209,6 +210,16 @@ export function studioAgs(options: StudioAgsOptions = {}): Plugin[] {
       return productEntries.has(id) ? readFileSync(resolve(root, "index.html"), "utf8") : null;
     },
     configureServer(server) {
+      // src/contenido-node.ts lee contenido/ fuera de Vite: si cambia, se suma o se borra un
+      // producto, el servidor se reinicia para volver a armar el HTML, como con src/catalog.ts.
+      const contentDir = normalizePath(resolve(__dirname, "contenido"));
+      server.watcher.add(contentDir);
+      server.watcher.on("all", (_event, file) => {
+        const path = normalizePath(file);
+        if (path.startsWith(`${contentDir}/`) && path.endsWith(".json")) {
+          void server.restart();
+        }
+      });
       server.middlewares.use((req, res, next) => {
         const path = (req.url ?? "").split("?")[0];
         if (!pageFromPath(path.endsWith("/") ? path : `${path}/`, catalog)) {
@@ -309,7 +320,7 @@ export default defineConfig({
   base: "./",
   plugins: [studioAgs()],
   test: {
-    // Los tests usan una copia de los textos y precios: no cambian cuando se edita contenido/.
+    // Los tests usan una copia fija de los productos: no cambian cuando Aixa edita contenido/.
     alias: [{ find: /^\.\/contenido$/, replacement: resolve(__dirname, "src/contenido-tests.json") }],
     environment: "node",
     include: ["src/**/*.test.ts"],

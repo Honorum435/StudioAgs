@@ -10,6 +10,43 @@
       "contain": false
     }
   ],
+  "groups": [
+    {
+      "id": "formato",
+      "label": "Formato",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "polaroid",
+          "label": "Polaroid 8 × 6,5",
+          "src": "/fotos/opcion-fotos-polaroid.webp",
+          "alt": "Medidas de la polaroid: 8 × 10 cm, con la foto de 6,6 × 6,6 cm",
+          "contain": true
+        },
+        {
+          "id": "tira",
+          "label": "Tira de fotos",
+          "src": "/fotos/opcion-fotos-tira.webp",
+          "alt": "Medidas de la tira: 6 × 17 cm, con tres fotos de 5 × 5 cm",
+          "contain": true
+        },
+        {
+          "id": "foto-10x10",
+          "label": "Foto 10 × 10",
+          "src": "/fotos/opcion-fotos-10x10.webp",
+          "alt": "Medidas de la foto de 10 × 10 cm",
+          "contain": true
+        },
+        {
+          "id": "iman-10x10",
+          "label": "Imán 10 × 10",
+          "src": "/fotos/fotos-1.webp",
+          "alt": "Imanes con fotos en la heladera, uno con forma de corazón",
+          "contain": false
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "Polaroid 8 × 6,5",
@@ -33,30 +70,17 @@
     }
   ],
   "addOns": [],
-  "optionPhotos": [
-    {
-      "option": "Formato: Polaroid 8 × 6,5",
-      "src": "/fotos/opcion-fotos-polaroid.webp",
-      "alt": "Medidas de la polaroid: 8 × 10 cm, con la foto de 6,6 × 6,6 cm",
-      "contain": true
-    },
-    {
-      "option": "Formato: Tira de fotos",
-      "src": "/fotos/opcion-fotos-tira.webp",
-      "alt": "Medidas de la tira: 6 × 17 cm, con tres fotos de 5 × 5 cm",
-      "contain": true
-    },
-    {
-      "option": "Formato: Foto 10 × 10",
-      "src": "/fotos/opcion-fotos-10x10.webp",
-      "alt": "Medidas de la foto de 10 × 10 cm",
-      "contain": true
-    },
-    {
-      "option": "Formato: Imán 10 × 10",
-      "src": "/fotos/fotos-1.webp",
-      "alt": "Imanes con fotos en la heladera, uno con forma de corazón",
-      "contain": false
-    }
-  ]
+  "intents": [
+    "regalar",
+    "decorar"
+  ],
+  "personalizable": true,
+  "photoQuantity": "Una foto por cada copia que pidas; para cada tira, tres.",
+  "leadTime": {
+    "min": 1,
+    "max": 3,
+    "text": "De 1 a 3 días hábiles"
+  },
+  "featured": true,
+  "order": 2
 }

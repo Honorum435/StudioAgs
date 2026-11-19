@@ -31,6 +31,113 @@
         "contain": false
       }
     ],
+    "groups": [
+      {
+        "id": "formato",
+        "label": "Formato",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "clasico-sin-notas",
+            "label": "Clásico sin notas",
+            "src": "/fotos/calendarios-5.webp",
+            "alt": "Calendario clásico rojo de julio, con la grilla del mes",
+            "contain": false
+          },
+          {
+            "id": "clasico-con-notas",
+            "label": "Clásico con notas",
+            "src": "/fotos/calendarios-6.webp",
+            "alt": "Calendario clásico rosa de diciembre, todo escrito, con las notas abajo",
+            "contain": false
+          },
+          {
+            "id": "unico",
+            "label": "Único",
+            "src": "/fotos/calendarios-7.webp",
+            "alt": "Calendario único rosa sobre la mesa, junto a un florero",
+            "contain": false
+          },
+          {
+            "id": "doce-meses",
+            "label": "Doce meses",
+            "src": "/fotos/opcion-calendarios-doce-meses.webp",
+            "alt": "Dibujo del calendario de doce meses: el año entero en una hoja",
+            "contain": true
+          },
+          {
+            "id": "semanal-grande",
+            "label": "Semanal grande",
+            "src": "/fotos/calendarios-9.webp",
+            "alt": "Calendario semanal grande rojo, con fibrones",
+            "contain": false
+          },
+          {
+            "id": "semanal-chico",
+            "label": "Semanal chico",
+            "src": "/fotos/calendarios-8.webp",
+            "alt": "Calendario semanal chico rojo, con fibrones y un borrador",
+            "contain": false
+          },
+          {
+            "id": "acrilico",
+            "label": "Acrílico",
+            "src": "/fotos/calendarios-10.webp",
+            "alt": "Calendario de acrílico de septiembre, apoyado en la pared",
+            "contain": false
+          },
+          {
+            "id": "iman",
+            "label": "Imán",
+            "src": "/fotos/calendarios-11.webp",
+            "alt": "Calendario de imán lila en la heladera, con fibrones",
+            "contain": false
+          }
+        ]
+      },
+      {
+        "id": "colores",
+        "label": "Colores",
+        "changesPrice": false,
+        "options": [
+          {
+            "id": "pastel",
+            "label": "Pastel",
+            "src": "/fotos/calendarios-16.webp",
+            "alt": "Los doce meses en colores pastel",
+            "contain": true
+          },
+          {
+            "id": "intenso",
+            "label": "Intenso",
+            "src": "/fotos/calendarios-13.webp",
+            "alt": "Los doce meses en colores intensos",
+            "contain": true
+          },
+          {
+            "id": "calido",
+            "label": "Cálido",
+            "src": "/fotos/calendarios-12.webp",
+            "alt": "Los doce meses en colores cálidos, del verde lima al rojo",
+            "contain": true
+          },
+          {
+            "id": "frio",
+            "label": "Frío",
+            "src": "/fotos/calendarios-14.webp",
+            "alt": "Los doce meses en colores fríos, del rosa al verde",
+            "contain": true
+          },
+          {
+            "id": "monocromo",
+            "label": "Monocromo",
+            "src": "/fotos/calendarios-15.webp",
+            "alt": "Los doce meses en un solo color; de ejemplo, azul",
+            "contain": true
+          }
+        ]
+      }
+    ],
     "prices": [
       {
         "label": "Clásico sin notas",
@@ -81,86 +188,16 @@
         "unit": "por unidad"
       }
     ],
-    "optionPhotos": [
-      {
-        "option": "Formato: Clásico sin notas",
-        "src": "/fotos/calendarios-5.webp",
-        "alt": "Calendario clásico rojo de julio, con la grilla del mes",
-        "contain": false
-      },
-      {
-        "option": "Formato: Clásico con notas",
-        "src": "/fotos/calendarios-6.webp",
-        "alt": "Calendario clásico rosa de diciembre, todo escrito, con las notas abajo",
-        "contain": false
-      },
-      {
-        "option": "Formato: Único",
-        "src": "/fotos/calendarios-7.webp",
-        "alt": "Calendario único rosa sobre la mesa, junto a un florero",
-        "contain": false
-      },
-      {
-        "option": "Formato: Doce meses",
-        "src": "/fotos/opcion-calendarios-doce-meses.webp",
-        "alt": "Dibujo del calendario de doce meses: el año entero en una hoja",
-        "contain": true
-      },
-      {
-        "option": "Formato: Semanal grande",
-        "src": "/fotos/calendarios-9.webp",
-        "alt": "Calendario semanal grande rojo, con fibrones",
-        "contain": false
-      },
-      {
-        "option": "Formato: Semanal chico",
-        "src": "/fotos/calendarios-8.webp",
-        "alt": "Calendario semanal chico rojo, con fibrones y un borrador",
-        "contain": false
-      },
-      {
-        "option": "Formato: Acrílico",
-        "src": "/fotos/calendarios-10.webp",
-        "alt": "Calendario de acrílico de septiembre, apoyado en la pared",
-        "contain": false
-      },
-      {
-        "option": "Formato: Imán",
-        "src": "/fotos/calendarios-11.webp",
-        "alt": "Calendario de imán lila en la heladera, con fibrones",
-        "contain": false
-      },
-      {
-        "option": "Colores: Pastel",
-        "src": "/fotos/calendarios-16.webp",
-        "alt": "Los doce meses en colores pastel",
-        "contain": true
-      },
-      {
-        "option": "Colores: Intenso",
-        "src": "/fotos/calendarios-13.webp",
-        "alt": "Los doce meses en colores intensos",
-        "contain": true
-      },
-      {
-        "option": "Colores: Cálido",
-        "src": "/fotos/calendarios-12.webp",
-        "alt": "Los doce meses en colores cálidos, del verde lima al rojo",
-        "contain": true
-      },
-      {
-        "option": "Colores: Frío",
-        "src": "/fotos/calendarios-14.webp",
-        "alt": "Los doce meses en colores fríos, del rosa al verde",
-        "contain": true
-      },
-      {
-        "option": "Colores: Monocromo",
-        "src": "/fotos/calendarios-15.webp",
-        "alt": "Los doce meses en un solo color; de ejemplo, azul",
-        "contain": true
-      }
-    ]
+    "intents": [
+      "organizarte",
+      "regalar",
+      "marca"
+    ],
+    "personalizable": true,
+    "photoQuantity": "",
+    "leadTime": null,
+    "featured": true,
+    "order": 1
   },
   "fotos": {
     "name": "Fotos para guardar",
@@ -172,6 +209,43 @@
         "src": "/fotos/fotos.webp",
         "alt": "Ejemplos de formatos para imprimir fotos",
         "contain": false
+      }
+    ],
+    "groups": [
+      {
+        "id": "formato",
+        "label": "Formato",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "polaroid",
+            "label": "Polaroid 8 × 6,5",
+            "src": "/fotos/opcion-fotos-polaroid.webp",
+            "alt": "Medidas de la polaroid: 8 × 10 cm, con la foto de 6,6 × 6,6 cm",
+            "contain": true
+          },
+          {
+            "id": "tira",
+            "label": "Tira de fotos",
+            "src": "/fotos/opcion-fotos-tira.webp",
+            "alt": "Medidas de la tira: 6 × 17 cm, con tres fotos de 5 × 5 cm",
+            "contain": true
+          },
+          {
+            "id": "foto-10x10",
+            "label": "Foto 10 × 10",
+            "src": "/fotos/opcion-fotos-10x10.webp",
+            "alt": "Medidas de la foto de 10 × 10 cm",
+            "contain": true
+          },
+          {
+            "id": "iman-10x10",
+            "label": "Imán 10 × 10",
+            "src": "/fotos/fotos-1.webp",
+            "alt": "Imanes con fotos en la heladera, uno con forma de corazón",
+            "contain": false
+          }
+        ]
       }
     ],
     "prices": [
@@ -197,32 +271,19 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": [
-      {
-        "option": "Formato: Polaroid 8 × 6,5",
-        "src": "/fotos/opcion-fotos-polaroid.webp",
-        "alt": "Medidas de la polaroid: 8 × 10 cm, con la foto de 6,6 × 6,6 cm",
-        "contain": true
-      },
-      {
-        "option": "Formato: Tira de fotos",
-        "src": "/fotos/opcion-fotos-tira.webp",
-        "alt": "Medidas de la tira: 6 × 17 cm, con tres fotos de 5 × 5 cm",
-        "contain": true
-      },
-      {
-        "option": "Formato: Foto 10 × 10",
-        "src": "/fotos/opcion-fotos-10x10.webp",
-        "alt": "Medidas de la foto de 10 × 10 cm",
-        "contain": true
-      },
-      {
-        "option": "Formato: Imán 10 × 10",
-        "src": "/fotos/fotos-1.webp",
-        "alt": "Imanes con fotos en la heladera, uno con forma de corazón",
-        "contain": false
-      }
-    ]
+    "intents": [
+      "regalar",
+      "decorar"
+    ],
+    "personalizable": true,
+    "photoQuantity": "Una foto por cada copia que pidas; para cada tira, tres.",
+    "leadTime": {
+      "min": 1,
+      "max": 3,
+      "text": "De 1 a 3 días hábiles"
+    },
+    "featured": true,
+    "order": 2
   },
   "pizarra-orma": {
     "name": "Pizarra OrMa",
@@ -241,6 +302,29 @@
         "contain": false
       }
     ],
+    "groups": [
+      {
+        "id": "color",
+        "label": "Color",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "gris-galvanizada",
+            "label": "Gris galvanizada",
+            "src": "/fotos/pizarra-orma-2.webp",
+            "alt": "Pizarra OrMa gris con marco de madera, fotos, polaroids y una gorra colgada",
+            "contain": true
+          },
+          {
+            "id": "negro-mate",
+            "label": "Negro mate",
+            "src": "/fotos/pizarra-orma-1.webp",
+            "alt": "Pizarra OrMa negra con imanes, fotos, notas y fibrones",
+            "contain": false
+          }
+        ]
+      }
+    ],
     "prices": [
       {
         "label": "Gris galvanizada",
@@ -254,20 +338,16 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": [
-      {
-        "option": "Color: Gris galvanizada",
-        "src": "/fotos/pizarra-orma-2.webp",
-        "alt": "Pizarra OrMa gris con marco de madera, fotos, polaroids y una gorra colgada",
-        "contain": true
-      },
-      {
-        "option": "Color: Negro mate",
-        "src": "/fotos/pizarra-orma-1.webp",
-        "alt": "Pizarra OrMa negra con imanes, fotos, notas y fibrones",
-        "contain": false
-      }
-    ]
+    "intents": [
+      "decorar",
+      "organizarte",
+      "regalar"
+    ],
+    "personalizable": true,
+    "photoQuantity": "Para los accesorios: 3 fotos para los imanes de 10 × 10, 3 para las polaroid mini y 9 para las 3 tiras triples.",
+    "leadTime": null,
+    "featured": false,
+    "order": 3
   },
   "entre-flores": {
     "name": "Entre Flores",
@@ -281,6 +361,7 @@
         "contain": false
       }
     ],
+    "groups": [],
     "prices": [
       {
         "label": "Precio único",
@@ -289,7 +370,15 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": []
+    "intents": [
+      "regalar",
+      "decorar"
+    ],
+    "personalizable": true,
+    "photoQuantity": "",
+    "leadTime": null,
+    "featured": false,
+    "order": 4
   },
   "vinilos": {
     "name": "Vinilos impresos",
@@ -306,6 +395,57 @@
         "src": "/fotos/vinilos-1.webp",
         "alt": "Planchas de stickers redondos con el logo de Maika",
         "contain": false
+      }
+    ],
+    "groups": [
+      {
+        "id": "material",
+        "label": "Vinilo",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "blanco",
+            "label": "Blanco",
+            "src": "/fotos/vinilos-1.webp",
+            "alt": "Planchas de stickers redondos con el logo de Maika",
+            "contain": false
+          },
+          {
+            "id": "transparente",
+            "label": "Transparente",
+            "src": "/fotos/opcion-vinilos-transparente.webp",
+            "alt": "Dibujo del vinilo transparente: el logo deja ver lo que hay detrás",
+            "contain": true
+          }
+        ]
+      },
+      {
+        "id": "laca",
+        "label": "Laca UV",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "sin-laca",
+            "label": "Sin laca",
+            "src": "/fotos/opcion-vinilos-sin-laca.webp",
+            "alt": "Dibujo de un sticker sin laca",
+            "contain": true
+          },
+          {
+            "id": "laca-sectorizada",
+            "label": "Laca sectorizada",
+            "src": "/fotos/opcion-vinilos-laca-sectorizada.webp",
+            "alt": "Dibujo de la laca sectorizada: solo sobre una parte del diseño",
+            "contain": true
+          },
+          {
+            "id": "laca-completa",
+            "label": "Laca completa",
+            "src": "/fotos/opcion-vinilos-laca-completa.webp",
+            "alt": "Dibujo de la laca completa: sobre todo el diseño",
+            "contain": true
+          }
+        ]
       }
     ],
     "prices": [
@@ -354,38 +494,19 @@
         "unit": "por pliego"
       }
     ],
-    "optionPhotos": [
-      {
-        "option": "Vinilo: Blanco",
-        "src": "/fotos/vinilos-1.webp",
-        "alt": "Planchas de stickers redondos con el logo de Maika",
-        "contain": false
-      },
-      {
-        "option": "Vinilo: Transparente",
-        "src": "/fotos/opcion-vinilos-transparente.webp",
-        "alt": "Dibujo del vinilo transparente: el logo deja ver lo que hay detrás",
-        "contain": true
-      },
-      {
-        "option": "Laca UV: Sin laca",
-        "src": "/fotos/opcion-vinilos-sin-laca.webp",
-        "alt": "Dibujo de un sticker sin laca",
-        "contain": true
-      },
-      {
-        "option": "Laca UV: Laca sectorizada",
-        "src": "/fotos/opcion-vinilos-laca-sectorizada.webp",
-        "alt": "Dibujo de la laca sectorizada: solo sobre una parte del diseño",
-        "contain": true
-      },
-      {
-        "option": "Laca UV: Laca completa",
-        "src": "/fotos/opcion-vinilos-laca-completa.webp",
-        "alt": "Dibujo de la laca completa: sobre todo el diseño",
-        "contain": true
-      }
-    ]
+    "intents": [
+      "marca",
+      "decorar"
+    ],
+    "personalizable": true,
+    "photoQuantity": "",
+    "leadTime": {
+      "min": 1,
+      "max": 4,
+      "text": "De 1 a 4 días"
+    },
+    "featured": false,
+    "order": 5
   },
   "gran-formato": {
     "name": "Gran formato",
@@ -412,6 +533,85 @@
         "src": "/fotos/gran-formato-4.webp",
         "alt": "Puerta de vidrio de La Verdu vista desde la calle, con el vinilo ya colocado",
         "contain": false
+      }
+    ],
+    "groups": [
+      {
+        "id": "material",
+        "label": "Material",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "vinilo-blanco",
+            "label": "Vinilo blanco",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "vinilo-blanco-laca-sectorizada",
+            "label": "Vinilo blanco con laca sectorizada",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "vinilo-blanco-laca-completa",
+            "label": "Vinilo blanco con laca completa",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "vinilo-transparente",
+            "label": "Vinilo transparente",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "vinilo-transparente-laca-sectorizada",
+            "label": "Vinilo transparente con laca sectorizada",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "vinilo-transparente-laca-completa",
+            "label": "Vinilo transparente con laca completa",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "lona-frontlight",
+            "label": "Lona frontlight 13 oz",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "lona-frontlight-laca",
+            "label": "Lona frontlight 13 oz con laca",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "blueback",
+            "label": "Blueback 150 g mate",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "blueback-laca",
+            "label": "Blueback 150 g mate con laca",
+            "src": "",
+            "alt": "",
+            "contain": false
+          }
+        ]
       }
     ],
     "prices": [
@@ -467,68 +667,15 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": [
-      {
-        "option": "Material: Vinilo blanco",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Material: Vinilo blanco con laca sectorizada",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Material: Vinilo blanco con laca completa",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Material: Vinilo transparente",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Material: Vinilo transparente con laca sectorizada",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Material: Vinilo transparente con laca completa",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Material: Lona frontlight 13 oz",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Material: Lona frontlight 13 oz con laca",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Material: Blueback 150 g mate",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Material: Blueback 150 g mate con laca",
-        "src": "",
-        "alt": "",
-        "contain": false
-      }
-    ]
+    "intents": [
+      "marca",
+      "decorar"
+    ],
+    "personalizable": true,
+    "photoQuantity": "",
+    "leadTime": null,
+    "featured": false,
+    "order": 6
   },
   "dtf-textil": {
     "name": "DTF textil",
@@ -552,6 +699,7 @@
         "contain": false
       }
     ],
+    "groups": [],
     "prices": [
       {
         "label": "Precio único",
@@ -560,7 +708,15 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": []
+    "intents": [
+      "marca",
+      "regalar"
+    ],
+    "personalizable": true,
+    "photoQuantity": "",
+    "leadTime": null,
+    "featured": false,
+    "order": 7
   },
   "tarjetas": {
     "name": "Tarjetas personales",
@@ -597,6 +753,92 @@
         "src": "/fotos/tarjetas-5.webp",
         "alt": "Tarjetas de Luz Sosa con la foto de dos manos tomadas",
         "contain": false
+      }
+    ],
+    "groups": [
+      {
+        "id": "cantidad",
+        "label": "Cantidad",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "100",
+            "label": "100",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "200",
+            "label": "200",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "300",
+            "label": "300",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "500",
+            "label": "500",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "1000",
+            "label": "1.000",
+            "src": "",
+            "alt": "",
+            "contain": false
+          }
+        ]
+      },
+      {
+        "id": "faz",
+        "label": "Impresión",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "simple-faz",
+            "label": "Simple faz",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "doble-faz",
+            "label": "Doble faz",
+            "src": "",
+            "alt": "",
+            "contain": false
+          }
+        ]
+      },
+      {
+        "id": "terminacion",
+        "label": "Terminación",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "sin-laminar",
+            "label": "Sin laminar",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "laminado",
+            "label": "Laminado mate o brillo",
+            "src": "",
+            "alt": "",
+            "contain": false
+          }
+        ]
       }
     ],
     "prices": [
@@ -702,62 +944,14 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": [
-      {
-        "option": "Cantidad: 100",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Cantidad: 200",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Cantidad: 300",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Cantidad: 500",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Cantidad: 1.000",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Impresión: Simple faz",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Impresión: Doble faz",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Terminación: Sin laminar",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Terminación: Laminado mate o brillo",
-        "src": "",
-        "alt": "",
-        "contain": false
-      }
-    ]
+    "intents": [
+      "marca"
+    ],
+    "personalizable": true,
+    "photoQuantity": "",
+    "leadTime": null,
+    "featured": false,
+    "order": 8
   },
   "bitacoras": {
     "name": "Bitácoras",
@@ -786,6 +980,64 @@
         "contain": true
       }
     ],
+    "groups": [
+      {
+        "id": "formato",
+        "label": "Formato",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "bitacora-a5",
+            "label": "Bitácora A5",
+            "src": "/fotos/bitacoras-2.webp",
+            "alt": "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro",
+            "contain": true
+          },
+          {
+            "id": "bitacora-a6",
+            "label": "Bitácora A6",
+            "src": "/fotos/bitacoras-4.webp",
+            "alt": "Bitácoras A6 en stock: formas bordó, una chica con flores, limones y un gato en la bañera",
+            "contain": true
+          }
+        ]
+      },
+      {
+        "id": "hojas",
+        "label": "Hojas",
+        "changesPrice": false,
+        "options": [
+          {
+            "id": "lisas",
+            "label": "Lisas",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "rayadas",
+            "label": "Rayadas",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "cuadriculadas",
+            "label": "Cuadriculadas",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "punteadas",
+            "label": "Punteadas",
+            "src": "",
+            "alt": "",
+            "contain": false
+          }
+        ]
+      }
+    ],
     "prices": [
       {
         "label": "Bitácora A5",
@@ -799,44 +1051,15 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": [
-      {
-        "option": "Formato: Bitácora A5",
-        "src": "/fotos/bitacoras-2.webp",
-        "alt": "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro",
-        "contain": true
-      },
-      {
-        "option": "Formato: Bitácora A6",
-        "src": "/fotos/bitacoras-4.webp",
-        "alt": "Bitácoras A6 en stock: formas bordó, una chica con flores, limones y un gato en la bañera",
-        "contain": true
-      },
-      {
-        "option": "Hojas: Lisas",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Hojas: Rayadas",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Hojas: Cuadriculadas",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Hojas: Punteadas",
-        "src": "",
-        "alt": "",
-        "contain": false
-      }
-    ]
+    "intents": [
+      "organizarte",
+      "regalar"
+    ],
+    "personalizable": true,
+    "photoQuantity": "",
+    "leadTime": null,
+    "featured": true,
+    "order": 9
   },
   "archivo-bajonero": {
     "name": "Archivo bajonero + alfajor",
@@ -860,6 +1083,7 @@
         "contain": true
       }
     ],
+    "groups": [],
     "prices": [
       {
         "label": "Precio único",
@@ -868,7 +1092,14 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": []
+    "intents": [
+      "regalar"
+    ],
+    "personalizable": false,
+    "photoQuantity": "",
+    "leadTime": null,
+    "featured": false,
+    "order": 10
   },
   "complementos": {
     "name": "Complementos",
@@ -907,6 +1138,43 @@
         "contain": true
       }
     ],
+    "groups": [
+      {
+        "id": "tipo",
+        "label": "Tipo",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "separador",
+            "label": "Separador clásico",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "separador-con-iman",
+            "label": "Separador con imán",
+            "src": "/fotos/complementos-1.webp",
+            "alt": "Separadores imantados con flores y moños, en sus tarjetas de colores",
+            "contain": false
+          },
+          {
+            "id": "separadores-con-iman-x3",
+            "label": "3 separadores con imán",
+            "src": "/fotos/complementos-2.webp",
+            "alt": "Separadores imantados con flores, cuadros y figuras en blanco y negro",
+            "contain": false
+          },
+          {
+            "id": "marco-con-iman",
+            "label": "Marco con imán",
+            "src": "/fotos/complementos-4.webp",
+            "alt": "Marcos con imán para polaroid: rojo, amarillo con limones, cuadrillé verde y rosa con flores",
+            "contain": true
+          }
+        ]
+      }
+    ],
     "prices": [
       {
         "label": "Separador clásico",
@@ -930,32 +1198,15 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": [
-      {
-        "option": "Tipo: Separador clásico",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Tipo: Separador con imán",
-        "src": "/fotos/complementos-1.webp",
-        "alt": "Separadores imantados con flores y moños, en sus tarjetas de colores",
-        "contain": false
-      },
-      {
-        "option": "Tipo: 3 separadores con imán",
-        "src": "/fotos/complementos-2.webp",
-        "alt": "Separadores imantados con flores, cuadros y figuras en blanco y negro",
-        "contain": false
-      },
-      {
-        "option": "Tipo: Marco con imán",
-        "src": "/fotos/complementos-4.webp",
-        "alt": "Marcos con imán para polaroid: rojo, amarillo con limones, cuadrillé verde y rosa con flores",
-        "contain": true
-      }
-    ]
+    "intents": [
+      "regalar",
+      "organizarte"
+    ],
+    "personalizable": true,
+    "photoQuantity": "Solo para los marcos: una foto por cada marco. Los separadores no llevan fotos.",
+    "leadTime": null,
+    "featured": false,
+    "order": 11
   },
   "laminas": {
     "name": "Láminas",
@@ -972,6 +1223,50 @@
         "src": "/fotos/laminas-1.webp",
         "alt": "Láminas e ilustraciones de distintos artistas en un exhibidor",
         "contain": false
+      }
+    ],
+    "groups": [
+      {
+        "id": "tamano",
+        "label": "Tamaño",
+        "changesPrice": true,
+        "options": [
+          {
+            "id": "a3-plus",
+            "label": "A3+ (SA3)",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "a3",
+            "label": "A3",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "a4",
+            "label": "A4",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "a5",
+            "label": "A5",
+            "src": "",
+            "alt": "",
+            "contain": false
+          },
+          {
+            "id": "a6",
+            "label": "A6",
+            "src": "",
+            "alt": "",
+            "contain": false
+          }
+        ]
       }
     ],
     "prices": [
@@ -1002,38 +1297,15 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": [
-      {
-        "option": "Tamaño: A3+ (SA3)",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Tamaño: A3",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Tamaño: A4",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Tamaño: A5",
-        "src": "",
-        "alt": "",
-        "contain": false
-      },
-      {
-        "option": "Tamaño: A6",
-        "src": "",
-        "alt": "",
-        "contain": false
-      }
-    ]
+    "intents": [
+      "decorar",
+      "regalar"
+    ],
+    "personalizable": false,
+    "photoQuantity": "",
+    "leadTime": null,
+    "featured": true,
+    "order": 12
   },
   "minijuegos": {
     "name": "Minijuegos",
@@ -1062,6 +1334,50 @@
         "contain": false
       }
     ],
+    "groups": [
+      {
+        "id": "color",
+        "label": "Color",
+        "changesPrice": false,
+        "options": [
+          {
+            "id": "naranja",
+            "label": "Naranja",
+            "src": "/fotos/minijuegos-4.webp",
+            "alt": "Minijuego naranja con la tapa Mini juegos para el viaje, sobre las piedras",
+            "contain": false
+          },
+          {
+            "id": "rosa",
+            "label": "Rosa",
+            "src": "/fotos/minijuegos-5.webp",
+            "alt": "Minijuego rosa con sus dos fibrones, en la mano",
+            "contain": false
+          },
+          {
+            "id": "celeste",
+            "label": "Celeste",
+            "src": "/fotos/minijuegos-2.webp",
+            "alt": "Minijuegos de todos los colores abiertos en abanico, el celeste adelante, en la mano",
+            "contain": false
+          },
+          {
+            "id": "verde",
+            "label": "Verde",
+            "src": "/fotos/minijuegos-6.webp",
+            "alt": "Minijuego verde con la tapa Mini juegos para el viaje",
+            "contain": false
+          },
+          {
+            "id": "amarillo",
+            "label": "Amarillo",
+            "src": "",
+            "alt": "",
+            "contain": false
+          }
+        ]
+      }
+    ],
     "prices": [
       {
         "label": "Precio único",
@@ -1070,37 +1386,13 @@
       }
     ],
     "addOns": [],
-    "optionPhotos": [
-      {
-        "option": "Color: Naranja",
-        "src": "/fotos/minijuegos-4.webp",
-        "alt": "Minijuego naranja con la tapa Mini juegos para el viaje, sobre las piedras",
-        "contain": false
-      },
-      {
-        "option": "Color: Rosa",
-        "src": "/fotos/minijuegos-5.webp",
-        "alt": "Minijuego rosa con sus dos fibrones, en la mano",
-        "contain": false
-      },
-      {
-        "option": "Color: Celeste",
-        "src": "/fotos/minijuegos-2.webp",
-        "alt": "Minijuegos de todos los colores abiertos en abanico, el celeste adelante, en la mano",
-        "contain": false
-      },
-      {
-        "option": "Color: Verde",
-        "src": "/fotos/minijuegos-6.webp",
-        "alt": "Minijuego verde con la tapa Mini juegos para el viaje",
-        "contain": false
-      },
-      {
-        "option": "Color: Amarillo",
-        "src": "",
-        "alt": "",
-        "contain": false
-      }
-    ]
+    "intents": [
+      "regalar"
+    ],
+    "personalizable": false,
+    "photoQuantity": "",
+    "leadTime": null,
+    "featured": false,
+    "order": 13
   }
 }

@@ -25,6 +25,50 @@
       "contain": false
     }
   ],
+  "groups": [
+    {
+      "id": "color",
+      "label": "Color",
+      "changesPrice": false,
+      "options": [
+        {
+          "id": "naranja",
+          "label": "Naranja",
+          "src": "/fotos/minijuegos-4.webp",
+          "alt": "Minijuego naranja con la tapa Mini juegos para el viaje, sobre las piedras",
+          "contain": false
+        },
+        {
+          "id": "rosa",
+          "label": "Rosa",
+          "src": "/fotos/minijuegos-5.webp",
+          "alt": "Minijuego rosa con sus dos fibrones, en la mano",
+          "contain": false
+        },
+        {
+          "id": "celeste",
+          "label": "Celeste",
+          "src": "/fotos/minijuegos-2.webp",
+          "alt": "Minijuegos de todos los colores abiertos en abanico, el celeste adelante, en la mano",
+          "contain": false
+        },
+        {
+          "id": "verde",
+          "label": "Verde",
+          "src": "/fotos/minijuegos-6.webp",
+          "alt": "Minijuego verde con la tapa Mini juegos para el viaje",
+          "contain": false
+        },
+        {
+          "id": "amarillo",
+          "label": "Amarillo",
+          "src": "",
+          "alt": "",
+          "contain": false
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "Precio único",
@@ -33,36 +77,12 @@
     }
   ],
   "addOns": [],
-  "optionPhotos": [
-    {
-      "option": "Color: Naranja",
-      "src": "/fotos/minijuegos-4.webp",
-      "alt": "Minijuego naranja con la tapa Mini juegos para el viaje, sobre las piedras",
-      "contain": false
-    },
-    {
-      "option": "Color: Rosa",
-      "src": "/fotos/minijuegos-5.webp",
-      "alt": "Minijuego rosa con sus dos fibrones, en la mano",
-      "contain": false
-    },
-    {
-      "option": "Color: Celeste",
-      "src": "/fotos/minijuegos-2.webp",
-      "alt": "Minijuegos de todos los colores abiertos en abanico, el celeste adelante, en la mano",
-      "contain": false
-    },
-    {
-      "option": "Color: Verde",
-      "src": "/fotos/minijuegos-6.webp",
-      "alt": "Minijuego verde con la tapa Mini juegos para el viaje",
-      "contain": false
-    },
-    {
-      "option": "Color: Amarillo",
-      "src": "",
-      "alt": "",
-      "contain": false
-    }
-  ]
+  "intents": [
+    "regalar"
+  ],
+  "personalizable": false,
+  "photoQuantity": "",
+  "leadTime": null,
+  "featured": false,
+  "order": 13
 }

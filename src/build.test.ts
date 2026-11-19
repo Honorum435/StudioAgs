@@ -24,18 +24,19 @@ const completeBusiness: BusinessInfo = {
   email: "hola@studioags.com.ar",
   responseTime: "Respondemos en el día.",
   exchangePolicy: "Te mandamos una muestra antes de imprimir.",
-  featuredProducts: ["calendarios", "tarjetas"],
 };
 
+// Con sus propios más vendidos, para ver que el build usa este catálogo y no el de contenido/.
 const completeCatalog: CatalogProduct[] = products.map((product) => ({
   ...product,
   leadTime: businessValue(product.leadTime),
+  featured: product.id === "calendarios" || product.id === "tarjetas",
 }));
 
 interface BuildCase {
   env: Record<string, string>;
   mode?: string;
-  // Sin datos propios usa vite.config.ts tal cual, con src/business.ts y src/catalog.ts reales.
+  // Sin datos propios usa vite.config.ts tal cual, con src/business.ts y contenido/ reales.
   business?: BusinessInfo;
   catalog?: readonly CatalogProduct[];
 }
@@ -159,7 +160,7 @@ describe("build", { timeout: 60_000 }, () => {
       catalog,
     });
     await expect(result).rejects.toThrow(
-      /src\/catalog\.ts todavía tiene datos de ejemplo: tarjetas\.leadTime\./,
+      /Falta el plazo de producción \(en el panel, o leadTime en contenido\/<id>\.json\) de: tarjetas\./,
     );
     await expect(result).rejects.not.toThrow(/src\/business\.ts todavía/);
   });

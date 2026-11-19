@@ -25,6 +25,64 @@
       "contain": true
     }
   ],
+  "groups": [
+    {
+      "id": "formato",
+      "label": "Formato",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "bitacora-a5",
+          "label": "Bitácora A5",
+          "src": "/fotos/bitacoras-2.webp",
+          "alt": "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro",
+          "contain": true
+        },
+        {
+          "id": "bitacora-a6",
+          "label": "Bitácora A6",
+          "src": "/fotos/bitacoras-4.webp",
+          "alt": "Bitácoras A6 en stock: formas bordó, una chica con flores, limones y un gato en la bañera",
+          "contain": true
+        }
+      ]
+    },
+    {
+      "id": "hojas",
+      "label": "Hojas",
+      "changesPrice": false,
+      "options": [
+        {
+          "id": "lisas",
+          "label": "Lisas",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "rayadas",
+          "label": "Rayadas",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "cuadriculadas",
+          "label": "Cuadriculadas",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "punteadas",
+          "label": "Punteadas",
+          "src": "",
+          "alt": "",
+          "contain": false
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "Bitácora A5",
@@ -38,42 +96,13 @@
     }
   ],
   "addOns": [],
-  "optionPhotos": [
-    {
-      "option": "Formato: Bitácora A5",
-      "src": "/fotos/bitacoras-2.webp",
-      "alt": "Bitácoras A5 en stock: celestes y crema con el sol de la bandera, y tapas de dibujos en blanco y negro",
-      "contain": true
-    },
-    {
-      "option": "Formato: Bitácora A6",
-      "src": "/fotos/bitacoras-4.webp",
-      "alt": "Bitácoras A6 en stock: formas bordó, una chica con flores, limones y un gato en la bañera",
-      "contain": true
-    },
-    {
-      "option": "Hojas: Lisas",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Hojas: Rayadas",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Hojas: Cuadriculadas",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Hojas: Punteadas",
-      "src": "",
-      "alt": "",
-      "contain": false
-    }
-  ]
+  "intents": [
+    "organizarte",
+    "regalar"
+  ],
+  "personalizable": true,
+  "photoQuantity": "",
+  "leadTime": null,
+  "featured": true,
+  "order": 9
 }

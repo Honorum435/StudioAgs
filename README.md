@@ -39,18 +39,19 @@ El error lista lo que falta, uno por uno:
   instagramHandle: "studioags",          // después
   ```
 
-- **`src/catalog.ts todavía tiene datos de ejemplo: calendarios.leadTime, ...`**: son plazos de producción provisorios: los productos de la lista que no tienen `leadTime`. Agregale a cada uno el plazo real, en días hábiles:
+- **`Falta el plazo de producción (en el panel, o leadTime en contenido/<id>.json) de: calendarios, ...`**: esos productos muestran el plazo provisorio de 3 a 5 días hábiles. Se carga en el panel, en **Plazo de producción** de cada producto (o a mano en su `contenido/<id>.json`):
 
-  ```ts
-  leadTime: { min: 3, max: 5, text: "De 3 a 5 días hábiles" },
+  ```json
+  "leadTime": { "min": 3, "max": 5, "text": "" }
   ```
 
 ## Panel de Aixa
 
-Aixa edita precios, textos y fotos desde https://honorum435.github.io/StudioAgs/admin/ (no hace falta tocar código).
+Aixa maneja todos los productos desde https://honorum435.github.io/StudioAgs/admin/, sin tocar código.
 
-- **Puede cambiar:** los precios, los adicionales, los textos de cada producto (nombre, descripción, "más texto" y aclaración), las fotos de la galería (agregar, sacar, ordenar) y la foto que aparece al elegir cada opción.
-- **No puede cambiar:** opciones nuevas, productos nuevos, plazos ni filtros. Eso se cambia en `src/catalog.ts`.
+- **Puede:** crear productos (**Nuevo**), duplicarlos y borrarlos, y en cada uno cambiar nombre, textos, fotos, opciones (grupos como Tamaño o Color, cada opción con su foto), precios, adicionales, para qué es (los filtros), si es personalizable, cuántas fotos manda la clienta, el plazo de producción, si va en "Los más vendidos" y su lugar en el catálogo.
+- **Precios:** la tabla se arma sola con una fila por cada opción, o combinación de opciones, que cambia el precio (los grupos con **Cambia el precio** apagado, como los colores, no suman filas). Si renombra una opción o reordena los grupos, cada precio sigue a su combinación; una opción nueva aparece vacía y el panel no deja guardar hasta que tenga precio.
+- **No puede:** cambiar los cuatro filtros (Para regalar, etc.) ni los datos del negocio (`src/business.ts`). La dirección de un producto (`producto/<id>/`) sale de su nombre al crearlo y no cambia aunque después lo renombre.
 - Cada guardado se publica solo en unos minutos (es un commit a `main`; el workflow corre los tests y vuelve a publicar). Si a los 5 minutos no cambió, que me avise: un workflow que falla deja el sitio como estaba y manda un mail al dueño del repo.
 - Las fotos que sube se convierten a WebP, de hasta 1200 px, en el navegador, y se guardan en `public/fotos/`.
 
@@ -62,17 +63,19 @@ Aixa edita precios, textos y fotos desde https://honorum435.github.io/StudioAgs/
 
 **En desarrollo:** abrí `http://localhost:5173/admin/index.html` (`/admin/` solo muestra la tienda). Ahí aparece además "Trabajar con un repositorio local", que edita los archivos de tu compu sin hacer commits; en la página publicada no está. Corré `git pull` antes de trabajar: Aixa también hace commits a `main`.
 
-**Para sumar una opción o un producto:** agregalo en `src/catalog.ts`, sumá sus filas a `contenido/<id>.json` (precio y, si quiere, foto) y a `src/contenido-tests.json`. `npx vitest run src/contenido.test.ts` dice qué falta.
+**Cómo funciona:** cada producto es un `contenido/<id>.json` y el sitio arma el catálogo con todos los que haya (`src/contenido.ts`), así un producto nuevo del panel entra solo. Los campos del panel están en `public/admin/config.yml`; `public/admin/panel.js` suma la tabla de precios y, al guardar, pone los códigos (`id`) de los grupos, opciones y adicionales nuevos. Esos códigos no cambian aunque cambie el nombre, porque los usan los pedidos guardados en el navegador de la clienta. Sveltia va con versión fija en `public/admin/index.html`: para actualizarla, cambiá el número y probá crear un producto con dos grupos de opciones.
+
+`src/contenido.test.ts` revisa los archivos reales (que el catálogo se arme, que cada foto exista); si falla, el sitio no se vuelve a publicar y queda como estaba. Los demás tests usan una copia fija, `src/contenido-tests.json`, para no depender de lo que cambie Aixa.
 
 ## Contenido y fotos
 
-- Precios, textos y fotos de cada producto: `contenido/<id>.json`. Se arman con la estructura de `src/catalog.ts`.
+- Todo lo de cada producto (textos, fotos, opciones, precios, filtros, plazo, más vendidos y orden): `contenido/<id>.json`, lo edita el panel. `src/catalog.ts` lo convierte en el catálogo.
 - Fotos de los productos: un solo archivo WebP cada una, en `public/fotos/`.
 - Fotos fijas del sitio (el puesto de la feria, Comunidad AGS, `compartir.jpg`): `public/images/`.
 
 El sitio tiene estas páginas, y todas se arman solas al hacer el build:
 
-- **Inicio** (`/`): armado como la página de ejemplo que mandó la dueña. Tiene el título con una polaroid grande del puesto de la feria sobre el panel azul (con las caritas del kit de marca de agua), los círculos por uso que abren Productos ya filtrado (`productos/?uso=regalar`) y los más vendidos, que se eligen en `featuredProducts` de `src/business.ts`. Abajo van Nosotros con Comunidad AGS al lado (pedidos ya entregados, que llevan a Instagram) y la franja roja de "¿Tenés una idea?".
+- **Inicio** (`/`): armado como la página de ejemplo que mandó la dueña. Tiene el título con una polaroid grande del puesto de la feria sobre el panel azul (con las caritas del kit de marca de agua), los círculos por uso que abren Productos ya filtrado (`productos/?uso=regalar`) y los más vendidos, que se marcan en el panel (se ven hasta cuatro, en el orden del catálogo). Abajo van Nosotros con Comunidad AGS al lado (pedidos ya entregados, que llevan a Instagram) y la franja roja de "¿Tenés una idea?".
 - **Productos** (`productos/`): el catálogo con los filtros, la búsqueda y el orden. El buscador del encabezado lleva acá con el texto (`productos/?q=tarjetas`).
 - **Nosotros** (`nosotros/`), **Preguntas frecuentes** (`preguntas-frecuentes/`) y **Contacto** (`contacto/`): sus textos están en `src/templates.ts` y los datos de contacto en `src/business.ts`. Las respuestas de Preguntas frecuentes salen de los mismos datos que "Antes de pedir", y al lado van pasando fotos de las galerías (`src/slideshow.ts`).
 - **Cada producto** (`producto/<id>/`, por ejemplo `producto/calendarios/`): una galería de fotos, las mismas opciones y el mismo pedido. El texto y las fotos salen de su `contenido/<id>.json`.
@@ -83,7 +86,7 @@ Los colores son los de la hoja de identidad del kit y van de a dos, como en el k
 
 ## Bueno saber
 
-- Editar `src/catalog.ts`, `src/business.ts`, `src/templates.ts` o `src/format.ts` (también `src/prerender.ts` y `src/validation.ts`) reinicia el servidor de desarrollo, porque el HTML se arma de antemano con esos archivos. Es normal: la página se recarga sola.
+- Editar `contenido/`, `src/catalog.ts`, `src/business.ts`, `src/templates.ts` o `src/format.ts` (también `src/prerender.ts` y `src/validation.ts`) reinicia el servidor de desarrollo, porque el HTML se arma de antemano con esos archivos. Es normal: la página se recarga sola.
 - El pedido queda guardado solo en el navegador de la clienta, nunca en un servidor. Un pedido sin enviar dura 30 días; uno enviado se borra a las 48 horas. Si al volver algo ya no existe en el catálogo, se saca del pedido y se le avisa.
 
 ## Imágenes
@@ -100,7 +103,7 @@ Cada página tiene su propia frase en el pie, de las que eligió la dueña: est�
 
 ## Antes de publicar
 
-- [ ] Datos completos: `.env` (o el hosting), `src/business.ts` y los plazos de `src/catalog.ts`, sin ningún `example(...)`.
+- [ ] Datos completos: `.env` (o el hosting), `src/business.ts` sin ningún `example(...)` y el plazo de producción de cada producto cargado en el panel.
 - [ ] `npm test` y `npm run build` pasan sin errores.
 - [ ] Un pedido de prueba de punta a punta con un número de WhatsApp de prueba en `VITE_WHATSAPP_NUMBER`: tiene que llegar con todo lo necesario para cotizar sin preguntar nada más.
 - [ ] Vista previa HTTPS para probar desde el celular:

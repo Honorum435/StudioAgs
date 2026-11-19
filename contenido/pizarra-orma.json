@@ -15,6 +15,29 @@
       "contain": false
     }
   ],
+  "groups": [
+    {
+      "id": "color",
+      "label": "Color",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "gris-galvanizada",
+          "label": "Gris galvanizada",
+          "src": "/fotos/pizarra-orma-2.webp",
+          "alt": "Pizarra OrMa gris con marco de madera, fotos, polaroids y una gorra colgada",
+          "contain": true
+        },
+        {
+          "id": "negro-mate",
+          "label": "Negro mate",
+          "src": "/fotos/pizarra-orma-1.webp",
+          "alt": "Pizarra OrMa negra con imanes, fotos, notas y fibrones",
+          "contain": false
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "Gris galvanizada",
@@ -28,18 +51,14 @@
     }
   ],
   "addOns": [],
-  "optionPhotos": [
-    {
-      "option": "Color: Gris galvanizada",
-      "src": "/fotos/pizarra-orma-2.webp",
-      "alt": "Pizarra OrMa gris con marco de madera, fotos, polaroids y una gorra colgada",
-      "contain": true
-    },
-    {
-      "option": "Color: Negro mate",
-      "src": "/fotos/pizarra-orma-1.webp",
-      "alt": "Pizarra OrMa negra con imanes, fotos, notas y fibrones",
-      "contain": false
-    }
-  ]
+  "intents": [
+    "decorar",
+    "organizarte",
+    "regalar"
+  ],
+  "personalizable": true,
+  "photoQuantity": "Para los accesorios: 3 fotos para los imanes de 10 × 10, 3 para las polaroid mini y 9 para las 3 tiras triples.",
+  "leadTime": null,
+  "featured": false,
+  "order": 3
 }

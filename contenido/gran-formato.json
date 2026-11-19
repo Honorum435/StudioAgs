@@ -25,6 +25,85 @@
       "contain": false
     }
   ],
+  "groups": [
+    {
+      "id": "material",
+      "label": "Material",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "vinilo-blanco",
+          "label": "Vinilo blanco",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "vinilo-blanco-laca-sectorizada",
+          "label": "Vinilo blanco con laca sectorizada",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "vinilo-blanco-laca-completa",
+          "label": "Vinilo blanco con laca completa",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "vinilo-transparente",
+          "label": "Vinilo transparente",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "vinilo-transparente-laca-sectorizada",
+          "label": "Vinilo transparente con laca sectorizada",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "vinilo-transparente-laca-completa",
+          "label": "Vinilo transparente con laca completa",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "lona-frontlight",
+          "label": "Lona frontlight 13 oz",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "lona-frontlight-laca",
+          "label": "Lona frontlight 13 oz con laca",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "blueback",
+          "label": "Blueback 150 g mate",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "blueback-laca",
+          "label": "Blueback 150 g mate con laca",
+          "src": "",
+          "alt": "",
+          "contain": false
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "Vinilo blanco",
@@ -78,66 +157,13 @@
     }
   ],
   "addOns": [],
-  "optionPhotos": [
-    {
-      "option": "Material: Vinilo blanco",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Material: Vinilo blanco con laca sectorizada",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Material: Vinilo blanco con laca completa",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Material: Vinilo transparente",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Material: Vinilo transparente con laca sectorizada",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Material: Vinilo transparente con laca completa",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Material: Lona frontlight 13 oz",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Material: Lona frontlight 13 oz con laca",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Material: Blueback 150 g mate",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Material: Blueback 150 g mate con laca",
-      "src": "",
-      "alt": "",
-      "contain": false
-    }
-  ]
+  "intents": [
+    "marca",
+    "decorar"
+  ],
+  "personalizable": true,
+  "photoQuantity": "",
+  "leadTime": null,
+  "featured": false,
+  "order": 6
 }

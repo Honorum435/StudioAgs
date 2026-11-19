@@ -35,6 +35,92 @@
       "contain": false
     }
   ],
+  "groups": [
+    {
+      "id": "cantidad",
+      "label": "Cantidad",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "100",
+          "label": "100",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "200",
+          "label": "200",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "300",
+          "label": "300",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "500",
+          "label": "500",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "1000",
+          "label": "1.000",
+          "src": "",
+          "alt": "",
+          "contain": false
+        }
+      ]
+    },
+    {
+      "id": "faz",
+      "label": "Impresión",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "simple-faz",
+          "label": "Simple faz",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "doble-faz",
+          "label": "Doble faz",
+          "src": "",
+          "alt": "",
+          "contain": false
+        }
+      ]
+    },
+    {
+      "id": "terminacion",
+      "label": "Terminación",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "sin-laminar",
+          "label": "Sin laminar",
+          "src": "",
+          "alt": "",
+          "contain": false
+        },
+        {
+          "id": "laminado",
+          "label": "Laminado mate o brillo",
+          "src": "",
+          "alt": "",
+          "contain": false
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "100 · Simple faz · Sin laminar",
@@ -138,60 +224,12 @@
     }
   ],
   "addOns": [],
-  "optionPhotos": [
-    {
-      "option": "Cantidad: 100",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Cantidad: 200",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Cantidad: 300",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Cantidad: 500",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Cantidad: 1.000",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Impresión: Simple faz",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Impresión: Doble faz",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Terminación: Sin laminar",
-      "src": "",
-      "alt": "",
-      "contain": false
-    },
-    {
-      "option": "Terminación: Laminado mate o brillo",
-      "src": "",
-      "alt": "",
-      "contain": false
-    }
-  ]
+  "intents": [
+    "marca"
+  ],
+  "personalizable": true,
+  "photoQuantity": "",
+  "leadTime": null,
+  "featured": false,
+  "order": 8
 }

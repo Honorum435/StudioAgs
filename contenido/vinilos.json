@@ -15,6 +15,57 @@
       "contain": false
     }
   ],
+  "groups": [
+    {
+      "id": "material",
+      "label": "Vinilo",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "blanco",
+          "label": "Blanco",
+          "src": "/fotos/vinilos-1.webp",
+          "alt": "Planchas de stickers redondos con el logo de Maika",
+          "contain": false
+        },
+        {
+          "id": "transparente",
+          "label": "Transparente",
+          "src": "/fotos/opcion-vinilos-transparente.webp",
+          "alt": "Dibujo del vinilo transparente: el logo deja ver lo que hay detrás",
+          "contain": true
+        }
+      ]
+    },
+    {
+      "id": "laca",
+      "label": "Laca UV",
+      "changesPrice": true,
+      "options": [
+        {
+          "id": "sin-laca",
+          "label": "Sin laca",
+          "src": "/fotos/opcion-vinilos-sin-laca.webp",
+          "alt": "Dibujo de un sticker sin laca",
+          "contain": true
+        },
+        {
+          "id": "laca-sectorizada",
+          "label": "Laca sectorizada",
+          "src": "/fotos/opcion-vinilos-laca-sectorizada.webp",
+          "alt": "Dibujo de la laca sectorizada: solo sobre una parte del diseño",
+          "contain": true
+        },
+        {
+          "id": "laca-completa",
+          "label": "Laca completa",
+          "src": "/fotos/opcion-vinilos-laca-completa.webp",
+          "alt": "Dibujo de la laca completa: sobre todo el diseño",
+          "contain": true
+        }
+      ]
+    }
+  ],
   "prices": [
     {
       "label": "Blanco · Sin laca",
@@ -61,36 +112,17 @@
       "unit": "por pliego"
     }
   ],
-  "optionPhotos": [
-    {
-      "option": "Vinilo: Blanco",
-      "src": "/fotos/vinilos-1.webp",
-      "alt": "Planchas de stickers redondos con el logo de Maika",
-      "contain": false
-    },
-    {
-      "option": "Vinilo: Transparente",
-      "src": "/fotos/opcion-vinilos-transparente.webp",
-      "alt": "Dibujo del vinilo transparente: el logo deja ver lo que hay detrás",
-      "contain": true
-    },
-    {
-      "option": "Laca UV: Sin laca",
-      "src": "/fotos/opcion-vinilos-sin-laca.webp",
-      "alt": "Dibujo de un sticker sin laca",
-      "contain": true
-    },
-    {
-      "option": "Laca UV: Laca sectorizada",
-      "src": "/fotos/opcion-vinilos-laca-sectorizada.webp",
-      "alt": "Dibujo de la laca sectorizada: solo sobre una parte del diseño",
-      "contain": true
-    },
-    {
-      "option": "Laca UV: Laca completa",
-      "src": "/fotos/opcion-vinilos-laca-completa.webp",
-      "alt": "Dibujo de la laca completa: sobre todo el diseño",
-      "contain": true
-    }
-  ]
+  "intents": [
+    "marca",
+    "decorar"
+  ],
+  "personalizable": true,
+  "photoQuantity": "",
+  "leadTime": {
+    "min": 1,
+    "max": 4,
+    "text": "De 1 a 4 días"
+  },
+  "featured": false,
+  "order": 5
 }
