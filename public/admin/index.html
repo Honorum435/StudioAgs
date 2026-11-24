@@ -7,6 +7,10 @@
   <title>Panel de StudioAGS</title>
 </head>
 <body>
-  <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+  <!-- panel.js suma la tabla de precios y los códigos de las opciones, y después arranca el panel. -->
+  <script>window.CMS_MANUAL_INIT = true;</script>
+  <!-- Versión fija: panel.js usa su API. Para actualizar, cambiá el número y probá crear un producto con opciones. -->
+  <script src="https://unpkg.com/@sveltia/cms@0.270.0/dist/sveltia-cms.js"></script>
+  <script src="panel.js"></script>
 </body>
 </html>

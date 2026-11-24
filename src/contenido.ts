@@ -1,33 +1,23 @@
-import type { ProductContent } from "./catalog";
-import archivoBajonero from "../contenido/archivo-bajonero.json";
-import bitacoras from "../contenido/bitacoras.json";
-import calendarios from "../contenido/calendarios.json";
-import complementos from "../contenido/complementos.json";
-import dtfTextil from "../contenido/dtf-textil.json";
-import entreFlores from "../contenido/entre-flores.json";
-import fotos from "../contenido/fotos.json";
-import granFormato from "../contenido/gran-formato.json";
-import laminas from "../contenido/laminas.json";
-import minijuegos from "../contenido/minijuegos.json";
-import pizarraOrma from "../contenido/pizarra-orma.json";
-import tarjetas from "../contenido/tarjetas.json";
-import vinilos from "../contenido/vinilos.json";
+/// <reference types="vite/client" />
+import type { ProductFile } from "./catalog";
 
-// Lo que edita el panel (precios, fotos y textos de cada producto); tsc revisa que cada archivo tenga la forma de ProductContent.
-const content: Record<string, ProductContent> = {
-  "archivo-bajonero": archivoBajonero,
-  bitacoras,
-  calendarios,
-  complementos,
-  "dtf-textil": dtfTextil,
-  "entre-flores": entreFlores,
-  fotos,
-  "gran-formato": granFormato,
-  laminas,
-  minijuegos,
-  "pizarra-orma": pizarraOrma,
-  tarjetas,
-  vinilos,
-};
+// Lo que edita el panel: un archivo por producto en contenido/, con el id como nombre. Vite junta
+// todos los .json, así un producto nuevo del panel entra solo, sin tocar el código.
+//
+// vite.config.ts no pasa por Vite y ahí import.meta.glob no existe: antes de importar el catálogo,
+// src/contenido-node.ts lee la carpeta con fs y la deja en globalThis.contenidoStudioAgs.
+declare global {
+  var contenidoStudioAgs: Record<string, ProductFile> | undefined;
+}
+
+function byId(files: Record<string, ProductFile>): Record<string, ProductFile> {
+  return Object.fromEntries(
+    Object.entries(files).map(([path, file]) => [path.replace(/^.*\//, "").replace(/\.json$/, ""), file]),
+  );
+}
+
+const content: Record<string, ProductFile> =
+  globalThis.contenidoStudioAgs ??
+  byId(import.meta.glob<ProductFile>("../contenido/*.json", { eager: true, import: "default" }));
 
 export default content;

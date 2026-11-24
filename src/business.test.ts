@@ -9,7 +9,6 @@ const complete: BusinessInfo = {
   email: "hola@studioags.com.ar",
   responseTime: "Respondemos en el día.",
   exchangePolicy: "Te mandamos una muestra antes de imprimir.",
-  featuredProducts: ["calendarios", "tarjetas"],
 };
 
 describe("listPendingFields", () => {

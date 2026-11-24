@@ -20,6 +20,7 @@
       "contain": true
     }
   ],
+  "groups": [],
   "prices": [
     {
       "label": "Precio único",
@@ -28,5 +29,12 @@
     }
   ],
   "addOns": [],
-  "optionPhotos": []
+  "intents": [
+    "regalar"
+  ],
+  "personalizable": false,
+  "photoQuantity": "",
+  "leadTime": null,
+  "featured": false,
+  "order": 10
 }

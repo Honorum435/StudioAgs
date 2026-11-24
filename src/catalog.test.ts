@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { businessValue, example, isExample } from "./business";
 import {
+  buildCatalog,
   buildProduct,
   initialSelection,
   intents,
@@ -8,8 +9,7 @@ import {
   products,
   resolveSelection,
   type CatalogProduct,
-  type ProductContent,
-  type ProductStructure,
+  type ProductFile,
 } from "./catalog";
 
 function product(id: string): CatalogProduct {
@@ -255,43 +255,53 @@ describe("catálogo", () => {
 });
 
 describe("buildProduct", () => {
-  const structure: ProductStructure = {
-    id: "prueba",
-    intents: ["regalar"],
-    groups: [
-      { id: "tamano", label: "Tamaño", options: [{ id: "chico", label: "Chico" }, { id: "grande", label: "Grande" }] },
-      { id: "color", label: "Color", free: true, options: [{ id: "rojo", label: "Rojo" }, { id: "azul", label: "Azul" }] },
-    ],
-  };
-  const content: ProductContent = {
+  const file: ProductFile = {
     name: "Prueba",
     description: "Un producto de prueba",
     details: null,
     note: null,
     gallery: [{ src: "/fotos/prueba.webp", alt: null, contain: false }],
+    groups: [
+      {
+        id: "tamano",
+        label: "Tamaño",
+        changesPrice: true,
+        options: [
+          { id: "chico", label: "Chico" },
+          { id: "grande", label: "Grande" },
+        ],
+      },
+      {
+        id: "color",
+        label: "Color",
+        changesPrice: false,
+        options: [
+          { id: "rojo", label: "Rojo", src: "/fotos/prueba-rojo.webp", alt: "Prueba roja", contain: true },
+          { id: "azul", label: "Azul", src: null, alt: null, contain: false },
+        ],
+      },
+    ],
     prices: [
       { label: "Chico", price: 100, unit: "por unidad" },
       { label: "Grande", price: 200, unit: "por unidad" },
     ],
     addOns: [],
-    optionPhotos: [
-      { option: "Color: Rojo", src: "/fotos/prueba-rojo.webp", alt: "Prueba roja", contain: true },
-      { option: "Color: Azul", src: null, alt: null, contain: false },
-    ],
+    intents: ["regalar"],
   };
 
-  it("arma las combinaciones con el precio de los grupos que no son gratis", () => {
-    const built = buildProduct(structure, content);
+  it("arma las combinaciones con el precio de los grupos que cambian el precio", () => {
+    const built = buildProduct("prueba", file);
     expect(built.combinations.map(({ id, label, price }) => [id, label, price])).toEqual([
       ["prueba-chico-rojo", "Chico · Rojo", 100],
       ["prueba-chico-azul", "Chico · Azul", 100],
       ["prueba-grande-rojo", "Grande · Rojo", 200],
       ["prueba-grande-azul", "Grande · Azul", 200],
     ]);
+    expect(built.groups.map((group) => group.free)).toEqual([undefined, true]);
   });
 
   it("los textos y fotos que el panel deja vacíos (null) no rompen nada", () => {
-    const built = buildProduct(structure, content);
+    const built = buildProduct("prueba", file);
     expect([built.details, built.note]).toEqual(["", ""]);
     // Sin barra al principio y, sin descripción, con el nombre del producto.
     expect(built.gallery).toEqual([{ src: "fotos/prueba.webp", alt: "Prueba", contain: false }]);
@@ -301,26 +311,101 @@ describe("buildProduct", () => {
   });
 
   it("sin grupos busca la fila «Precio único» y usa los valores por defecto", () => {
-    const single = { ...content, prices: [{ label: "Precio único", price: 500, unit: "por unidad" }], optionPhotos: [] };
-    const built = buildProduct({ id: "prueba", intents: ["regalar"] }, single);
+    const single = { ...file, groups: null, prices: [{ label: "Precio único", price: 500, unit: "por unidad" }] };
+    const built = buildProduct("prueba", single);
     expect(built.combinations).toEqual([{ id: "prueba", values: {}, label: "", price: 500, unit: "por unidad" }]);
-    expect([built.personalizable, built.needsPhotos, isExample(built.leadTime)]).toEqual([true, false, true]);
+    expect([built.personalizable, built.needsPhotos, isExample(built.leadTime), built.featured]).toEqual([
+      true,
+      false,
+      true,
+      false,
+    ]);
   });
 
-  it("sin adicionales (null) ni fotos de opciones, los dos quedan en listas vacías", () => {
-    const built = buildProduct(structure, { ...content, addOns: null, optionPhotos: undefined });
-    expect(built.addOns).toEqual([]);
-    expect(built.groups[1].options.every((option) => !option.photo)).toBe(true);
+  it("sin adicionales (null), quedan en una lista vacía", () => {
+    expect(buildProduct("prueba", { ...file, addOns: null }).addOns).toEqual([]);
   });
 
-  it("avisa en castellano si falta un precio o sobra una fila de fotos", () => {
-    expect(() => buildProduct(structure, { ...content, prices: content.prices.slice(0, 1) })).toThrow(
+  it("un producto nuevo del panel sin códigos los arma con el nombre, sin repetir", () => {
+    const built = buildProduct("prueba", {
+      ...file,
+      groups: [{ label: "Tamaño", options: [{ label: "A4 (21 × 29,7)" }, { label: "Más grande" }, { label: "más grande" }] }],
+      prices: [
+        { label: "A4 (21 × 29,7)", price: 100, unit: "por unidad" },
+        { label: "Más grande", price: 200, unit: "por unidad" },
+        { label: "más grande", price: 300, unit: "por unidad" },
+      ],
+      addOns: [{ label: "Caja de regalo", price: 900, unit: "por unidad" }],
+    });
+    expect(built.groups[0].id).toBe("tamano");
+    expect(built.groups[0].options.map((option) => option.id)).toEqual(["a4-21-29-7", "mas-grande", "mas-grande-2"]);
+    expect(built.combinations.map((combination) => [combination.id, combination.price])).toEqual([
+      ["prueba-a4-21-29-7", 100],
+      ["prueba-mas-grande", 200],
+      ["prueba-mas-grande-2", 300],
+    ]);
+    expect(built.addOns.map((addOn) => addOn.id)).toEqual(["prueba-caja-de-regalo"]);
+  });
+
+  it("no usa las filas de precio que ya no son de ninguna combinación ni las intenciones que no existen", () => {
+    const built = buildProduct("prueba", {
+      ...file,
+      prices: [...file.prices, { label: "Mediano", price: 150, unit: "por unidad" }],
+      intents: ["regalar", "inventada", "regalar", "decorar"],
+    });
+    expect(built.combinations).toHaveLength(4);
+    expect(built.intents).toEqual(["regalar", "decorar"]);
+  });
+
+  it("arma el texto del plazo con desde y hasta; incompleto o al revés queda el provisorio", () => {
+    const leadTime = (value: ProductFile["leadTime"]) => buildProduct("prueba", { ...file, leadTime: value }).leadTime;
+    expect(leadTime({ min: 2, max: 4, text: null })).toEqual({ min: 2, max: 4, text: "De 2 a 4 días hábiles" });
+    expect(leadTime({ min: 1, max: 1, text: "" })).toEqual({ min: 1, max: 1, text: "1 día hábil" });
+    expect(leadTime({ min: 3, max: 3 })).toEqual({ min: 3, max: 3, text: "3 días hábiles" });
+    expect(leadTime({ min: 1, max: 4, text: "De 1 a 4 días" })).toEqual({ min: 1, max: 4, text: "De 1 a 4 días" });
+    for (const pending of [null, { min: 5, max: 3 }, { min: 2, max: null }, { min: 0, max: 2 }]) {
+      expect(isExample(leadTime(pending))).toBe(true);
+    }
+  });
+
+  it("con cuántas fotos manda el cliente, pide fotos y da las instrucciones", () => {
+    const built = buildProduct("prueba", { ...file, photoQuantity: " Una por copia. " });
+    expect([built.needsPhotos, built.photoInstructions?.quantity]).toEqual([true, "Una por copia."]);
+    expect(buildProduct("prueba", { ...file, photoQuantity: "  " }).needsPhotos).toBe(false);
+  });
+
+  it("avisa en castellano lo que frena el build", () => {
+    expect(() => buildProduct("prueba", { ...file, prices: file.prices.slice(0, 1) })).toThrow(
       "Falta el precio de «Grande» en contenido/prueba.json",
     );
-    const extra = { option: "Color: Verde", src: null, alt: null, contain: false };
-    expect(() => buildProduct(structure, { ...content, optionPhotos: [...(content.optionPhotos ?? []), extra] })).toThrow(
-      "En contenido/prueba.json, «Color: Verde» no es una opción de prueba",
+    expect(() => buildProduct("prueba", { ...file, gallery: [{ src: "" }] })).toThrow(
+      "En contenido/prueba.json falta al menos una foto",
     );
+    expect(() => buildProduct("prueba", { ...file, groups: [{ label: "Color", options: [] }] })).toThrow(
+      "En contenido/prueba.json, «Color» no tiene ninguna opción",
+    );
+    expect(() => buildProduct("prueba", { ...file, name: " " })).toThrow("En contenido/prueba.json falta el nombre");
+  });
+});
+
+describe("buildCatalog", () => {
+  const single = (name: string, order?: number | null): ProductFile => ({
+    name,
+    description: "",
+    gallery: [{ src: "/fotos/prueba.webp" }],
+    prices: [{ label: "Precio único", price: 100, unit: "por unidad" }],
+    order,
+  });
+
+  it("ordena por el lugar en el catálogo; sin número van al final y los empates, por nombre", () => {
+    const built = buildCatalog({
+      b: single("Bitácora", 2),
+      sin: single("Agenda", null),
+      c: single("Calendario", 1),
+      a: single("Álbum", 2),
+      otro: single("Zapato"),
+    });
+    expect(built.map((item) => item.id)).toEqual(["c", "a", "b", "sin", "otro"]);
   });
 });
 
